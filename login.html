@@ -98,9 +98,6 @@
 					document.addEventListener("plusready",plusReady,false);  
 				}
 				
-				// checkUserVip(url);
-				
-				
 				//check phone number
 				checkPhoneNumber();
 				
@@ -312,8 +309,7 @@
 						var activationCode = $('#activationCode01').val()+'-'+ $('#activationCode02').val() +'-'+ $('#activationCode03').val();
 						var sendCode = $('#codeNumber').val();
 						var imei = localStorage.getItem('imei');
-						// var imei = '123456789123456,123456789123457';
-						//6413-0265-3855
+						
 						if(pn){
 							if(activationCode.length === 14){
 								if( ( vip === 1 && sendCode )  || ( vip === 2 && sendCode === '' ) ){
