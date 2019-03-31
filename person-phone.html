@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>手机号码修改</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		.person-phone{width:100%;height:100%;background:#f2f2f2;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.update-phone{width:100%;height:calc(100% - 1rem);}
+		.phone-input{width:100%;height:0.8rem;margin-top:0.2rem;}
+		.phone-input > input{width:100%;height:0.8rem;line-height:0.8rem;padding:0 6%;border:none;outline:none;font-size:0.3rem;color:#222;}
+		.messageCode{width:100%;height:0.8rem;background:#fff;margin-top:0.2rem;position:relative;}
+		.messageCode > input{width:65%;height:0.8rem;border:none;outline:none;user-select:none;font-size:0.3rem;padding:0 6%;}
+		.messageCode > button{width:33%;height:0.6rem;line-height:0.6rem;margin-top:0.1rem;background:#4787ca;border:none;outline:none;border-radius:0.1rem;font-size:0.3rem;color:#fff;}
+		
+		.phone-notice{display:none;width:100%;height:0.6rem;line-height:0.6rem;padding:0 5%;}
+		.phone-notice > span{font-size:0.28rem;color:#f00;}
+		
+		.update-btn{width:100%;height:0.8rem;margin-top:0.4rem;text-align:center;}
+		.update-btn > button{width:80%;height:0.8rem;background:#217bd1;outline:none;border:none;color:#fff;font-size:0.32rem;border-radius:0.1rem;}
+		
+	</style>
+	<body>
+		<div class="person-phone">
+			<div class="head">
+				<div class="head-back" onClick='javascript:history.go(-1);'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>手机号码修改</span>
+				</div>
+			</div>
+			
+			<div class="update-phone">
+				<div class="phone-input">
+					<input type="number" require maxlength="11" autocomplete="off" id="phone" placeholder="请输入手机号码" >
+				</div>
+				
+				<div class="messageCode">
+					<input type="number" required name="messageCode" id="codeNumber" autocomplete="off" placeholder="请输入验证码">
+					<button type="button" id="sendCode" class="sendCode">发送验证码</button>
+				</div>
+				
+				<div class="phone-notice" id="errorMsg">
+					<span></span>
+				</div>
+				
+				<div class="update-btn">
+					<button type="button" id="changePhoneBtn">确认修改</button>
+				</div>
+			</div>
+		
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script>
+			
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip');
+				var url = 'http://'+ urlip +':8080/platform-web/';
+				
+				//check phone number
+				checkPhoneNumber();
+				
+				//send message code number
+				sendMessageCode(url);
+				
+				//submit phone
+				submitPhone(url);
+				
+				//check phone number
+				function checkPhoneNumber(){
+					var endVal = '';
+					//listen phone number
+					$('#phone').on('input propertychange',function(){
+						var curVal = $(this).val();
+						var phoneRule = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/;
+						if(curVal.length === 11){
+							if( phoneRule.test(curVal) ){
+								$('#errorMsg').hide().children('span').text('');
+								$('#sendCode').attr('disabled',false);
+							}else{
+								$('#errorMsg').show().children('span').text('请输入正确的手机号码');
+								$('#sendCode').attr('disabled',true);
+							}
+						}else if(curVal.length > 11){
+							if(curVal.length < 13){
+								endVal = curVal.substring(0,curVal.length-1);
+							}
+							$(this).val(endVal);
+							$('#sendCode').attr('disabled',true);
+							return false;
+							
+						}else{
+							$('#errorMsg').hide().children('span').text('');
+							$('#sendCode').attr('disabled',true);
+						}
+					});
+				
+					//phone number blur
+					$('#phone').on('blur',function(){
+						if($(this).val()){
+							if($(this).val().length == 11){
+								$('#errorMsg').hide().children('span').text('');
+								$('#sendCode').attr('disabled',false);
+							}else{
+								$('#errorMsg').show().children('span').text('请输入正确的电话号码');
+								$('#sendCode').attr('disabled',true);
+							}
+						}else{
+							$('#errorMsg').show().children('span').text('电话号码不能为空');
+							$('#sendCode').attr('disabled',true);
+						}
+					});
+					
+					//check sendCode
+					$("#codeNumber").on('keyup',function(ev){
+						var sendCodeVal = $(this).val();
+						var reg = /^[0-9]*$/;
+						var sendCodeValLen = '';
+						for(var i=0;i<=sendCodeVal.length;i++){
+							if( reg.test(sendCodeVal[i]) ){
+								if(sendCodeValLen.length < 6){
+									sendCodeValLen += sendCodeVal[i];
+								}
+							}
+						}
+						$('#errorMsg').hide().children('span').text('');
+						$(this).val(sendCodeValLen);
+						return false;
+					});
+					
+					$("#codeNumber").on('blur',function(ev){
+						var sendCodeVal = $(this).val();
+						if(sendCodeVal){
+							$('#errorMsg').hide().children('span').text('');
+							var reg = /^[0-9]*$/;
+							var sendCodeValLen = '';
+							for(var i=0;i<=sendCodeVal.length;i++){
+								if( reg.test(sendCodeVal[i]) ){
+									if(sendCodeValLen.length < 6){
+										sendCodeValLen += sendCodeVal[i];
+									}
+								}
+							}
+							$(this).val(sendCodeValLen);
+							return false;
+						}else{
+							$('#errorMsg').show().children('span').text('短信验证码不能为空');
+						}
+						
+					});
+				}
+							
+				//send message code number
+				function sendMessageCode(url){
+					//check phone number
+					checkPhoneNumber();
+					
+					$('#sendCode').click(function(){
+						var pn = $('#phone').val();
+						if(pn){
+							//get check code
+							$.ajax({
+								type:'POST',
+								url:url+'message/sendcode',
+								dataType:'json',
+								data:{
+									phone:pn  //手机号码
+								},
+								success:function(data){
+									//console.log(data);
+									if(data.code === "5000"){
+										sendedCode = true;
+										var timer = 60;
+										function timeCountDown(){
+											if(timer == 0){
+												$('#sendCode').text("发送验证码");
+												$('#sendCode').attr('disabled',false);
+												clearInterval(countTime);
+											}else{
+												$('#sendCode').text( timer + "s后发送" );
+												$('#sendCode').attr('disabled',true);
+												timer--;
+											}
+										}
+										timeCountDown();
+										var countTime = setInterval(timeCountDown,1000);
+									}else{
+										$('#errorMsg').show().children('span').text('获取验证码失败');
+									}
+								}
+							});
+						}else{
+							$('#errorMsg').show().children('span').text('请输入正确的手机号码');
+							$('#sendCode').attr('disabled',true);
+						}
+					})
+				}
+				
+				//submit phone
+				function submitPhone(url){
+					
+					$('#changePhoneBtn').on('click',function(){
+						var phone = $('#phone').val();
+						var msgcode = $('#codeNumber').val();
+						var userid = localStorage.getItem('userid');
+						
+						if(phone){
+							$('#errorMsg').hide().children('span').text('');
+							if(msgcode){
+								if(userid){
+									$.ajax({
+										type:'POST',
+										url:url+'user/update',
+										dataType:'json',
+										data:{
+											id:userid,
+											msgCode:msgcode,
+											phone:phone
+										},
+										success:function(data){
+											if(data.code === 403){
+												location.href = './login.html'
+											}else if(data.code === 404){
+												alert('设备被锁');
+											}else if(data.code === 5000 ){
+												alert('修改成功');
+												location.href = './person-infor.html';
+											}else if(data.code === 5001 ){
+												alert('手机验证码错误');
+											}else if(data.code === 5002 ){
+												alert('号码已存在');
+											}
+										},
+									})
+								}else{
+									location.href = './login.html';
+								}
+							}else{
+								$('#errorMsg').show().children('span').text('短信验证码不能为空');
+							}
+						}else{
+							$('#errorMsg').show().children('span').text('手机号码不能为空');
+						}
+					});
+					
+					
+				}
+			});
+		</script>
+	</body>
+</html>

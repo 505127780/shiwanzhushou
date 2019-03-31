@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>余额提现</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		body{-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+		.balance{width:100%;height:100%;background:#f2f2f2;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.balance-account{width:100%;height:calc(100% - 1rem);}
+		
+		.putforward-style{width:100%;height:1rem;margin-top:0.3rem;background:#fff;display:flex;flex-direction:row;}
+		.select-style{width:85%;height:1rem;line-height:1rem;text-align:center;}
+		.select-style > span{color:#222;font-size:0.32rem;}
+		
+		/* .putforward-bank{width:100%;height:1rem;margin-top:0.3rem;background:#fff;display:flex;flex-direction:row;}
+		.bank-img{width:25%;height:1rem;line-height:1rem;text-align:center;}
+		.bank-img > img{width:0.7rem;height:0.7rem;}
+		.bank-infor{width:60%;height:1rem;display:flex;flex-direction:column;justify-content:center;}
+		.bank-infor > span{color:#222;font-size:0.32rem;}
+		.bank-infor > p{color:#999;font-size:0.26rem;margin:0 !important;}
+		 */
+		.toright{width:15%;height:1rem;display:flex;flex-direction:row;justify-content:center;align-items:center;}
+		.toright > i.right{width:0.4rem;height:0.4rem;display:block;background:url('./img/icons/right.png') no-repeat;background-size:0.4rem;}
+		
+		.putforward-money{width:100%;height:auto;margin-top:0.3rem;padding:0.2rem 5% 0;background:#fff;}
+		.number-title{height:0.4rem;line-height:0.4rem;}
+		.number-title > span{font-size:0.26rem;color:#888;}
+		.input-number{height:1.2rem;display:flex;flex-direction:row;justify-content:flex-start;align-items:center;}
+		.input-number > span{width:10%;font-size:0.5rem;}
+		.input-number > input{width:80%;height:1rem;border:none;outline:none;font-size:0.7rem;color:#222;}
+		.input-notice{height:0.8rem;line-height:0.6rem;border-top:0.02rem solid #ccc;}
+		.input-notice > span{font-size:0.26rem;color:#888;}
+		.error-notice > span{color:#f00 !important;}
+		
+		.putforward-btn{width:100%;height:0.8rem;margin-top:0.5rem;text-align:center;}
+		.putforward-btn > button{width:80%;height:0.8rem;line-height:0.8rem;border:none;outline:none;border-radius:0.1rem;background:#9bcbf1;color:#efefef;font-size:0.32rem;}
+		.putforward-btn > button.enableBtn{background:#0c5dac;color:#fff;}
+		
+		.pwd-modal{display:none;position:fixed;width:100%;height:100%;background:rgba(0,0,0,0.5);}
+		.password-contain{width:85%;height:auto;background:#fff;margin:30% auto 0;border-radius:0.2rem;}
+		
+		.pwdmodal-title{width:100%;height:1rem;border-bottom:0.01rem solid #ccc;position:relative;}
+		.modal-title{width:100%;height:1rem;line-height:1rem;text-align:center;}
+		.modal-title > span{font-size:0.3rem;color:#222;}
+		.pwdModal-close{position:absolute;top:0;right:0;width:1rem;height:1rem;line-height:1rem;text-align:center;}
+		.pwdModal-close > span{font-size:0.5rem;color:#999;}
+		.password-content{width:100%;height:4rem;display:flex;flex-direction:column;justify-content:center;}
+		.balance-number{width:100%;height:auto;}
+		.balance-title{width:100%;height:0.8rem;line-height:0.8rem;text-align:center;}
+		.balance-title > span{font-size:0.28rem;color:#666;}
+		.balance-money{height:1rem;line-height:1rem;text-align:center;}
+		.balance-money > span{font-size:0.8rem;color:#000;}
+		
+		.putforward-pwd{width:100%;height:1.5rem;line-height:1.5rem;text-align:center;}
+		.putforward-pwd > input{width:0.65rem;height:0.65rem;line-height:0.65rem;text-align:center;margin:0 0.05rem 0 0;border:0.02rem solid #888;font-size:0.3rem;-webkit-text-security:disc;text-security:disc;}
+	</style>
+	<body>
+		<div class="balance">
+			<div class="head">
+				<div class="head-back" onClick='location.href="./balance.html"'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>提现</span>
+				</div>
+			</div>
+			
+			<div class="balance-account">
+				<!-- <div class="putforward-bank" onclick="javascript:location.href='./bank-choice.html'">
+					<div class="bank-img">
+						<img src="./img/bank-zg.png" alt="">
+					</div>
+					<div class="bank-infor">
+						<span>中国银行</span>
+						<p>尾号3456 储蓄卡</p>
+					</div>
+					<div class="toright">
+						<i class="right"></i>
+					</div>
+				</div> -->
+				
+				<div class="putforward-style" onclick="javascript:location.href='./bank-choice.html'">
+					<div class="select-style">
+						<span id="selectStyle">点击选择支付类型</span>
+					</div>
+					<div class="toright">
+						<i class="right"></i>
+					</div>
+				</div>
+				
+				<div class="putforward-money">
+					<div class="number-title">
+						<span>提现金额</span>
+					</div>
+					<div class="input-number">
+						<span>￥</span>
+						<input type="number" id="inputMoney" autofocus="autofocus">
+					</div>
+					<div class="input-notice">
+						<span>最低提现金额为 100元(金额为100的整数倍)</span>
+					</div>
+				</div>
+				
+				<div class="putforward-btn">
+					<button type="button" id="putforwardMoneyBtn" disabled="disabled">预计24h内到账，确认提现</button>
+				</div>
+			</div>
+			
+		</div>
+		
+		
+		<!-- putforward modal -->
+		<div class="pwd-modal" id="pwdModal">
+			<div class="password-contain">
+				<div class="pwdmodal-title">
+					<div class="modal-title">
+						<span>请输入提现密码</span>
+					</div>
+					<div class="pwdModal-close" id="closeModal"><span>×</span></div>
+				</div>
+				<div class="password-content">
+					<div class="balance-number">
+						<div class="balance-title">
+							<span>提现金额</span>
+						</div>
+						<div class="balance-money">
+							<span>￥</span><span id="putforwardMoney">0.00</span>
+						</div>
+					</div>
+					
+					<div class="putforward-pwd" id="pwdCode">
+						<input type="number">
+						<input type="number">
+						<input type="number">
+						<input type="number">
+						<input type="number">
+						<input type="number">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script>
+			
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip');
+				var url = 'http://'+ urlip +':8080/platform-web/';
+				var userid = localStorage.getItem('userid');
+				var paystyle = localStorage.getItem('paystyle');
+				
+				switch(paystyle){
+					case 'alipay':$('#selectStyle').text('当前选择 支付宝收款');break;
+					case 'wxpay':$('#selectStyle').text('当前选择 微信收款');break;
+					case 'zg':$('#selectStyle').text('当前选择 中国银行收款');break;
+					case 'js':$('#selectStyle').text('当前选择 建设银行收款');break;
+					case 'ny':$('#selectStyle').text('当前选择 农业银行收款');break;
+					case 'gs':$('#selectStyle').text('当前选择 工商银行收款');break;
+				}
+				
+				var enablemoney = localStorage.getItem('enablemoney');
+				
+				checkInputMoney();
+				
+				function checkInputMoney(){
+					var enableMoney = localStorage.getItem('enablemoney');
+					
+					$('#inputMoney').on('keyup',function(){
+						var curVal = $(this).val();
+						if(curVal){
+							if( parseFloat(enableMoney) >= parseFloat(curVal) ){
+								$('.input-notice').removeClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)')
+								$('#putforwardMoneyBtn').addClass('enableBtn').attr('disabled',false);
+								$('#putforwardMoneyBtn').text('确认提现');
+							}else{
+								$('.input-notice').addClass('error-notice').children('span').text('输入金额超过可提现金额');
+							}
+						}else{
+							$('#putforwardMoneyBtn').removeClass('enableBtn').attr('disabled',true);
+							$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+						}
+					});
+				}
+				
+				//check putforward money and pwd style
+				checkPutforwardMoney(url,userid)
+				
+				//close pwd modal
+				$('#closeModal').click(function(){
+					$('#pwdModal').hide();
+					$('#inputMoney').focus();
+					$('#pwdCode').children('input').each(function(){
+						$(this).val('');
+					})
+				})
+				
+				//check putforward money and pwd ,style
+				function checkPutforwardMoney(url,userid){
+					$('#putforwardMoneyBtn').unbind('click').click(function(){
+						var inputMoney = $('#inputMoney').val();
+						var transferStyle = localStorage.getItem('paystyle');
+						
+						var bankId = localStorage.getItem('bankid');;
+						
+						if(transferStyle){
+							if(parseInt(inputMoney) >= 100 && parseInt(inputMoney)%100 === 0){
+								$('.input-notice').removeClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)')
+								userid = true;
+								if(userid){
+									$('#pwdModal').show();
+									$('#putforwardMoney').text(inputMoney);
+									$('#pwdCode').children('input')[0].focus();
+									
+									var styleNumber = null;
+									if(transferStyle === 'wxpay'){
+										styleNumber = 1;
+										bankId = '';
+									}else if(transferStyle === 'alipay'){
+										styleNumber = 2;
+										bankId = '';
+									}else{
+										styleNumber = 3;
+									}
+									
+									goNextInput('#pwdCode',inputMoney,styleNumber,bankId);
+									
+								}else{
+									location.href = './login.html';
+								}
+							}else{
+								$('.input-notice').addClass('error-notice').children('span').text('请输入金额为100的整数倍')
+								$('#putforwardMoneyBtn').removeClass('enableBtn').attr('disabled',true);
+								$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+							}
+						}else{
+							alert('请选择支付类型');
+						}
+					})
+				}
+				
+				//go next input
+				function goNextInput(el,inputMoney,styleNumber,bankId){
+					var txts = $(el).children('input');
+					var intpwd = '';
+					for(var i = 0; i<txts.length;i++){
+						var t = txts[i];
+						t.index = i;
+						t.setAttribute("readonly", true);
+						t.onkeyup=function(){
+							this.value=this.value.replace(/^(.).*$/,'$1');
+							var next = this.index + 1;
+							intpwd += this.value
+							if(next > txts.length - 1){
+								
+								putforwardMoneySubmit(url,userid,intpwd,inputMoney,styleNumber,bankId);
+								
+								$('#pwdModal').hide();
+								$('#pwdCode').children('input').each(function(){
+									$(this).val('')
+								});
+								$('#inputMoney').val('');
+							};
+							if(next < txts.length ) txts[next].removeAttribute("readonly");
+							if (this.value) {
+								txts[next].focus();
+							}
+					  }
+					}
+					txts[0].removeAttribute("readonly");
+				}
+			
+				//check activationCode
+				function putforwardMoneySubmit(url,userid,intpwd,inputMoney,styleNumber,bankId){
+					$.ajax({
+						type:'POST',
+						url:url+'withdraw/withdraw',
+						dataType:'json',
+						data:{
+							id:userid,
+							password:intpwd,
+							money:inputMoney,
+							type:styleNumber,
+							bankId:bankId
+						},
+						success:function(data){
+							if(data.code === 403){
+								var confirmRes = confirm('请重新登录');
+								if(confirmRes){
+									location.href = './login.html'
+								}
+							}else if(data.code === 404){
+								alert('设备被锁')
+							}else if(data.code === 5000 ){
+								alert('提现成功');
+								location.href = "./putforward-record.html";
+							}else if(data.code === 5001){
+								alert('提现密码错误');
+							}else if(data.code === 5002){
+								alert('余额不足');
+							}else if(data.code === 5003){
+								alert('请上传微信收款码');
+							}else if(data.code === 5004){
+								alert('请上传支付宝收款码');
+							}else if(data.code === 5005){
+								alert('提现金额不能低于100');
+							}else if(data.code === 5006){
+								alert('测试机不能提现');
+							}else if(data.code === 5006){
+								alert(data.msg);
+							}
+						}
+					})
+				}
+			})
+		</script>
+	</body>
+</html>

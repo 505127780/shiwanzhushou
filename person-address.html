@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>邮寄地址修改</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+		<link rel="stylesheet" href="./css/area/area.css">
+		<link rel="stylesheet" href="./css/area/area-style.css">
+	</head>
+	<style>
+		.person-address{width:100%;height:100%;background:#fff;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.update-address{width:92%;height:calc(100% - 1rem);margin:0 4%;}
+		.address-input{width:100%;height:0.8rem;margin-top:0.2rem;display:flex;flex-direction:row;border-bottom:0.02rem solid #ccc;}
+		.address-input > span{width:25%;height:0.8rem;line-height:0.8rem;text-align:center;font-size:0.28rem;color:#999;}
+		.address-input > input{width:75%;height:0.78rem;padding:0 3%;border:none;outline:none;font-size:0.3rem;color:#222;}
+		.address-detail{width:100%;height:1.5rem;display:flex;flex-direction:row;border-bottom:0.02rem solid #ccc;margin-top:0.2rem;}
+		.address-detail > span{width:25%;height:0.8rem;line-height:0.8rem;text-align:center;font-size:0.28rem;color:#999;}
+		.address-detail > textarea{width:75%;height:1.18rem;padding:0.1rem 2%;outline:none;border:none;font-size:0.3rem;color:#222;}
+		.area-notice{width:100%;height:0.6rem;line-height:0.6rem;padding:0 5%;}
+		.area-notice > span{font-size:0.28rem;color:#999;}
+		.error-notice > span{color:#f00;}
+		.update-btn{width:100%;height:0.8rem;margin-top:0.4rem;text-align:center;}
+		.update-btn > button{width:80%;height:0.8rem;background:#217bd1;outline:none;border:none;color:#fff;font-size:0.32rem;border-radius:0.1rem;}
+				
+	</style>
+	<body>
+		<div class="person-address">
+			<div class="head">
+				<div class="head-back" onClick='javascript:history.go(-1);'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>邮寄地址修改</span>
+				</div>
+			</div>
+			
+			<div class="update-address">
+				<div class="address-input">
+					<span>所在地区：</span>
+					<input type="text" id="expressArea" data-name="custUa" data-required="true" data-label="单位地址" readonly="readonly" placeholder="点击选择所在区域">
+				</div>
+				<div class="address-detail">
+					<span>详细地址：</span>
+					<textarea name="" id="detailArea" ></textarea>
+				</div>
+				
+				<div class="area-notice" id="errorMsg">
+					<span></span>
+				</div>
+				
+				<div class="update-btn">
+					<button type="button" id="changeAddressBtn">保存</button>
+				</div>
+			</div>
+			
+			<div class="browser">
+				<!--选择地区弹层-->
+				<section id="areaLayer" class="express-area-box">
+					<header>
+						<h3>选择省市区</h3>
+						<div class="selet-area-wrap">
+							<p><span class="one"></span></p>
+							<p><span class="two"></span></p>
+							<p><span class="three"></span></p>
+						</div>
+						<div class="hot-city">
+							<p>热门城市</p>
+							<ul>
+								<li onClick="selectPP(0,1)">北京</li>
+								<li onClick="selectPP(10,1)">上海</li>
+								<li onClick="quickselectC(18,0)">广州</li>
+								<li onClick="quickselectC(18,1)">深圳</li>
+								<li onClick="quickselectC(12,0)">杭州</li>
+								<li onClick="quickselectC(11,0)">南京</li>
+								<li onClick="quickselectC(11,4)">苏州</li>
+								<li onClick="selectPP(1,1)">天津</li>
+								<li onClick="quickselectC(16,0)">武汉</li>
+								<li onClick="quickselectC(17,0)">长沙</li>
+								<li onClick="selectPP(21,1)">重庆</li>
+								<li onClick="quickselectC(22,0)">成都</li>
+							</ul>
+							<p class="selct-define">选择省份/地区</p>
+						</div>
+						
+					</header>
+					<article id="areaBox">
+						<ul id="areaList" class="area-list"></ul>
+					</article>
+				</section>
+				<!--遮罩层-->
+				<div id="areaMask" class="mask"></div>
+			</div>
+		
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script src="./js/lib/areajs/jquery.area.js" type="text/javascript"></script>
+		
+		<script>
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				$('#changeAddressBtn').click(function(){
+					var userArea = $('#expressArea').val();
+					var detailArea = $('#detailArea').val();
+					var userid = localStorage.getItem('userid');
+					
+					if(userArea){
+						userArea = userArea.replace(/\s*/g,"");
+						$('#errorMsg').removeClass('error-notice').children('span').text('');
+						if(detailArea){
+							var userAddress = userArea + detailArea;
+							if(userid){
+								$.ajax({
+									type:'POST',
+									url:url+'user/update',
+									dataType:'json',
+									data:{
+										id:userid,
+										updateContext:userAddress,
+										type:3
+									},
+									success:function(data){
+										console.log(data);
+										if(data.code === 403){
+											location.href = './login.html'
+										}else if(data.code === 404){
+											alert('设备被锁');
+										}else if(data.code === 5000 ){
+											alert('修改成功');
+											location.href = './login.html';
+										}
+									},
+								})
+							}else{
+								location.href = './login.html';
+							}
+						}else{
+							$('#errorMsg').addClass('error-notice').children('span').text('请填写详细地址');
+						}
+					}else{
+						$('#errorMsg').addClass('error-notice').children('span').text('请选择所在区域');
+					}
+					
+					
+				})
+				
+			})
+		</script>
+	</body>
+</html>

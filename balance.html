@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>我的余额</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		.balance{width:100%;height:100%;background:#fff;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.balance-account{width:100%;height:calc(100% - 1rem);}
+		.balance-img{width:100%;height:3.5rem;line-height:4rem;text-align:center;}
+		.balance-img > img{width:2rem;height:2rem;border-radius:50%;}
+		.balance-number{width:100%;height:auto;}
+		.balance-title{width:100%;height:0.8rem;line-height:0.8rem;text-align:center;}
+		.balance-title > span{font-size:0.28rem;color:#666;}
+		.balance-money{height:1.2rem;line-height:1.2rem;text-align:center;}
+		.balance-money > span{font-size:0.75rem;color:#000;}
+		.balance-putforward{width:100%;height:0.8rem;}
+		.balance-putforward > button{display:block;width:80%;height:0.8rem;line-height:0.8rem;margin:0.4rem auto 0;background:#007AFF;font-size:0.32rem;color:#fff;border-radius:0.1rem;text-align:center;text-decoration:none;outline:none;}
+		
+	</style>
+	<body>
+		<div class="balance">
+			<div class="head">
+				<div class="head-back" onClick='location.href="./person.html"'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>我的余额</span>
+				</div>
+			</div>
+			
+			<div class="balance-account">
+				<div class="balance-img">
+					<img src="./img/balance-pic.png" alt="">
+				</div>
+				
+				<div class="balance-number">
+					<div class="balance-title">
+						<span>可提现金额</span>
+					</div>
+					<div class="balance-money">
+						<span>￥</span><span id="usableMoney">0.00</span>
+					</div>
+				</div>
+				
+				<div class="balance-putforward">
+					<button type="button" id="putforwardBtn">提现</button>
+				</div>
+			</div>
+			
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script>
+			
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip');
+				var url = 'http://'+ urlip +':8080/platform-web/';
+				var userid = localStorage.getItem('userid');
+				var enableMoney = null;
+				
+				//show index info
+				showIndexInfo(url,userid)
+				
+				// check putforward style
+				checkPutforwardStyle(url,userid)
+				
+				//show index info
+				function showIndexInfo(url,userid){
+					if(userid){
+						$.ajax({
+							type:'POST',
+							url:url+'user/userInfo',
+							dataType:'json',
+							data:{
+								id:userid,
+							},
+							success:function(data){
+								if(data.code === 403){
+									location.href = './login.html';
+								}else if(data.code === 404){
+									alert('设备被锁');
+								}else if(data.code === 5000 ){
+									var userInfo = data.userInfo;
+									$('#usableMoney').text(userInfo.strMoney ? userInfo.strMoney : '0.00');
+									enableMoney = userInfo.strMoney;
+								}
+							}
+						})
+					}else{
+						setTimeout(function(){
+							location.href = './login.html'
+						},1500);
+					}
+				}
+				
+				// check putforward style
+				function checkPutforwardStyle(url,userid){
+					var payImg = 0;
+					var payCard = 0;
+					$('#putforwardBtn').click(function(){
+						$.ajax({
+							type:'POST',
+							url:url+'user/myInfo',
+							dataType:'json',
+							data:{
+								id:userid,
+							},
+							success:function(data){
+								if(data.code === 403){
+									location.href = './login.html'
+								}else if(data.code === 404){
+									alert('设备被锁')
+								}else if(data.code === 5000 ){
+									if(data.userInfo.weChatCharge === "" && data.userInfo.alipayCharge === "" ){
+										payImg = 0;
+										localStorage.setItem('wxputforwardimg',false);
+										localStorage.setItem('aliputforwardimg',false);
+									}else{
+										payImg = 1;
+										
+										if(data.userInfo.weChatCharge !== ""){
+											localStorage.setItem('wxputforwardimg',true);
+										}
+										if(data.userInfo.alipayCharge !== ""){
+											localStorage.setItem('aliputforwardimg',true);
+										}
+									}
+									
+								}
+							}
+						});
+						
+						var pageIndex = 1;
+						$.ajax({
+							type:'POST',
+							url:url+'bank/selectBank',
+							dataType:'json',
+							data:{
+								userId:userid,
+								pageNum:pageIndex, //当前页
+								pageDataCount:20,
+							},
+							success:function(data){
+								if(data.code === 403){
+									location.href = './login.html'
+								}else if(data.code === 404){
+									alert('设备被锁')
+								}else if(data.code === 5000 ){
+									if(data.pageList.length !== 0){
+										payCard = 1;
+									}else{
+										payCard = 0;
+									}
+								}
+							}
+						});
+						
+						setTimeout(function(){
+							if(payImg === 1 || payCard === 1){
+								localStorage.setItem('enablemoney',enableMoney);
+								location.href = "./putforward.html";
+							}else{
+								// alert('请添加收款类型');
+								var confirmRes = confirm('请添加收款类型','确定');
+								if(confirmRes){
+									location.href = './person-infor.html';
+								}
+							}
+						},800);
+					});
+				}
+			});
+			
+			
+		</script>
+	</body>
+</html>

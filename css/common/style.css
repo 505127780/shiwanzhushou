@@ -1,0 +1,105 @@
+body{-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+
+.state-modal{display:none;width:100%;height:15%;position:fixed;z-index:8;bottom:0;}
+.statemodal-contain{width:100%;height:1rem;position:absolute;left:0;top:0;}
+.statemodal-content{width:80%;height:1rem;background:rgba(0,0,0,0.6);border-radius:0.08rem;margin:0 auto;position:relative;}
+.statemodal-icon{width:1rem;height:1rem;position:absolute;top:0;left:5%;}
+.loadicon{display:block;width:100%;height:1rem;background:url('../../img/icons/load.png') center center no-repeat;background-size:0.6rem 0.6rem;-webkit-transform: rotate(360deg);animation: rotation 3s linear infinite;-moz-animation: rotation 3s linear infinite;-webkit-animation: rotation 3s linear infinite;-o-animation: rotation 3s linear infinite;}
+.tipsicon{display:block;width:100%;height:1rem;background:url('../../img/icons/tips.png') center center no-repeat;background-size:0.6rem 0.6rem;}
+
+.statemodal-text{width:100%;height:1rem;line-height:1rem;text-align:center;}
+.statemodal-text > span{font-size:0.34rem;color:#fff;}
+
+
+@-webkit-keyframes rotation{
+from {
+	-webkit-transform: rotate(0deg);
+}
+to {
+	-webkit-transform: rotate(360deg);}
+}
+
+.Rotation{
+-webkit-transform: rotate(360deg);
+animation: rotation 10s linear infinite;
+-moz-animation: rotation 10s linear infinite;
+-webkit-animation: rotation 10s linear infinite;
+-o-animation: rotation 10s linear infinite;
+}
+
+/* modal task */
+.divmodal{width:100%;height:100%;background:rgba(0,0,0,0.5);position:absolute;top:0;left:0;z-index:88;}
+.divmodal-inner{width:85%;height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;}
+.divmodal-contain{width:100%;height:auto;background:#fff;margin:0 auto;border-radius:0.2rem;}
+.divmodal-head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#ff3333;/* border-bottom:0.01rem solid #999; */border-top-right-radius:0.2rem;border-top-left-radius:0.2rem;}
+.divmodal-head > span{font-size:0.36rem;color:#fff;}
+.divmodal-headimg{width:100%;height:100%;position:relative;}
+.divmodal-headimg > span{position:absolute;bottom:0;left:35%;z-index:30;height:0.9rem;font-size:0.34rem;color:#fff;}
+.divmodal-headimg > img{border:none;width:104%;height:auto;position:absolute;bottom:0.02rem;left:-2%;z-index:25;}
+.divmodal-headbg{}
+.divmodal-headbg > span{color:#f7e48d !important;font-size:0.48rem;font-weight:bold;}
+
+.divmodal-title-color{color:#ff0 !important;}
+.divmodal-body-bg{background:#ff5b0e !important;}
+
+.divmodal-body{width:100%;height:3rem;background:#ffff33;display:flex;flex-direction:column;/* justify-content:center; */align-items:center;border-bottom-right-radius:0.2rem;border-bottom-left-radius:0.2rem;}
+.divmodal-content-title{width:100%;height:1.5rem;line-height:1.5rem;text-align:center;}
+.mt-05{margin-top:0.5rem !important;}
+.divmodal-content-title > span{color:#1a16aa;font-size:0.45rem;}
+.divmodal-content-text{width:84%;height:auto;max-height:1.8rem;line-height:0.4rem;overflow:hidden;text-align:center;}
+.divmodal-content-text > span{color:#000;font-size:0.32rem;}
+
+.divimg{width:100%;height:100%;position:absolute;top:0;right:-100%;backgound:#fff;z-index:2}
+.divimg > img{width:100%;height:100%}
+
+.divpos{width:100%;height:100%;position:absolute;top:0;right:-100%;z-index:30;background:#fff;}
+.divmap{width:100%;height:100%;}
+
+
+.divsmallmodal{display:none;width:100%;height:auto;position:absolute;left:0;bottom:15%;z-index:32;}
+.divsmallmodal-contain{width:100%;height:1rem;}
+.divsmallmodal-content{width:75%;height:0.8rem;line-height:0.8rem;text-align:center;margin:0 auto;background:rgba(0,0,0,0.5);border-radius:0.5rem;}
+.divsmallmodal-content > span{font-size:0.32rem;color:#fff;}
+
+
+.infor-modal{display:none;position:absolute;width:100%;height:100%;z-index:88;}
+.infor-inner{width:85%;height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;}
+.infor-contain{width:100%;height:auto;background:#fff;border-radius:0.2rem;}
+
+.informodal-title{width:100%;height:1rem;border-bottom:0.01rem solid #ccc;position:relative;}
+.modal-title{width:100%;height:1rem;line-height:1rem;text-align:center;}
+.modal-title > span{font-size:0.3rem;color:#222;}
+
+.inforModal-content{width:80%;height:3rem;margin:0 auto;text-indent:2em;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+.inforModal-content > span{font-size:0.32rem;color:#0062CC;}
+.inforModal-content > span:last-child{font-size:0.3rem;color:#222 !important;}
+
+/* apk href */
+.apkHref{display:none;width:100%;height:30%;position:absolute;top:0;left:0;z-index:35;background:#20c7d2;}
+.slide-button{width:100%;height:0.7rem;position:relative;}
+.slide-button-contain{width:1rem;height:1rem;border-radius:50%;position:absolute;bottom:0;left:calc(50% - 0.5rem);background:#70f6ff;}
+.slide-button-img{width:0.8rem;height:0.8rem;line-height:0.9rem;text-align:center;border-radius:50%;position:absolute;bottom:calc(50% - 0.4rem);left:calc(50% - 0.4rem);background:#fff;}
+.slide-button-img > img{width:0.5rem;height:0.5rem;}
+
+.apkHref-title{width:100%;height:0.8rem;line-height:0.8rem;padding:0 5%;margin-top:0.2rem;}
+.apkHref-title > span{font-size:0.4rem;color:#000;}
+
+.apkHref-content{width:100%;height:0.9rem;padding:0 5%;}
+.apkHref-content > span{font-size:0.28rem;color:#000;}
+
+.apkHref-btn{width:100%;height:0.6rem;padding:0 5%;text-align:right;}
+.apkHref-btn > button{width:30%;height:0.6rem;line-height:0.6rem;text-align:center;border:none;background:#a2a2a2;font-size:0.26rem;color:#fff;}
+
+/* update modal */
+.update-modal-fixed{display:none;position:fixed;width:100%;height:100%;z-index:999;background:rgba(0,0,0,0.5);}
+.update-modal-contain{width:80%;height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;}
+.update-modal{width:100%;height:auto;background:#fff;border-radius:0.1rem;}
+.update-modal-head{width:100%;height:1rem;line-height:0.8rem;padding-top:0.2rem;text-align:center;}
+.update-modal-head > span{font-size:0.34rem;color:#222;font-weight:bold !important;}
+.update-modal-body{width:100%;height:auto;margin:0 auto 0.3rem;}
+.update-modal-body > p{width:100%;height:0.4rem;margin:0;text-align:center;font-size:0.28rem;color:#444;}
+.update-modal-foot{width:100%;height:1rem;border-top:0.01rem solid #ccc;}
+.update-modal-foot > button{width:100%;height:1rem;text-align:center;font-size:0.32rem;color:#0062CC;background:none;border:none;outline:none;}
+
+
+

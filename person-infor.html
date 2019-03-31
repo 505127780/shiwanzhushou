@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>我的信息</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		.infor{width:100%;height:100%;background:#f2f2f2;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.infor-contain{width:100%;height:calc(100% - 1rem);padding-top:0.2rem;background:#fff;}
+		.infor-list{width:100%;height:auto;}
+		.infor-list > a{width:94%;height:1rem;margin:0 3%;text-decoration:none;outline:none;display:flex;flex-direction:row;}
+		.infor-list > a > div:first-child{width:20%;height:1rem;line-height:1rem;}
+		.infor-list > a > div:last-child{width:80%;height:1rem;line-height:1rem;padding-right:8%;text-align:right;position:relative;}
+		.infor-list > a.address > div:last-child{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;}
+		.infor-list > a > div:first-child > span{color:#222;font-size:0.28rem;}
+		.infor-list > a > div:last-child > span{color:#666;font-size:0.26rem;}
+		.infor-list > a > div > p{width:90%;height:0.8rem;line-height:0.4rem;margin:0 !important;font-size:0.24rem;color:#666;overflow:hidden;}
+		.infor-list > a > div:last-child > i.right{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/right-01.png') no-repeat;background-size:0.4rem;position:absolute;right:0;top:0.3rem;}
+		.paypic > div:first-child{width:35% !important;}
+		.wxpay-code,.alipay-code{width:65% !important;}
+		.wxpay-code > img{width:0.43rem;height:0.43rem;}
+		.alipay-code > img{width:0.4rem;height:0.4rem;}
+	
+	</style>
+	<body>
+		<div class="infor">
+			<div class="head">
+				<div class="head-back" onClick='location.href="./person.html"'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>我的信息</span>
+				</div>
+			</div>
+			
+			<div class="infor-contain">
+				<div class="infor-list">
+					<a href="./person-name.html">
+						<div>
+							<span>真实姓名</span>
+						</div>
+						<div>
+							<span id="username"></span>
+							<i class="right"></i>
+						</div>
+					</a>
+					
+					<a href="./person-phone.html">
+						<div>
+							<span>手机号码</span>
+						</div>
+						<div>
+							<span id="userphone"></span>
+							<i class="right"></i>
+						</div>
+					</a>
+					
+					<a href="./person-id.html">
+						<div>
+							<span>身份证号</span>
+						</div>
+						<div>
+							<span id="useridentity"></span>
+							<i class="right"></i>
+						</div>
+					</a>
+					
+					<a href="./bank.html">
+						<div>
+							<span>银行卡</span>
+						</div>
+						<div>
+							<!-- <span id="userbank"></span> -->
+							<img src="./img/icons/bank-card.png" alt="">
+							<i class="right"></i>
+						</div>
+					</a>
+					
+					<a href="./person-address.html" class="address">
+						<div>
+							<span>邮寄地址</span>
+						</div>
+						<div>
+							<p id="useraddress"></p>
+							<i class="right"></i>
+						</div>
+					</a>
+						
+					<a href="./person-wxpaypic.html" class="paypic">
+						<div>
+							<span>微信收款码</span>
+						</div>
+						<div class="wxpay-code">
+							<img src="./img/icons/wxpay-pic.png" alt="">
+							<i class="right"></i>
+						</div>
+					</a>
+					
+					<a href="./person-alipaypic.html" class="paypic">
+						<div>
+							<span>支付宝收款码</span>
+						</div>
+						<div class="alipay-code">
+							<img src="./img/icons/alipay-pic.png" alt="">
+							<i class="right"></i>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script>
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip')
+				var url = 'http://'+ urlip +':8080/platform-web/'
+				var userid = localStorage.getItem('userid')
+				
+				$.ajax({
+					type:'POST',
+					url:url+'user/myInfo',
+					dataType:'json',
+					data:{
+						id:userid,
+					},
+					success:function(data){
+						if(data.code === 403){
+							location.href = './login.html'
+						}else if(data.code === 404){
+							alert('设备被锁')
+						}else if(data.code === 5000 ){
+							$('#username').text(data.userInfo.name ? data.userInfo.name : '请设置');
+							$('#userphone').text(data.userInfo.phone ? data.userInfo.phone : '请设置');
+							$('#useridentity').text(data.userInfo.idCard ? data.userInfo.idCard : '请设置');
+							$('#useraddress').text(data.userInfo.address ? data.userInfo.address : '');
+							localStorage.setItem('wxpayimg',data.userInfo.weChatCharge);
+							localStorage.setItem('alipayimg',data.userInfo.alipayCharge);
+						}
+					}
+				})
+			})
+		</script>
+	</body>
+</html>

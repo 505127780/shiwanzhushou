@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>我的</title>
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+	</head>
+	<style>
+		.person{width:100%;height:100%;background:#f2f2f2;position:fixed;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+		.person-contain{width:102%;height:calc(100% - 1.2rem);position:absolute;overflow:auto;}
+		.person-contain-scroll{width:100%;height:100%;}
+		.person-t{width:100%;height:auto;}
+		.person-info{width:100%;height:3rem;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;background:#0c5dac;}
+		.person-img{height:2rem;line-height:2rem;}
+		.person-img > img{width:1.2rem;height:1.2rem;border-radius:50%;}
+		.person-phone{height:0.8rem;}
+		.person-phone > span{font-size:0.32rem;color:#fff;}
+		
+		.person-code{width:100%;height:1rem;background:#fff;}
+		.recommend-code{width:100%;height:1rem;line-height:1rem;text-align:center;}
+		.recommend-code > span{color:#222;font-size:0.3rem;margin-right:15%;}
+		.recommend-code > span:last-child{margin-right:0 !important;}
+		
+		/*
+		.person-manager{width:100%;height:1.2rem;background:#fff;display:flex;flex-direction:row;align-items:center;}
+		.person-manager > a{flex:1;border-right:0.02rem solid #999;text-align:center;text-decoration:none;outline:none;}
+		.person-manager > a:last-child{border:0;}
+		.person-manager > a > i{width:0.4rem;height:0.4rem;display:block;margin:0 auto;}
+		.person-manager > a > i.pwd-manager{background:url('./img/icons/pwd-setup.png') no-repeat;background-size:0.4rem;}
+		.person-manager > a > i.bankCard-manager{background:url('./img/icons/bank-card.png') no-repeat;background-size:0.4rem;}
+		.person-manager > a > span{font-size:0.28rem;color:#222;}
+		*/
+	   
+		.bankCard-manager{background:url('./img/icons/bank-card.png') no-repeat;background-size:0.4rem;}
+		
+		.person-c{width:100%;height:auto;background:#fff;margin-top:0.2rem;}
+		.person-c > a{position:relative;height:1rem;line-height:1rem;text-decoration:none;outline:none;padding:0 5%;border-bottom:0.02rem solid #f2f2f2;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;}
+		.person-c > a > i{width:0.4rem;height:0.4rem;display:inline-block;}
+		.person-c > a > i.myInfo{background:url('./img/icons/my-info.png') no-repeat;background-size:0.4rem;}
+		
+		.person-c > a > i.pwd-manager{background:url('./img/icons/pwd-setup.png') no-repeat;background-size:0.4rem;}
+		
+		.person-c > a > i.myBalance{background:url('./img/icons/my-balance.png') no-repeat;background-size:0.4rem;}
+		.person-c > a > i.tradeRecord{background:url('./img/icons/trade-record.png') no-repeat;background-size:0.4rem;}
+		.person-c > a > i.onlineService{background:url('./img/icons/online-service.png') no-repeat;background-size:0.4rem;}
+		.person-c > a > i.aboutus{background:url('./img/icons/about-us.png') no-repeat;background-size:0.4rem;}
+		.person-c > a > i.right{background:url('./img/icons/right.png') no-repeat;background-size:0.4rem;position:absolute;right:5%;top:0.3rem;}
+		.person-c > a:last-child{border-bottom:0;}
+		.person-c > a > span{font-size:0.3rem;color:#222;margin-left:0.2rem;}
+		
+		.person-ring{width:100%;height:0.9rem;background:#fff;padding: 0 2% 0 5%;margin-top:0.2rem;display:flex;flex-direction:row;align-items:space-around;}
+		.ring-l{width:60%;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;}
+		.ring-l > i.ringIcon{width:0.4rem;height:0.4rem;background:url('./img/icons/ring.png') no-repeat;background-size:0.4rem 0.4rem;}
+		.ring-l > span{font-size:0.32rem;color:#222;margin-left:0.2rem;}
+		.ring-r{width:40%;padding-right:5%;display:flex;flex-direction:row;align-items:center;justify-content:flex-end;}
+		.ring-contain{width:1.2rem;height:0.5rem;background:#0c5dac;border:0.01rem #ccc solid;border-radius:0.25rem;position:relative;}
+		.ring-contain > div{width:0.48rem;height:0.48rem;background:#fff;border:0.01rem #ccc solid;border-radius:50%;position:absolute;top:0;right:0;}
+		.ring-contain > span{position:absolute;top:0;display:inline-block;width:50%;height:0.48rem;line-height:0.48rem;text-align:center;font-size:0.26rem;}
+		.ring-contain > span.ringon{left:5%;color:#fff;}
+		.ring-contain > span.ringoff{right:5%;color:#333;}
+		
+		.person-btn{width:100%;height:1rem;line-height:1rem;background:#fff;margin-top:0.2rem;text-align:center;}
+		.person-btn > span{font-size:0.32rem;color:#f00;}
+
+		.f{width:100%;height:1rem;position:fixed;left:0;bottom:0;z-index:2;background:#fff;display:flex;flex-direction:row;align-items:center;}
+		.f > a{height:1rem;margin:0 3%;text-decoration:none;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+		.f > a > span{font-size:0.26rem;color:#636363;}
+		.f > a > i{width:0.4rem;height:0.4rem;}
+		.f > a > i.index{background:url('./img/icons/index.png') no-repeat;background-size:0.4rem 0.4rem;}
+		.f > a > i.config{background:url('./img/icons/setup.png') no-repeat;background-size:0.4rem 0.4rem;}
+		.f > a > i.position{background:url('./img/icons/position.png') no-repeat;background-size:0.4rem 0.4rem;}
+		.f > a > i.mine{background:url('./img/icons/mine.png') no-repeat;background-size:0.4rem 0.4rem;}
+		.mine-active{background:url('./img/icons/mine-active.png') no-repeat;background-size:0.4rem 0.4rem;}
+		.active-s{color:#0c5dac !important;}
+	</style>
+	<body>
+		<div class="person">
+			<div class="person-contain">
+				<div class="person-contain-scroll">
+					<div class="person-t">
+						<div class="person-info">
+							<div class="person-img">
+								<img src="./img/avatar.png" alt="">
+							</div>
+							<div class="person-phone">
+								<span id="userPhone"></span>
+							</div>
+						</div>
+						<!-- <div class="person-manager">
+							<a href="./password.html">
+								<i class="pwd-manager"></i>
+								<span>提现密码管理</span>
+							</a>
+							<a href="./bank.html">
+								<i class="bankCard-manager"></i>
+								<span>银行卡管理</span>
+							</a>
+						</div> -->
+						
+						<div class="person-code">
+							<div class="recommend-code">
+								<span>我的推荐码</span>
+								<span id="inviteCode"></span>
+							</div>
+						</div>
+					</div>
+				
+					<div class="person-c">
+						<a href="./person-infor.html">
+							<i class="myInfo"></i>
+							<span>我的信息</span>
+							<i class="right"></i>
+						</a>
+						<a href="./balance.html">
+							<i class="myBalance"></i>
+							<span>我的余额</span>
+							<i class="right"></i>
+						</a>
+						<!-- <a href="./bank.html">
+							<i class="bankCard-manager"></i>
+							<span>银行卡管理</span>
+							<i class="right"></i>
+						</a> -->
+						<a href="./password.html">
+							<i class="pwd-manager"></i>
+							<span>提现密码管理</span>
+							<i class="right"></i>
+						</a>
+						
+						<a href="./putforward-record.html">
+							<i class="tradeRecord"></i>
+							<span>交易记录</span>
+							<i class="right"></i>
+						</a>
+						<a href="javascript:;" onclick="plus.runtime.openURL('http://api.pop800.com/chat/474007')">
+							<i class="onlineService"></i>
+							<span>在线客服</span>
+							<i class="right"></i>
+						</a>
+						<a href="./aboutus.html">
+							<i class="aboutus"></i>
+							<span>关于我们</span>
+							<i class="right"></i>
+						</a>
+					</div>
+					
+					<div class="person-ring">
+						<div class="ring-l">
+							<i class="ringIcon"></i>
+							<span>任务铃声</span>
+						</div>
+						<div class="ring-r">
+							<div class="ring-contain" id="ringBtn">
+								<div data-ringstate="on"></div>
+								<span class="ringon">打开</span>
+								<span class="ringoff"></span>
+							</div>
+						</div>
+					</div>
+					
+					<div class="person-btn" id="exitBtn">
+						<span>安全退出</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="f">
+				<a href="./index.html"><i class="index"></i><span>首页</span></a>
+				<a href="./setup.html"><i class="config"></i><span>设置</span></a>
+				<a href="./position.html"><i class="position"></i><span>定位</span></a>
+				<a href="./person.html"><i class="mine-active"></i><span class="active-s">我的</span></a>
+			</div>
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script>
+		
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip')
+				var url = 'http://'+ urlip +':8080/platform-web/';
+				
+				var userphone = localStorage.getItem('phone');
+				$('#userPhone').text(userphone);
+				
+				var invitecode = localStorage.getItem('invitecode');
+				$('#inviteCode').text(invitecode);
+				
+				$('#exitBtn').click(function(){
+					$.ajax({
+						type:'POST',
+						url:url+'/user/exit',
+						dataType:'json',
+						success:function(data){
+							if(data.code === 5000){
+								localStorage.clear();
+								window.location.href = './login.html'
+							}else if(data.code === 5001){
+								alert('已退出,无需在退出');
+							}else{
+								alert('退出失败');
+							}
+						}
+					});
+				});
+				
+				//get ring state
+				var curRingState = localStorage.getItem('ringstate');
+				if(curRingState === 'true'){
+					$('#ringBtn').css('background','#0c5dac');
+					$('#ringBtn').css('border-color','#0c5dac');
+					$('#ringBtn').children('div').attr("data-ringstate","on").css({'right':'0'});
+					$('.ringon').text('打开');
+					$('.ringoff').text('');
+				}
+				if(curRingState === 'false'){
+					$('#ringBtn').css('background','#efefef');
+					$('#ringBtn').css('border-color','#ccc');
+					$('#ringBtn').children('div').attr("data-ringstate","off").css({'right':'0.72rem'});
+					$('.ringoff').text('关闭');
+					$('.ringon').text('');
+				}
+				
+				//set ring state
+				$('#ringBtn').click(function(){
+					var ballState = $(this).children('div').attr('data-ringstate');
+					if( ballState === 'off' ){
+						localStorage.setItem('ringstate',true);
+						$(this).css('background','#0c5dac');
+						$(this).css('border-color','#0c5dac');
+						$(this).children('div').attr("data-ringstate","on").animate({left:'0.72rem'});
+						$('.ringoff').text('');
+						setTimeout(function(){
+							$('.ringon').text('打开');
+						},300);
+					}
+					if( ballState === 'on' ){
+						localStorage.setItem('ringstate',false);
+						$(this).css('background','#efefef');
+						$(this).css('border-color','#ccc');
+						$(this).children('div').attr("data-ringstate","off").animate({left:'0'});
+						setTimeout(function(){
+							$('.ringoff').text('关闭');
+						},300);
+						$('.ringon').text('');
+					}
+				});
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			});
+			
+		</script>
+		
+	</body>
+</html>
+

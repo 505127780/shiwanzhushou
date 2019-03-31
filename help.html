@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>新手帮助</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		.help{width:100%;height:100%;background:#fff;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.help-contain{width:100%;height:calc(100% - 1rem);overflow: auto;}
+		.help-title{width:100%;height:1rem;line-height:1rem;text-align:center;margin-top:0.3rem;}
+		.help-title > span{font-size:0.4rem;color:#222;}
+		
+		.help-content{width:85%;height:auto;margin:0.2rem auto 0;}
+		.help-content > p{width:100%;height:auto;line-height:0.4rem;text-indent:2em;font-size:0.3rem;color:#555;}
+		
+	</style>
+	<body>		
+		<div class="help">
+			<div class="head">
+				<div class="head-back" onClick='location.href="./index.html"'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>新手帮助</span>
+				</div>
+			</div>
+			
+			<div class="help-contain">
+				<div class="help-title">
+					<span>新手操作说明</span>
+				</div>
+				<div class="help-content">
+					<p>1、打开手机，点击进入app。</p>
+					<p>2、如果是第一次登录，会进入登录页面，根据要求填写登录信息，登录成功进入首页；已登录的用户会直接进入首页。</p>
+					<p>3、点击界面下方“我的”界面，进入“我的信息”界面，完善个人信息。</p>
+					<p>4、点击界面下方“设置”界面，选择接入平台，并勾选权限。</p>
+					<p>5、进入首页，点击“开始”按钮，由系统自动进行任务抓取，任务成功后，会获取收益。</p>
+					
+				</div>
+			</div>
+		
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		
+		<script>
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+		</script>
+	</body>
+</html>

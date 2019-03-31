@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>支付宝收款码</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		.person-alipay{width:100%;height:100%;background:#f2f2f2;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.update-alipay{width:100%;height:calc(100% - 1rem);}
+		.alipay-img{width:100%;height:auto;text-align:center;margin:0.5rem auto;}
+		.alipay-img > img{width:auto;height:auto;max-height:5rem;}
+		
+		.alipay-notice{width:100%;height:0.5rem;line-height:0.5rem;text-align:center;margin-bottom:0.2rem;}
+		.alipay-notice > span{color:#999;font-size:0.3rem;}
+		
+		.alipay-upload{width:80%;height:0.8rem;line-height:0.8rem;margin-top:0.5rem;text-align:center;margin:0 auto;background:#217bd1;border-radius:0.1rem;position:relative;}
+		.alipay-upload > span{color:#fff;font-size:0.32rem;}
+		.alipay-upload > input{width:100%;height:0.8rem;position:absolute;top:0;left:0;opacity:0;}
+		
+		.update-btn{width:100%;height:1rem;margin-top:0.2rem;text-align:center;}
+		.update-btn > button{width:80%;height:0.8rem;background:#217bd1;outline:none;border:none;color:#fff;font-size:0.32rem;border-radius:0.1rem;}
+		
+		.upload-modal{display:none;width:100%;height:100%;background:rgba(0,0,0,0.4);position:absolute;top:0;left:0;z-index:3;}
+		.upload-modal-content{width:80%;height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;}
+		.upload-notice{width:100%;height:3rem;background:#fff;margin:0 auto;border-radius:0.2rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+		.upload-title{width:100%;height:0.6rem;text-align:center;margin-bottom:0.4rem;}
+		.upload-title > span{font-size:0.34rem;color:#222;}
+		.notice-content{width:85%;height:0.5rem;border:0.02rem solid #ccc;position:relative;}
+		.upload-bg{position:absolute;top:0;left:0;z-index:1;background:#0092ea;width:10%;height: 0.48rem;}
+		.upload-val{position:absolute;top:0;left:0;z-index:6;width:100%;height:0.5rem;line-height: 0.5rem;text-align:center;}
+		.upload-val > span{font-size:0.28rem;color:#000;}
+		.border-style{border-top-right-radius:0.25rem;border-bottom-right-radius:0.25rem;}
+		
+		
+	</style>
+	<body>
+		<div class="person-alipay">
+			<div class="head">
+				<div class="head-back" onClick='location.href="./person-infor.html"'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>支付宝收款码</span>
+				</div>
+			</div>
+			
+			<div class="update-alipay">
+				<form action="" id="uploadImgForm" method="POST" enctype="multipart/form-data">
+					<input type="hidden" name="type" value="2">
+					<input type="hidden" name="id" id="userid">
+					<div class="alipay-img">
+						<img src="./img/alipayimg.png" alt="" id="showImg">
+					</div>
+					
+					<div class="alipay-notice">
+						<!-- <span>(注：图片大小不能超过 1MB)</span> -->
+					</div>
+					
+					<div class="alipay-upload" id="uploadAlipay">
+						<span>上传</span>
+						<input type="file" id="uploadPic" name="file" accept="image/*" capture="camera">
+					</div>
+					
+				</form>
+			</div>
+			
+			<div class="upload-modal" id="uploadImgNotice">
+				<div class="upload-modal-content">
+					<div class="upload-notice">
+						<div class="upload-title">
+							<span>上传进度</span>
+						</div>
+						<div class="notice-content">
+							<div class="upload-bg" id="uploadProgress"></div>
+							<div class="upload-val" id="uploadVal">
+								<span></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script type="text/javascript" src="./js/lib/upload/crypto.js"></script>
+		<script type="text/javascript" src="./js/lib/upload/cos-js-sdk-v4.js"></script>
+		
+		<script>
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+								
+				var urlip = localStorage.getItem('urlip');
+				var url = 'http://'+ urlip +':8080/platform-web/';
+				
+				var userid = localStorage.getItem('userid');
+				
+				if(userid){
+					$('#userid').val(userid);
+				}else{
+					location.href = './login.html';
+				}
+				
+				var alipayimg = localStorage.getItem('alipayimg');
+				if(alipayimg && alipayimg.indexOf('cossh.myqcloud') > 0){
+					$('#showImg').attr('src',alipayimg)
+				}
+				
+				var bucket = 'try-project';
+				var appid = '1255372231';
+				var sid = 'AKIDxvy2CLaG1gBVftOo48SlwyCIEzCMN9zh';
+				var skey = 'hJrEQSJ6iCVfeScdTIwOgqsmW5UjnfS5';
+				var region = 'sh';
+				var myFolder = '/alipay';//需要操作的目录
+				
+				
+				//初始化逻辑
+				var cos = new CosCloud({
+					appid: appid,
+					bucket: bucket,
+					region: region,
+					getAppSign: function (callback) {
+				
+						var self = this;
+						var random = parseInt(Math.random() * Math.pow(2, 32));
+						var now = parseInt(Date.now() / 1000);
+						var e = now + 600;
+						var path = '';
+						path = encodeURIComponent(path).replace(/%2F/, '/');
+						var str = 'a=' + self.appid + '&k=' + sid + '&e=' + e + '&t=' + now + '&r=' + random + '&f=' + path + '&b=' + self.bucket;
+						var sha1Res = CryptoJS.HmacSHA1(str, skey); 
+						var strWordArray = CryptoJS.enc.Utf8.parse(str);
+						var resWordArray = sha1Res.concat(strWordArray);
+						var res = resWordArray.toString(CryptoJS.enc.Base64);
+				
+						callback(res);
+				
+					},
+					getAppSignOnce: function (callback) {
+						var self = this;
+						var random = parseInt(Math.random() * Math.pow(2, 32));
+						var now = parseInt(Date.now() / 1000);
+						var e = 0; // 单次签名 expire==0
+						var path = self.path;
+						var str = 'a=' + self.appid + '&k=' + sid + '&e=' + e + '&t=' + now + '&r=' + random + '&f=' + path + '&b=' + self.bucket;
+						var sha1Res = CryptoJS.HmacSHA1(str, skey); 
+						var strWordArray = CryptoJS.enc.Utf8.parse(str);
+						var resWordArray = sha1Res.concat(strWordArray);
+						var res = resWordArray.toString(CryptoJS.enc.Base64);
+				
+						callback(res);
+					}
+				});
+				
+				var successCallBack = function (result) {
+					var src = result.data.source_url;
+					//upload img src
+					uploadImg(url,userid,src);
+				};
+				
+				var errorCallBack = function (result) {
+					result = result || {};
+					alert('上传失败');
+				};
+				
+				var progressCallBack = function (curr, sha1) {
+					var sha1CheckProgress = ((sha1 * 100).toFixed(2) || 100) + '%';
+					var uploadProgress = ((curr || 0) * 100).toFixed(2) + '%';
+					
+					$('#uploadImgNotice').show();
+					$('#uploadProgress').css('width',uploadProgress);
+					$('#uploadVal > span').text( ((curr || 0) * 100).toFixed(0) + '%');
+					
+					if(((curr || 0) * 100) === 100){
+						$('#uploadImgNotice').hide();
+						$('#uploadProgress').css('width','0');
+						$('#uploadVal > span').text('0%');
+					}
+					
+				};
+				
+				var lastTaskId;
+				var taskReady = function (taskId) {
+					lastTaskId = taskId;
+				};
+				
+				//上传文件,适合小于20M的文件上传
+				$('#uploadPic').off('change').on('change', function (e) {
+					var file = e.target.files[0];
+					var filerename = getNetTime();
+					// 分片上传过程可能会有 op=upload_slice_list 的 POST 请求返回 404，不会影响上传：https://github.com/tencentyun/cos-js-sdk-v4/issues/16
+					cos.uploadFile(successCallBack, errorCallBack, progressCallBack, bucket, myFolder + '/' + filerename+file.name, file, 1, taskReady);//insertOnly==0 表示允许覆盖文件 1表示不允许
+					
+					return false;
+				});
+							
+				//get net time
+				function getNetTime(){
+					var getTime = $.ajax({async: false}).getResponseHeader("Date");
+					var date = new Date(getTime);
+					var YY = date.getFullYear().toString();
+					var MM = (date.getMonth()+1) < 10 ? '0'+(date.getMonth()+1) : (date.getMonth()+1).toString();
+					var dd = date.getDate() < 10 ? '0'+date.getDate() : date.getDate().toString();
+					var hh = date.getHours() < 10 ? '0'+date.getHours() : date.getHours().toString();
+					var mm = date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes().toString();
+					var ss = date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds().toString();
+					
+					return YY+MM+dd+hh+mm+ss;
+				}
+				
+				//upload img src
+				function uploadImg(url,userid,src){
+					$.ajax({
+						url:url+"user/uploadCharge",
+						type:"post",
+						dataType:"json",
+						data:{
+							id:userid,
+							fName:src,
+							type:2
+						},
+						success:function (data) {
+							if(data.code === 403){
+								location.href = './login.html'
+							}else if(data.code === 404){
+								alert('设备被锁');
+							}else if(data.code === 5000 ){
+								alert('保存成功');
+								location.href = './person-infor.html';
+							}else{
+								alert('上传失败');
+							}
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

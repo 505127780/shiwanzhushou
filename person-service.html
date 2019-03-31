@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>在线客服</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+	</head>
+	<style>
+		.service{width:100%;height:100%;background:#fff;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.service-contain{width:100%;height:calc(100% - 1rem);}
+		.service-link{width:100%;height:60%;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+		.service-link > div{width:60%;height:1.2rem;text-indent: 2em;line-height:0.5rem;}
+		.service-descript > span{font-size:0.34rem;color:#666;}
+		.service-btn{height:0.8rem !important;text-align:center;margin-top:0.5rem;}
+		.service-btn > button{width:80%;height:0.8rem;line-height:0.8rem;text-align:center;border:none;outline:none;background:#007AFF;border-radius:0.1rem;font-size:0.3rem;color:#fff;}
+		
+		.urlHidden{width:100%;height:1rem;position:relative;background:#fff;}
+		.urlHidden > input{width:100%;height:0.3rem;position:absolute;top:0;left:0;z-index:-2;}
+	</style>
+	<body>
+		<div class="service">
+			<div class="head">
+				<div class="head-back" onClick='javascript:history.go(-1);'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>在线客服</span>
+				</div>
+			</div>
+			
+			<div class="urlHidden">
+				<input type="text" id="linkUrl">
+			</div>
+			
+			<div class="service-contain">
+				<div class="service-link">
+					<div class="service-descript">
+						<span>在线客服繁忙,请选择在浏览器中打开...</span>
+					</div>
+					<div class="service-btn">
+						<button type="button" id="copyBtn">点我复制链接</button>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		
+		<script>
+			
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				$('#linkUrl').val("http://api.pop800.com/chat/474007")
+				//点击一键复制
+				$('#copyBtn').click(function(){
+					$('#linkUrl').select();   //选择对象
+					try{
+						if(document.execCommand('copy', false, null)){
+							document.execCommand("Copy");
+							alert('复制成功');
+						}else{
+							alert("复制失败");
+						}
+					}catch(err){
+						alert("复制失败");
+					}
+					return false;
+				});
+				
+			});
+		</script>
+	</body>
+</html>

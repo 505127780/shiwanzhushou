@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>身份证号修改</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		
+	</head>
+	<style>
+		.person-id{width:100%;height:100%;background:#f2f2f2;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.updata-id{width:100%;height:calc(100% - 1rem);}
+		.id-input{width:100%;height:1rem;margin-top:0.2rem;}
+		.id-input > input{width:100%;height:1rem;line-height:1rem;padding:0 6%;border:none;outline:none;font-size:0.32rem;color:#222;}
+		.id-notice{width:100%;height:0.6rem;line-height:0.6rem;padding:0 5%;}
+		.id-notice > span{font-size:0.28rem;color:#999;}
+		.error-notice > span{color:#f00;}
+		.update-btn{width:100%;height:1rem;margin-top:0.2rem;text-align:center;}
+		.update-btn > button{width:80%;height:0.8rem;background:#217bd1;outline:none;border:none;color:#fff;font-size:0.32rem;border-radius:0.1rem;}
+		
+		
+	</style>
+	<body>
+		<div class="person-id">
+			<div class="head">
+				<div class="head-back" onClick='javascript:history.go(-1);'>
+					<i class="back"></i>
+					<span>返回</span>
+				</div>
+				<div class="head-title">
+					<span>身份证号修改</span>
+				</div>
+			</div>
+			
+			<div class="update-id">
+				<div class="id-input">
+					<input type="text" id="identity" >
+				</div>
+				<div class="id-notice" id="errorMsg">
+					<span>请输入身份证号码</span>
+				</div>
+				
+				<div class="update-btn">
+					<button type="button" id="changeIdentityBtn">确认修改</button>
+				</div>
+			</div>
+		
+		</div>
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script>
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip')
+				var url = 'http://'+ urlip +':8080/platform-web/'
+				
+				//check identity content and submit
+				checkIdentityVal(url)
+				
+				//check identity content
+				function checkIdentityVal(url){
+					
+					//check identity
+					$('#identity').on('input propertychange',function(){
+						var identityRule = /^(([1][1-5])|([2][1-3])|([3][1-7])|([4][1-6])|([5][0-4])|([6][1-5])|([7][1])|([8][1-2]))\d{4}(([1][9]\d{2})|([2]\d{3}))(([0][1-9])|([1][0-2]))(([0][1-9])|([1-2][0-9])|([3][0-1]))\d{3}[0-9xX]$/;
+						var curVal = $(this).val();
+						if(curVal){
+							if( !(identityRule.test(curVal)) ){
+								$('#errorMsg').addClass('error-notice').children('span').text('请输入正确的身份证号');
+							}else{
+								$('#errorMsg').removeClass('error-notice').children('span').text('');
+							}
+						}else{
+							$('#errorMsg').addClass('error-notice').children('span').text('身份证号不能为空');
+						}
+					});
+					
+					//check identity
+					$("#identity").on('keyup',function(ev){
+						var curVal = $(this).val();
+						var endVal = '';
+						for(var i=0;i<curVal.length;i++){
+							if(endVal.length < 18){
+								endVal += curVal[i];
+							}
+						}
+						$(this).val(endVal);
+						return false;
+					});
+					
+					$('#changeIdentityBtn').click(function(){
+						var identityNumber = $('#identity').val();
+						var userid = localStorage.getItem('userid');
+						
+						if(identityNumber){
+							$('#errorMsg').removeClass('error-notice').children('span').text('');
+							if(userid){
+								$.ajax({
+									type:'POST',
+									url:url+'user/update',
+									dataType:'json',
+									data:{
+										id:userid,
+										updateContext:identityNumber,
+										type:2
+									},
+									success:function(data){
+										if(data.code === 403){
+											location.href = './login.html'
+										}else if(data.code === 404){
+											alert('设备被锁')
+										}else if(data.code === 5000 ){
+											alert('修改成功')
+										}
+									},
+								})
+							}else{
+								location.href = './login.html';
+							}
+						}else{
+							$('#errorMsg').addClass('error-notice').children('span').text('身份证号码不能为空')
+						}
+					})
+				}
+				
+			});
+		</script>
+	</body>
+</html>

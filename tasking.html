@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="referrer" content="no-referrer">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>任务进行中</title>
+					
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<link rel="stylesheet" href="./css/common/scroll-refresh.css?v=22">
+		
+	</head>
+	<style>
+		.taskpage{width:100%;height:100%;position:fixed;background:#f3f3f3;}
+		.taskpage-header{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.taskpage-header > span{font-size:0.34rem;color:#fff;}
+		
+		.taskpage-title{width:100%;height:4.2rem;background:#fff;display:flex;flex-direction:column;justify-content:flex-end;}
+		.taskpage-img{width:100%;height:2rem;line-height:2rem;text-align:center;}
+		.taskpage-img > img{width:1.8rem;height:1.8rem;}
+		.taskpage-notice{width:85%;height:1.6rem;margin:0.2rem auto 0.3rem;background:#e8e8e8;border-radius:0.2rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+		.taskpage-notice > span{height:0.5rem;line-height:0.5rem;font-size:0.34rem;color:#333;font-weight:bold;}
+		
+		.taskpage-platform{width:100%;height:calc(100% - 5.2rem);padding-top:0.1rem;overflow:hidden;}
+		.taskpage-platform-list{width:100%;height:calc(100% - 0.2rem);margin:0 auto 0.2rem;overflow:hidden;position:relative;}
+		.taskpage-scroll{width:92%;height:auto;margin:0 5% 0.2rem 3%;padding-bottom:0.5rem;}
+		.platform-wrap{}
+		.platform-item{width:100%;height:1.6rem;margin-bottom:0.1rem;border-bottom:0.02rem solid #ccc;display:flex;flex-direction:row;justify-content:space-around;}
+		.platform-img{width:25%;height:1.6rem;line-height:1.6rem;text-align:center;}
+		.platform-img > img{width:1.3rem;height:1.3rem;border-radius:0.1rem;}
+		.platform-infor{width:65%;height:1.6rem;}
+		.platform-title{width:100%;height:0.5rem;line-height:0.5rem;overflow:hidden;word-break:break-all;}
+		.platform-title > span{font-size:0.3rem;color:#222;}
+		.platform-descript{width:100%;height:1rem;overflow:hidden;}
+		.platform-descript > p{width:100%;height:0.9rem;line-height:0.34rem;text-indent:1em;font-size:0.26rem;color:#999;margin:0 !important;}
+		
+		.loadover{width:100%;height:0.8rem;margin-top:0.2rem;text-align:center;}
+		.loadover > span{color:#666;font-size:0.3rem;}
+		
+	</style>
+	<body>
+		<div class="taskpage">
+			<div class="taskpage-header">
+				<span>平台接入</span>
+			</div>
+			
+			<div class="taskpage-title">
+				<div class="taskpage-img">
+					<img src="./img/executing.gif" alt="">
+				</div>
+				
+				<div class="taskpage-notice">
+					<span>api 接口与服务器连接成功</span>
+					<span>请勿进行其它操作</span>
+				</div>
+			</div>
+
+			<div class="taskpage-platform">
+				<div class="taskpage-platform-list" id="pullrefresh">
+					<div class="taskpage-scroll">
+						<div id="pullDown">
+							<span class="pullDownIcon" id="pullDownIcon"></span>
+							<span class="pullDownLabel">向下拖动刷新页面</span>
+						</div>
+						
+						<div class="platform-wrap" id="platformInfor">
+							
+						</div>
+						
+						<div id="pullUp">
+							<span class="pullUpIcon" id="pullUpIcon"></span>
+							<span class="pullUpLabel">向上拖动加载更多</span>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+		</div>
+		
+		
+		
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script src="./js/lib/iscroll/iscroll.js"></script>
+		
+		<script>
+			
+			(function(w){
+				// H5 plus事件处理 返回上一层
+				function plusReady(){
+					// Android处理返回键
+					plus.key.addEventListener('backbutton',function(){
+						location.href = "./index.html";
+					},false);
+					
+				}
+				
+				if(window.plus){
+					plusReady();
+				}else{
+					document.addEventListener('plusready',plusReady,false);
+				}
+			})(window);
+		</script>
+		
+		<script type="text/javascript">
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			var urlip = localStorage.getItem('urlip');
+			var url = 'http://'+ urlip +':8080/platform-web/';
+			var pageIndex = 1;
+			var pageTotal = null;
+			var isOver = false;
+			
+			loadList(url,pageIndex);
+			
+			var myScroll,
+				pullDownEl, 
+				pullDownOffset,
+				pullUpEl, 
+				pullUpOffset,
+				generatedCount = 0;
+			
+			function pullDownAction () {
+				$('#platformInfor').html('');
+				loadList(url,1);
+				document.getElementById("pullUp").style.display="";
+				pageIndex = 1;
+				isOver = false;
+				setTimeout(loadRefresh, 1000);
+			}
+			
+			function pullUpAction () {
+				if(!isOver){
+					pageIndex++;
+					loadList(url,pageIndex);
+				}
+				setTimeout(loadRefresh, 800);
+			}
+			
+			function loadRefresh(){
+				myScroll.refresh();
+			}
+			
+			function loaded() {
+				pullDownEl = document.getElementById('pullDown');
+				pullDownOffset = pullDownEl.offsetHeight;
+				pullUpEl = document.getElementById('pullUp');	
+				pullUpOffset = 10;
+				
+				myScroll = new iScroll('pullrefresh', {
+					useTransition: true,
+					topOffset: pullDownOffset,
+					onRefresh: function () {
+						if (pullDownEl.className.match('loading')) {
+							pullDownEl.className = '';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+							$('#pullDownIcon').removeClass('loadingicon');
+						}
+						if (pullUpEl.className.match('loading')) {
+							pullUpEl.className = '';
+							pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+							$('#pullUpIcon').removeClass('loadingicon');
+						}
+					},
+					onScrollMove: function () {
+						
+						if (this.y > 0) {
+							pullDownEl.className = 'flip';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
+							$('#pullDownIcon').removeClass('loadingicon');
+							this.minScrollY = 0;
+						}
+						if (this.y < 0 && pullDownEl.className.match('flip')) {
+							pullDownEl.className = '';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+							$('#pullDownIcon').removeClass('loadingicon');
+							this.minScrollY = -pullDownOffset;
+						}
+						
+						if ( this.scrollerH < this.wrapperH && this.y < (this.minScrollY-pullUpOffset) || this.scrollerH > this.wrapperH && this.y < (this.maxScrollY - pullUpOffset) ) {
+							document.getElementById("pullUp").style.display="";
+							pullUpEl.className = 'flip';
+							pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
+							$('#pullUpIcon').removeClass('loadingicon');
+						} 
+						if (this.scrollerH < this.wrapperH && this.y > (this.minScrollY-pullUpOffset) && pullUpEl.className.match('flip') || this.scrollerH > this.wrapperH && this.y > (this.maxScrollY - pullUpOffset) && pullUpEl.className.match('flip')) {
+							document.getElementById("pullUp").style.display="none";
+							pullUpEl.className = '';
+							pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+							$('#pullUpIcon').removeClass('loadingicon');
+						}
+					},
+					onScrollEnd: function () {
+						if (pullDownEl.className.match('flip')) {
+							pullDownEl.className = 'loading';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+							$('#pullDownIcon').addClass('loadingicon');
+							pullDownAction();
+						} 
+						if (pullUpEl.className.match('flip')) {
+							document.getElementById("pullUp").style.display="block";
+							if(isOver){
+								pullUpEl.className = 'ended';
+								pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+								$('#pullUpIcon').removeClass('loadingicon');
+								$('#pullUpIcon').removeClass('pullUpIcon');
+							}else{
+								pullUpEl.className = 'loading';
+								pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
+								$('#pullUpIcon').addClass('loadingicon');
+								setTimeout(pullUpAction,1000)
+							}
+							
+						}
+					}
+				});
+			
+			}
+			
+			document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+			
+			document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 800);}, false);
+			
+			//load list 
+			function loadList(url,pageIndex){
+				$.ajax({
+					type:'POST',
+					url:url+'platform/platformList',
+					dataType:'json',
+					data:{
+						pageNum:pageIndex, //当前页
+						pageDataCount:20 //每页的数据条数
+					},
+					success:function(data){
+						if(data.code === 403){
+							location.href = './login.html'
+						}else if(data.code === 404){
+							alert('设备被锁')
+						}else if(data.code == 5000 ){
+							pageTotal = data.pages;
+							if(data.pageList.length !== 0){
+								var platformListHtml = '';
+								for(var i=0;i<data.pageList.length;i++){
+									platformListHtml += '<div class="platform-item" data-listId="'+ data.pageList[i].id +'"><div class="platform-img">'+
+														'<img src="'+ data.pageList[i].image +'" alt="">'+
+														'</div><div class="platform-infor"><div class="platform-title">'+
+														'<span>'+ data.pageList[i].title +'</span>'+
+														'</div><div class="platform-descript">'+
+														'<p>'+ data.pageList[i].introduce +'</p>'+
+														'</div></div></div>'
+								}
+								$('#platformInfor').append(platformListHtml);
+							}
+							
+							if(pageIndex == pageTotal){
+								isOver = true;
+							}
+			
+						}
+					}
+				});
+			}
+			
+			
+		</script>
+	</body>
+
+</html>

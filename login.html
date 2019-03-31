@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>登录</title>
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+	</head>
+	<style>
+		body{-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+		.login{width:100%;height:100%;background:#fff;position:fixed;}
+		.logo{width:100%;height:4rem;line-height:4.5rem;text-align:center;}
+		.logo > img{width:2rem;height:2rem;border-radius:50%;}
+		.login-info{width:90%;height:auto;margin:0 5%;}
+		.login-info > div{width:100%;height:0.8rem;line-height:0.8rem;border-bottom:0.02rem solid #f2f2f2;position:relative;}
+		.account > span{display:inline-block;width:24%;font-size:0.32rem;color:#222;text-align:center;}
+		.account > input{width:70%;height:0.5rem;border:none;outline:none;user-select:none;font-size:0.3rem;}
+		.actCode{display:flex;flex-direction:row;}
+		.actCode-l{width:25%;height:0.8rem;line-height:0.8rem;text-align:center;}
+		.actCode-l > span{font-size:0.32rem;color:#222;}
+		.input-contain{width:75%;}
+		.input-contain > input{width:25%;height:0.5rem;text-align:center;border:0.02rem solid #999;outline:none;user-select:none;font-size:0.3rem;color:#222;}
+		.input-contain > span{font-size:0.3rem;margin:0 2%;}
+		.messageCode{width:100%;height:0.6rem;}
+		.messageCode > input{width:65%;height:0.5rem;border:none;outline:none;user-select:none;font-size:0.3rem;padding-left:10%;}
+		.messageCode > button{width:33%;height:0.6rem;line-height:0.6rem;margin-top:0.1rem;background:#4787ca;border:none;outline:none;border-radius:0.1rem;font-size:0.3rem;color:#fff;}
+		.input-error{display:none;width:100%;height:0.6rem;line-height:0.8rem;text-align:center;border-bottom:none !important;}
+		.input-error > span{display:inline !important;color:#f00 !important;font-size:0.28rem !important;}
+		.login-btn{width:100%;height:1.8rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+		.login-btn > button{width:80%;height:0.8rem;line-height:0.8rem;border:none;outline:none;border-radius:0.15rem;background:#217bd1;font-size:0.3rem;color:#fff;}
+	
+	</style>
+	<body>
+		<div class="login">
+			<div class="logo">
+				<img src="./img/avatar.png" alt="">
+			</div>
+			<div class="login-info">
+				<div class="account">
+					<span>账号：</span>
+					<input type="number" id="phone" autocomplete="off" require maxlength="11" name="account" placeholder="手机号">
+				</div>
+				<div class="actCode">
+					<div class="actCode-l">
+						<span>激活码：</span>
+					</div>
+					<div class="input-contain">
+						<input type="number" require maxlength="4" id="activationCode01">
+						<span>-</span>
+						<input type="number" required maxlength="4" id="activationCode02">
+						<span>-</span>
+						<input type="number" required maxlength="4" id="activationCode03">
+					</div>
+					
+				</div>
+				<div class="messageCode" id="messageCodeDiv">
+					<input type="number" required name="messageCode" id="codeNumber" placeholder="请输入验证码">
+					<button type="button" id="sendCode" disabled="disabled" class="sendCode">发送验证码</button>
+				</div>
+				<div class="input-error" id="errorMsg">
+					<span></span>
+				</div>
+			</div>
+			<div class="login-btn">
+				<button type="button" id="enterApp">立即使用</button>
+			</div>
+		</div>
+		
+		<script src="./js/update.js"></script>
+		
+		<script>
+			$(function(){
+				
+				var urlip = localStorage.getItem('urlip')
+				var url = 'http://'+ urlip +':8080/platform-web/'
+				var sendedCode = false;
+				var imei = '';
+
+				// H5 plus事件处理  
+				function plusReady(){
+					imei = plus.device.imei;
+					localStorage.setItem('imei',imei);
+					//check user vip
+					checkUserVip(url);
+				}  
+				if(window.plus){
+					plusReady();  
+				}else{  
+					document.addEventListener("plusready",plusReady,false);  
+				}
+				
+				// checkUserVip(url);
+				
+				
+				//check phone number
+				checkPhoneNumber();
+				
+				//check activationCode
+				checkActivationCode('#activationCode01',1)
+				checkActivationCode('#activationCode02',2)
+				checkActivationCode('#activationCode03',3)
+				
+				//check sendCode
+				checkSendCode()
+				
+				//send message code number
+				sendMessageCode(url)
+				
+				//login app
+				loginApp(url)
+
+				//check phone number
+				function checkPhoneNumber(){
+					var endVal = '';
+					//listen phone number
+					$('#phone').on('input propertychange',function(){
+						var curVal = $(this).val();
+						var phoneRule = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/;
+						if(curVal.length === 11){
+							if( phoneRule.test(curVal) ){
+								$('#errorMsg').hide().children('span').text('');
+								$('#sendCode').attr('disabled',false);
+							}else{
+								$('#errorMsg').show().children('span').text('请输入正确的手机号码');
+								$('#sendCode').attr('disabled',true);
+							}
+						}else if(curVal.length > 11){
+							if(curVal.length < 13){
+								endVal = curVal.substring(0,curVal.length-1);
+							}
+							$(this).val(endVal);
+							$('#sendCode').attr('disabled',true);
+							return false;
+							
+						}else{
+							$('#errorMsg').hide().children('span').text('');
+							$('#sendCode').attr('disabled',true);
+						}
+					});
+
+					//phone number blur
+					$('#phone').on('blur',function(){
+						if($(this).val()){
+							if($(this).val().length == 11){
+								$('#errorMsg').hide().children('span').text('');
+								$('#sendCode').attr('disabled',false);
+							}else{
+								$('#errorMsg').show().children('span').text('请输入正确的电话号码');
+								$('#sendCode').attr('disabled',true);
+							}
+						}else{
+							$('#errorMsg').show().children('span').text('电话号码不能为空');
+							$('#sendCode').attr('disabled',true);
+						}
+					});
+					
+					//check sendCode
+					$("#codeNumber").on('keyup',function(ev){
+						var sendCodeVal = $(this).val();
+						var reg = /^[0-9]*$/;
+						var sendCodeValLen = '';
+						for(var i=0;i<=sendCodeVal.length;i++){
+							if( reg.test(sendCodeVal[i]) ){
+								if(sendCodeValLen.length < 6){
+									sendCodeValLen += sendCodeVal[i];
+								}
+							}
+						}
+						$(this).val(sendCodeValLen);
+						return false;
+					});
+				}
+			
+				//check activationCode
+				function checkActivationCode(obj,index){
+					$(obj).on('keyup',function(){
+						var curVal = $(this).val();
+						var reg = /^[0-9]*$/;
+						var endVal = '';
+						for(var i=0;i<=curVal.length;i++){
+							if( reg.test(curVal[i]) ){
+								if(endVal.length < 4){
+									endVal += curVal[i];
+								}
+							}
+						}
+						if(index < 3 && endVal.length === 4){
+							var newObj = obj.substring(0,obj.length-1) + (index+1);
+							$(newObj).focus();
+						}
+						$(this).val(endVal);
+						return false;
+					});
+				}
+			
+				//check sendCode
+				function checkSendCode(){
+					$('#codeNumber').on('keyup',function(){
+						var curVal = $(this).val();
+						var reg = /^[0-9]*$/;
+						var endVal = '';
+						for(var i=0;i<=curVal.length;i++){
+							if( reg.test(curVal[i]) ){
+								if(endVal.length < 6){
+									endVal += curVal[i];
+								}
+							}
+						}
+						$(this).val(endVal);
+						return false;
+					})
+				}
+			
+				//send message code number
+				function sendMessageCode(url){
+					//check phone number
+					checkPhoneNumber();
+					
+					$('#sendCode').click(function(){
+						var pn = $('#phone').val();
+						if(pn){
+							//get check code
+							$.ajax({
+								type:'POST',
+								url:url+'message/sendcode',
+								dataType:'json',
+								data:{
+									phone:pn  //手机号码
+								},
+								success:function(data){
+									//console.log(data);
+									if(data.code === "5000"){
+										sendedCode = true;
+										var timer = 60;
+										function timeCountDown(){
+											if(timer == 0){
+												$('#sendCode').text("发送验证码");
+												$('#sendCode').attr('disabled',false);
+												clearInterval(countTime);
+											}else{
+												$('#sendCode').text( timer + "s后发送" );
+												$('#sendCode').attr('disabled',true);
+												timer--;
+											}
+										}
+										timeCountDown();
+										var countTime = setInterval(timeCountDown,1000);
+									}else{
+										$('#errorMsg').show().children('span').text('获取验证码失败');
+									}
+								}
+							});
+						}else{
+							$('#errorMsg').show().children('span').text('请输入正确的手机号码');
+							$('#sendCode').attr('disabled',true);
+						}
+					})
+				}
+				
+				//check user vip
+				function checkUserVip(url){
+					
+					imei = localStorage.getItem('imei');
+					// var imei = '123456789123456,123456789123457';
+					
+					if(imei){
+						$.ajax({
+							type:'POST',
+							url:url+'user/selectVip',
+							dataType:'json',
+							data:{
+								equipmentNumber:imei
+							},
+							success:function(data){
+								if(data.id != ""){
+									localStorage.setItem('userid',data.id);
+									localStorage.setItem('loginstate',true);
+									localStorage.setItem('privatestate',false);
+									localStorage.setItem('protocolstate',false);
+									location.href = "./index.html";
+								}
+								if(data.vip === 2){ //2 vip
+									$('#messageCodeDiv').hide();
+									//login app
+									loginApp(url,2);
+								}else{ //1 not vip
+									$('#messageCodeDiv').show();
+									//login app
+									loginApp(url,1);
+								}
+							}
+						});
+					}else{
+						$('#errorMsg').show().children('span').text('设备号未能读取');
+					}
+				}
+				
+				//login app
+				function loginApp(url,vip){
+					
+					$('#enterApp').click(function(){
+						var pn = $('#phone').val();
+						var activationCode = $('#activationCode01').val()+'-'+ $('#activationCode02').val() +'-'+ $('#activationCode03').val();
+						var sendCode = $('#codeNumber').val();
+						var imei = localStorage.getItem('imei');
+						// var imei = '123456789123456,123456789123457';
+						//6413-0265-3855
+						if(pn){
+							if(activationCode.length === 14){
+								if( ( vip === 1 && sendCode )  || ( vip === 2 && sendCode === '' ) ){
+									if(imei){
+										$.ajax({
+											type:'POST',
+											url:url+'user/login',
+											dataType:'json',
+											data:{
+												code:activationCode,  //序列号
+												equipmentNumber:imei,  //硬件设备号
+												phone:pn,  //手机号
+												msgCode:sendCode  //短信验证码
+											},
+											success:function(data){
+												if(data.code === 5000){
+													localStorage.setItem('loginstate',true);
+													localStorage.setItem('userid',data.userInfo.id);
+													localStorage.setItem('privatestate',false);
+													localStorage.setItem('protocolstate',false);
+													
+													//set received task ring
+													localStorage.setItem('ringstate',true);
+													
+													location.href = './index.html';
+												}else if(data.code === 404){
+													$('#errorMsg').show().children('span').text('设备被锁定');
+												}else if(data.code === 5001){
+													$('#errorMsg').show().children('span').text('验证码错误');
+												}else if(data.code === 5002){
+													$('#errorMsg').show().children('span').text('设备未被厂家激活');
+												}else if(data.code === 5003){
+													$('#errorMsg').show().children('span').text('激活码错误');
+												}else if(data.code === 5004){
+													$('#errorMsg').show().children('span').text('设备已被绑定');
+												}else if(data.code === 5005){
+													localStorage.setItem('loginstate',true);
+													localStorage.setItem('userid',data.userInfo.id);
+													localStorage.setItem('privatestate',false);
+													localStorage.setItem('protocolstate',false);
+													
+													//set received task ring
+													localStorage.setItem('ringstate',true);
+													
+													$('#errorMsg').show().children('span').text('注册成功');
+													location.href = './index.html';
+												}
+											}
+										})
+									}else{
+										$('#errorMsg').show().children('span').text('设备号未能读取');
+									}
+								}else{
+									if(vip === 1){
+										$('#errorMsg').show().children('span').text('请输入验证码');
+									}
+								}
+							}else{
+								$('#errorMsg').show().children('span').text('请输入激活号');
+							}
+						}else{
+							$('#errorMsg').show().children('span').text('请输入正确的手机号码');
+						}
+						
+					})
+				}
+			
+			
+			})
+		</script>
+	</body>
+</html>

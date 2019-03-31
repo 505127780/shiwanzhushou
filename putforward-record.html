@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>提现记录-交易记录</title>
+		
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/common.js"></script>
+		<link rel="stylesheet" href="./css/common/scroll-refresh.css?v=28752">
+		
+	</head>
+	<style>
+		body{-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+		.record{width:100%;height:100%;background:#f2f2f2;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;text-decoration:none;outline:none;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		.head-back-index{width:20%;height:1rem;position:absolute;right:0;top:0;text-decoration:none;outline:none;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back-index > i.back-index{width:0.6rem;height:0.6rem;display:inline-block;background:url('./img/icons/home.png') no-repeat;background-size:0.6rem;}
+		
+		.navTap{width:100%;height:1rem;background:#fff;border-bottom:0.02rem #ccc solid;display:flex;flex-direction:row;align-items:center;justify-content:space-around;}
+		.navTap > a{display:block;width:40%;height:0.95rem;line-height:1rem;text-align:center;text-decoration:none;outline:none;}
+		.navTap > a.navActive{border-bottom:0.05rem #2c64c5 solid;}
+		.navTap > a.navActive > span{color:#2c64c5 !important;}
+		.navTap > a > span{font-size:0.3rem;color:#222;}
+		
+		.putforward-contain{width:100%;height:calc(100% - 2.2rem);margin-top:0.2rem;background:#fff;overflow:hidden;}
+		.putforward-list{width:102%;height:calc(100% - 0.2rem);margin:0 auto 0.2rem;padding-top:0.2rem;overflow:hidden;position:relative;}
+		.putforward-scroll{width:92%;height:auto;margin:0 5% 0.2rem 3%;padding-bottom:1rem;}
+		.putforward-wrap{}
+		.putforward-item{width:100%;height:auto;margin-bottom:0.2rem;}
+		.putforward-infor{height:1rem;display:flex;flex-direction:row;border-bottom:0.02rem solid #ccc;}
+		.putforward-money{width:80%;padding-left:3%;}
+		.putforward-state{width:100%;height:0.5rem;line-height:0.5rem;overflow:hidden;word-break:break-all;}
+		.putforward-state > span{font-size:0.28rem;color:#222;}
+		.putforward-time{width:100%;height:0.4rem;}
+		.putforward-time > span{font-size:0.24rem;color:#999;}
+		.putforward-ok{width:100% !important;padding:0 3%;border-bottom:0.02rem solid #ccc;}
+		.putforward-result{width:20%;height:1rem;line-height:1rem;text-align:center;}
+		.putforward-result > span{font-size:0.24rem;color:#222;}
+		
+		.putforword-detail{width:100%;height:1rem;background:#f6f6f6;}
+		.putforword-detail > p{width:100%;height:1rem;line-height:0.42rem;padding:0.1rem 3%;margin:0 !important;font-size:0.28rem;color:#333;text-indent:1em;overflow: hidden;word-break:break-all;}
+		.hide{display:none;}
+		
+		.platform-empty{width:100%;height:4rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+		.platform-empty > img{width:1.5rem;height:1rem;}
+		.platform-empty > span{font-size:0.3rem;color:#666;margin-top:0.3rem;}
+		
+		.loadover{width:100%;height:0.8rem;margin-top:0.2rem;text-align:center;}
+		.loadover > span{color:#666;font-size:0.3rem;}
+		
+	</style>
+	<body>
+		<div class="record">
+			<div class="head">
+				<a href="./person.html" class="head-back">
+					<i class="back"></i>
+					<span>返回</span>
+				</a>
+				<div class="head-title">
+					<span>交易记录</span>
+				</div>
+				<a href="./index.html" class="head-back-index">
+					<i class="back-index"></i>
+				</a>
+			</div>
+			<div class="navTap">
+				<a href="./putforward-record.html" class="putforward navActive">
+					<span>提现记录</span>
+				</a>
+				<a href="./commission-task.html" class="commission">
+					<span>佣金记录</span>
+				</a>
+			</div>
+			
+			<div class="putforward-contain">
+				<div class="putforward-list" id="pullrefresh">
+					<div class="putforward-scroll" >
+						<div id="pullDown">
+							<span class="pullDownIcon" id="pullDownIcon"></span>
+							<span class="pullDownLabel">向下拖动刷新页面</span>
+						</div>
+						
+						<div class="putforward-wrap" id="putforwardRecordList">
+							
+						</div>
+						
+						<div id="pullUp">
+							<span class="pullUpIcon" id="pullUpIcon"></span>
+							<span class="pullUpLabel">向上拖动加载更多</span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+			
+		<div id="taskdiv"></div>
+		
+		<!-- putforward modal -->
+		<div class="infor-modal" id="inforModal">
+			<div class="infor-inner">
+				<div class="infor-contain">
+					<div class="informodal-title">
+						<div class="modal-title">
+							<span>试玩助手</span>
+						</div>
+					</div>
+					<div class="inforModal-content">
+						<span id="inforContextTitle"></span>
+						<span id="inforContext"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script src="./js/sendtask.js"></script>
+		<script src="./js/update.js"></script>
+		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/mui/mui.min.js"></script>
+		
+		<script src="./js/lib/iscroll/iscroll.js"></script>
+		
+		<script>
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
+				}
+			
+				var urlip = localStorage.getItem('urlip');
+				var url = 'http://'+ urlip +':8080/platform-web/';
+				var pageIndex = 1;
+				var pageTotal = null;
+				var isOver = false;
+				
+				loaded();
+				loadList(url,pageIndex);
+				
+				var myScroll,
+					pullDownEl, 
+					pullDownOffset,
+					pullUpEl, 
+					pullUpOffset,
+					generatedCount = 0;
+				
+				function pullDownAction () {
+					$('#putforwardRecordList').html('');
+					loadList(url,1);
+					document.getElementById("pullUp").style.display="";
+					pageIndex = 1;
+					isOver = false;
+					setTimeout(loadRefresh, 1000);
+				}
+				
+				function pullUpAction () {
+					if(!isOver){
+						pageIndex++;
+						loadList(url,pageIndex);
+					}
+					setTimeout(loadRefresh, 800);
+				}
+				
+				function loadRefresh(){
+					myScroll.refresh();
+				}
+				
+				function loaded() {
+					pullDownEl = document.getElementById('pullDown');
+					pullDownOffset = pullDownEl.offsetHeight;
+					pullUpEl = document.getElementById('pullUp');	
+					pullUpOffset = 10;
+					
+					myScroll = new iScroll('pullrefresh', {
+						useTransition: true,
+						topOffset: pullDownOffset,
+						onRefresh: function () {
+							if (pullDownEl.className.match('loading')) {
+								pullDownEl.className = '';
+								pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								$('#pullDownIcon').removeClass('loadingicon');
+							}
+							if (pullUpEl.className.match('loading')) {
+								pullUpEl.className = '';
+								pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								$('#pullUpIcon').removeClass('loadingicon');
+							}
+						},
+						onScrollMove: function () {
+							
+							if (this.y > 0) {
+								pullDownEl.className = 'flip';
+								pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
+								$('#pullDownIcon').removeClass('loadingicon');
+								this.minScrollY = 0;
+							}
+							if (this.y < 0 && pullDownEl.className.match('flip')) {
+								pullDownEl.className = '';
+								pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								$('#pullDownIcon').removeClass('loadingicon');
+								this.minScrollY = -pullDownOffset;
+							}
+							
+							if ( this.scrollerH < this.wrapperH && this.y < (this.minScrollY-pullUpOffset) || this.scrollerH > this.wrapperH && this.y < (this.maxScrollY - pullUpOffset) ) {
+								document.getElementById("pullUp").style.display="";
+								pullUpEl.className = 'flip';
+								pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
+								$('#pullUpIcon').removeClass('loadingicon');
+							} 
+							if (this.scrollerH < this.wrapperH && this.y > (this.minScrollY-pullUpOffset) && pullUpEl.className.match('flip') || this.scrollerH > this.wrapperH && this.y > (this.maxScrollY - pullUpOffset) && pullUpEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="none";
+								pullUpEl.className = '';
+								pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								$('#pullUpIcon').removeClass('loadingicon');
+							}
+						},
+						onScrollEnd: function () {
+							if (pullDownEl.className.match('flip')) {
+								pullDownEl.className = 'loading';
+								pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+								$('#pullDownIcon').addClass('loadingicon');
+								pullDownAction();
+							} 
+							if (pullUpEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="block";
+								if(isOver){
+									pullUpEl.className = 'ended';
+									pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+									$('#pullUpIcon').removeClass('loadingicon');
+									$('#pullUpIcon').removeClass('pullUpIcon');
+								}else{
+									pullUpEl.className = 'loading';
+									pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
+									$('#pullUpIcon').addClass('loadingicon');
+									setTimeout(pullUpAction,1000)
+								}
+								
+							}
+						}
+					});
+				
+				}
+				
+				document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+				
+				document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 200);}, false);
+				
+				//load list 
+				function loadList(url,pageIndex){
+					var userid = localStorage.getItem('userid');
+					if(userid){
+						$.ajax({
+							type:'POST',
+							url:url+'withdraw/withdrawList',
+							dataType:'json',
+							data:{
+								id:userid,
+								pageNum:pageIndex, 
+								pageDataCount:10
+							},
+							success:function(data){
+								if(data.code === 403){
+									location.href = './login.html'
+								}else if(data.code === 404){
+									alert('设备被锁')
+								}else if(data.code === 5000 ){
+									pageTotal = data.pages;
+									if(data.pageList && data.pageList.length !== 0){
+										var putforwadRecordListHtml = '';
+										for(var i=0;i<data.pageList.length;i++){
+											if(data.pageList[i].status === 1){
+												putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核中')
+											}else if(data.pageList[i].status === 2){
+												if(data.pageList[i].assetStatus === 1){
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'资金处理中')
+												}else if(data.pageList[i].assetStatus === 2){
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'资金已到账')
+												}else if(data.pageList[i].assetStatus === 3){
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'资金处理失败')
+												}
+											}else if(data.pageList[i].status === 3){
+												putforwadRecordListHtml += showPutforwardAbnormal(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核失败',descript)
+											}
+										}
+										$('#putforwardRecordList').append(putforwadRecordListHtml);
+										
+										//show and hide illustrate
+										$('.putforward-result').click(function(){
+											if($(this).parent('div').siblings('div').hasClass('hide')){
+												$(this).parent('div').siblings('div').removeClass('hide');
+											}else{
+												$(this).parent('div').siblings('div').addClass('hide');
+											}
+										})
+										
+									}else{
+										$('#putforwardRecordList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span>暂无数据</span></div>');
+									}
+									
+									if(pageIndex == pageTotal){
+										isOver = true;
+									}
+								}
+							}
+						});
+					}else{
+						location.href = './login.html';
+					}
+				}
+				
+				//show showPutforwardResultOk
+				function showPutforwardResultOk(strMoney,strLaunchTime,resultState){
+					return '<div class="putforward-item"><div class="putforward-ok"><div class="putforward-state">'+
+							'<span>提现 '+ strMoney+' 元</span>'+
+							'<span> '+ resultState +'</span>'+
+							'</div><div class="putforward-time">'+
+							'<span>'+ strLaunchTime +'</span>'+
+							'</div></div></div>'
+				}
+				
+				//show showPutforwardAbnormal
+				function showPutforwardAbnormal(strMoney,strLaunchTime,resultState,descript){
+					return '<div class="putforward-item"><div class="putforward-infor"><div class="putforward-money"><div class="putforward-state">'+
+								'<span>提现 '+ strMoney +' 元</span>'+
+								'<span>'+ resultState +'</span>'+
+								'</div><div class="putforward-time">'+
+								'<span>'+ strLaunchTime +'</span>'+
+								'</div></div><div class="putforward-result"><span>查看详情</span></div></div><div class="putforword-detail hide">'+
+								'<p>'+ descript +'</p>'+
+								'</div></div>'
+				}
+			
+			
+		</script>
+		
+		
+	</body>
+</html>

@@ -1,0 +1,81 @@
+
+.ui-form-item {
+	position: relative;
+    font-size:0.14rem;
+    height: 0.44rem;
+    line-height: 0.44rem;
+    padding-right: 0.15rem;
+    padding-left: 0.15rem;
+        background: white;
+}
+.ui-border-b {
+    border-bottom: 0.01rem solid #F0F0F0;
+}
+.ui-form-item label:not(.ui-switch):not(.ui-checkbox):not(.ui-checkbox-s):not(.ui-radio):not(.ui-radio-s) {
+    width: 0.95rem;
+    position: absolute;
+    padding-right: 0.1rem;
+    text-align: right;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #666666;
+}
+.ui-form-item > .ui-select {
+    margin-left: 1.15rem;
+}
+.ui-select {
+    position: relative;
+    margin-right: 0.06rem;
+}
+.ui-form-item input, .ui-form-item textarea {
+    text-align: left;
+    width: 100%;
+    min-height: 0.25rem;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    border: 0;
+    background: 0 0;
+    padding-left: 0;
+}
+input, input:focus, input:active {
+    user-select: text;
+}
+input, button, textarea, select, optgroup, option {
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    outline: 0;
+}
+.ui-select:after {
+	position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -0.04rem;
+    width: 0;
+    height: 0;
+    border-top: 0.06rem solid;
+    border-right: 0.05rem solid transparent;
+    border-left: 0.05rem solid transparent;
+    color: #a6a6a6;
+    content: "";
+    pointer-events: none;
+    border: 0;
+    background: url(../img/icon-select.png) no-repeat;
+    height: 0.2rem;
+    width: 0.2rem;
+    background-size: 100%;
+    top: 35%;
+    right: -0.05rem;
+}
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #a6a6a6;
+}
+.ui-form-item span {
+    display: block;
+    padding-left: 0.95rem;
+    width: 100%;
+    text-align: right;
+    color: #000;
+}
