@@ -2,6 +2,7 @@
 window.onload = function(){
 
 	var urlip = '116.85.19.102';
+	// var urlip = '192.168.43.73';
 	localStorage.setItem('urlip',urlip);
 	
 	var updatetimer = null;
@@ -63,12 +64,12 @@ window.onload = function(){
 				version:ver
 			},
 			error: function(jqXHR, textStatus, errorMsg){ // 出错时默认的处理函数
-				// jqXHR 是经过jQuery封装的XMLHttpRequest对象
-				// textStatus 可能为： null、"timeout"、"error"、"abort"或"parsererror"
-				// errorMsg 可能为： "Not Found"、"Internal Server Error"等
-		 
-				// 提示形如：发送AJAX请求到"/index.html"时出错[404]：Not Found
-				alert('网络异常');
+				if (jqXHR.status == 500) {
+					 alert('连接异常');
+				}
+				if (jqXHR.status == 404) {
+					alert('网络异常');
+				}
 			}
 		});
 		

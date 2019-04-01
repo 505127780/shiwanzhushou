@@ -1,6 +1,4 @@
-var urlip = '116.85.19.102';
-localStorage.setItem('urlip',urlip)
-	
+
 var sendTaskTimer = null;
 
 //show next task
@@ -535,8 +533,10 @@ function showPosition(posNoticeHtml){
 		closePosTips();
 	},5500);
 	
+	/*
 	//初始化
 	mui.init();
+	*/
 	
 	//show map
 	showMap();
@@ -554,7 +554,7 @@ function closePosTips(){
 //show map
 function showMap(){
 	
-	//第一步通过mui.plusReady
+/* 	//第一步通过mui.plusReady
 	mui.plusReady(function(){
 		plus.geolocation.getCurrentPosition( geoInf, function ( e ) {},{geocode:true,provider:'amap'});
 	})
@@ -568,7 +568,7 @@ function showMap(){
 		localStorage.setItem('longt',longt)
 		localStorage.setItem('lat',lat)
 	}
-	
+	 */
 	//初始化地图
 	var jdXmin = 84.022152;
 	var jdXmax = 120.626226;
