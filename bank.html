@@ -35,12 +35,23 @@
 		.bank-item{width:100%;height:1.2rem;margin-bottom:0.2rem;border-bottom:0.02rem solid #ccc;display:flex;flex-direction:row;}
 		.bank-img{width:25%;height:1.2rem;line-height:1.2rem;text-align:center;}
 		.bank-img > img{width:0.7rem;height:0.7rem;}
-		.bank-infor{width:60%;height:1.2rem;display:flex;flex-direction:column;justify-content:center;}
+		.bank-infor{width:50%;height:1.2rem;display:flex;flex-direction:column;justify-content:center;}
 		.bank-infor > span{color:#222;font-size:0.32rem;}
 		.bank-infor > p{color:#999;font-size:0.26rem;margin:0 !important;}
+		.unbind-card{width:25%;height:1.2rem;line-height:1.2rem;text-align:center;}
+		.unbind-card > span{font-size:0.28rem;color:#f00;}
+		
+		.unbind-bankCard{display:none;position:absolute;left:0;top:0;z-index:2;width:100%;height:100%;background:rgba(0,0,0,0.2);}
+		.unbind-bankCard-bg{position:absolute;left:0;bottom:-25%;z-index:3;width:100%;height:25%;background:#f2f2f2;}
+		.unbind-contain{width:100%;height:auto;}
+		.unbind-contain > div{height:1.2rem;line-height:1.2rem;margin-bottom:0.2rem;text-align:center;background:#fff;}
+		.unbind-contain > div#confirmUnbind > span{font-size:0.32rem;color:#f00;}
+		.unbind-contain > div#cancelBtn > span{font-size:0.32rem;color:#222;}
+		
 	</style>
 	<body>
 		<div class="bank">
+			
 			<div class="head">
 				<div class="head-back" onClick='location.href="./person-infor.html"'>
 					<i class="back"></i>
@@ -55,36 +66,19 @@
 			</div>
 			
 			<div class="bank-list" id="bankList">
-				<!-- <div class="bank-item">
-					<div class="bank-img">
-						<img src="./img/bank-zg.png" alt="">
-					</div>
-					<div class="bank-infor">
-						<span>中国银行</span>
-						<p>尾号3456 储蓄卡</p>
-					</div>
-				</div>
 				
-				<div class="bank-item">
-					<div class="bank-img">
-						<img src="./img/bank-js.png" alt="">
-					</div>
-					<div class="bank-infor">
-						<span>建设银行</span>
-						<p>尾号3456 储蓄卡</p>
-					</div>
-				</div>
-				
-				<div class="bank-item">
-					<div class="bank-img">
-						<img src="./img/bank-ny.png" alt="">
-					</div>
-					<div class="bank-infor">
-						<span>农业银行</span>
-						<p>尾号3456 储蓄卡</p>
-					</div>
-				</div> -->
+			</div>
 			
+			<div id="unbindCard-mask" class="unbind-bankCard"></div>
+			<div id="unbindCard" class="unbind-bankCard-bg">
+				<div class="unbind-contain">
+					<div id="confirmUnbind">
+						<span>确定解除绑定</span>
+					</div>
+					<div id="cancelBtn">
+						<span>取消</span>
+					</div>
+				</div>
 			</div>
 		</div>
 		
@@ -125,58 +119,101 @@
 			var pageIndex = 1;
 			var pageTotal = null;
 			
-			$.ajax({
-				type:'POST',
-				url:url+'bank/selectBank',
-				dataType:'json',
-				data:{
-					userId:userid,
-					pageNum:pageIndex, //当前页
-					pageDataCount:20,
-				},
-				success:function(data){
-					if(data.code === 403){
-						location.href = './login.html'
-					}else if(data.code === 404){
-						alert('设备被锁')
-					}else if(data.code === 5000 ){
-						pageTotal = data.pages;
-						if(data.pageList.length !== 0){
-							var bankListHtml = '';
-							var bankImg = '';
-							for(var i=0;i<data.pageList.length;i++){
-								switch(data.pageList[i].openingBank){
-									case '中国银行': bankListHtml += bankInfor('./img/bank-zg.png','中国银行',data.pageList[i].bankNumber);;break;
-									case '中国建设银行':bankListHtml += bankInfor('./img/bank-js.png','中国建设银行',data.pageList[i].bankNumber);;break;
-									case '中国农业银行':bankListHtml += bankInfor('./img/bank-ny.png','中国农业银行',data.pageList[i].bankNumber);;break;
-									case '中国工商银行':bankListHtml += bankInfor('./img/bank-gs.png','中国工商银行',data.pageList[i].bankNumber);;break;
+			showBindBankCardList(url,userid,pageIndex);
+			
+			function showBindBankCardList(url,userid,pageIndex){
+				if(userid){
+					$.ajax({
+						type:'POST',
+						url:url+'bank/selectBank',
+						dataType:'json',
+						data:{
+							userId:userid,
+							pageNum:pageIndex, //当前页
+							pageDataCount:20,
+						},
+						success:function(data){
+							if(data.code === 403){
+								location.href = './login.html';
+							}else if(data.code === 404){
+								alert('设备被锁');
+							}else if(data.code === 5000 ){
+								pageTotal = data.pages;
+								if(data.pageList.length !== 0){
+									var bankListHtml = '';
+									var bankImg = '';
+									for(var i=0;i<data.pageList.length;i++){
+										switch(data.pageList[i].openingBank){
+											case '中国银行': bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-zg.png','中国银行',data.pageList[i].bankNumber);;break;
+											case '中国建设银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-js.png','中国建设银行',data.pageList[i].bankNumber);;break;
+											case '中国农业银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-ny.png','中国农业银行',data.pageList[i].bankNumber);;break;
+											case '中国工商银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-gs.png','中国工商银行',data.pageList[i].bankNumber);;break;
+										}
+									}
+									
+									$('#bankList').append(bankListHtml);
+									//show unbind bank card modal
+									showUnbindCardModal(url,userid);
+								}else{
+									$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span>暂无数据</span></div>');
 								}
 							}
-							
-							function bankInfor(bankimg,bankname,banknumber){
-								return '<div class="bank-item"><div class="bank-img">'+
-												'<img src="'+ bankimg +'" alt="">'+
-												'</div><div class="bank-infor">'+
-												'<span>'+ bankname +'</span>'+
-												'<p>尾号'+ banknumber.substr(banknumber.length-4,4) +' 储蓄卡</p>'+
-												'</div></div>';
-							}
-							
-							$('#bankList').append(bankListHtml);
-						}else{
-							$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span>暂无数据</span></div>');
 						}
-					}
+					});
+				}else{
+					location.href = './login.html';
 				}
-			});
+			}
 			
+			function bankInfor(bankid,bankimg,bankname,banknumber){
+				return '<div class="bank-item"><div class="bank-img" data-bankid="'+ bankid +'">'+
+								'<img src="'+ bankimg +'" alt="">'+
+								'</div><div class="bank-infor">'+
+								'<span>'+ bankname +'</span>'+
+								'<p>尾号'+ banknumber.substr(banknumber.length-4,4) +' 储蓄卡</p>'+
+								'</div><div class="unbind-card"><span>解除绑定</span></div></div>';
+			}
+			
+			//show unbind bank card modal
+			function showUnbindCardModal(url,userid){
+				$('.unbind-card').unbind('click').click(function(){
+					var curIndex = $(this).index();
+					var bankid = $(this).attr('data-bankid');
+					$('#unbindCard-mask').show();
+					$('#unbindCard').animate({bottom:'0'},300);
+					
+					//confirm unbind bank card 
+					confirmUnbindBankCard(url,userid,bankid);
+				});
+				
+				//hide bottom cancel unbind bank card Modal
+				$('#cancelBtn').unbind('click').click(function(){
+					$('#unbindCard-mask').hide();
+					$('#unbindCard').animate({bottom:'-25%'},400);
+				});
+				
+			}
+			
+			//confirm unbind bank card 
+			function confirmUnbindBankCard(url,userid,bankid){
+				$('#confirmUnbind').unbind('click').click(function(){
+					$.ajax({
+						type:'POST',
+						url:url+'bank/unbindBank',
+						dataType:'json',
+						data:{
+							userId:userid,
+							bankid:bankid
+						},
+						success:function(data){
+							console.log(data);
+						}
+					});
+				})
+			}
 			
 			
 		</script>
-		
-		
-		
-		
 		
 	</body>
 </html>

@@ -1,10 +1,10 @@
 
 window.onload = function(){
 
-	var urlip = '116.85.19.102';
-	// var urlip = '192.168.43.73';
+	// var urlip = '116.85.19.102';//application server ip
+	var urlip = '47.107.72.129';//test server ip
 	localStorage.setItem('urlip',urlip);
-	
+	var url = 'http://'+ urlip +':8080/platform-web/'
 	var updatetimer = null;
 	
 	// H5 plus事件处理
@@ -38,11 +38,14 @@ window.onload = function(){
 		
 		// Android处理返回键
 		plus.key.addEventListener('backbutton',function(){
-			var backConfirm = confirm('确认退出？');
+			var backConfirm = confirm('确认返回到桌面？');
 			if(backConfirm){
 				// 关闭 保持程序唤醒状态
 				plus.device.setWakelock( false );
-				plus.runtime.quit();
+				var exitApp = setTimeout(function(){
+						plus.runtime.quit();
+						clearTimeout(exitApp);
+					},500);
 			}
 		},false);
 		
@@ -65,10 +68,13 @@ window.onload = function(){
 			},
 			error: function(jqXHR, textStatus, errorMsg){ // 出错时默认的处理函数
 				if (jqXHR.status == 500) {
-					 alert('连接异常');
+					 alert('服务器连接异常');
 				}
 				if (jqXHR.status == 404) {
-					alert('网络异常');
+					alert('无法请求数据');
+				}
+				if (jqXHR.status == 400) {
+					alert('请求无效');
 				}
 			}
 		});
@@ -76,7 +82,7 @@ window.onload = function(){
 	}
 	
 	//监听版本更新
-	function listenerUpdate(){
+	function listenerUpdate(url){
 		var updateModalState = localStorage.getItem('updatemodalstate');
 		if(updateModalState === '1'){
 			clearInterval(updatetimer);
@@ -86,7 +92,7 @@ window.onload = function(){
 		plus.runtime.getProperty(plus.runtime.appid, function (inf) {
 			var ver = inf.version;
 			$.ajax({
-				url:"http://116.85.19.102:8080/platform-web/conf/update.json",
+				url:url+"conf/update.json",
 				success:function (data) {
 					if ( compareVersion(ver , data.Android.version) ) {
 						//弹出显示更新页面
@@ -157,23 +163,16 @@ window.onload = function(){
 			localStorage.setItem('imei',imei)
 		}
 	}else{
+		
 		document.addEventListener('plusready',plusReady,false);
 		
 		updatetimer = setInterval(function(){
-			listenerUpdate();
+			listenerUpdate(url);
 		},5*60*1000);
 		
 	}
 	
 	//设置更新弹框
-	
-	/* var head= document.getElementsByTagName('head')[0]; 
-    var script= document.createElement('script'); 
-    script.type= 'text/javascript'; 
-    script.src= './js/update.js?v=6563'; 
-    head.appendChild(script); */
-	
-	
 	var updatebody = document.getElementsByTagName('body')[0]; 
 	var updateNode = document.createElement('div'); 
 	updateNode.setAttribute("id", "updateModalContain");

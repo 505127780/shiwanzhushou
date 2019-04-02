@@ -37,7 +37,14 @@
 		.input-error > span{display:inline !important;color:#f00 !important;font-size:0.28rem !important;}
 		.login-btn{width:100%;height:1.8rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
 		.login-btn > button{width:80%;height:0.8rem;line-height:0.8rem;border:none;outline:none;border-radius:0.15rem;background:#217bd1;font-size:0.3rem;color:#fff;}
-	
+		.login-btn > button:active{
+			background-image: linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -o-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -moz-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -webkit-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -ms-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+		}
+		
 	</style>
 	<body>
 		<div class="login">
@@ -78,8 +85,8 @@
 		<script src="./js/update.js"></script>
 		
 		<script>
+			
 			$(function(){
-				
 				var urlip = localStorage.getItem('urlip')
 				var url = 'http://'+ urlip +':8080/platform-web/'
 				var sendedCode = false;
@@ -93,13 +100,11 @@
 					checkUserVip(url);
 				}  
 				if(window.plus){
-					plusReady();  
+					plusReady();
 				}else{  
 					document.addEventListener("plusready",plusReady,false);  
 				}
-				
-				checkUserVip(url);//注意
-				
+
 				//check phone number
 				checkPhoneNumber();
 				
@@ -269,8 +274,6 @@
 				function checkUserVip(url){
 					
 					imei = localStorage.getItem('imei');
-					// var imei = '123456789123456,123456789123457';
-					/* 6413 - 0265 - 3855 */
 					
 					if(imei){
 						$.ajax({
@@ -281,6 +284,7 @@
 								equipmentNumber:imei
 							},
 							success:function(data){
+								
 								if(data.id != ""){
 									localStorage.setItem('userid',data.id);
 									localStorage.setItem('loginstate',true);
@@ -312,7 +316,6 @@
 						var activationCode = $('#activationCode01').val()+'-'+ $('#activationCode02').val() +'-'+ $('#activationCode03').val();
 						var sendCode = $('#codeNumber').val();
 						var imei = localStorage.getItem('imei');
-						// var imei = '123456789123456,123456789123457';
 						
 						if(pn){
 							if(activationCode.length === 14){

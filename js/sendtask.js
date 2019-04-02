@@ -16,7 +16,6 @@ function setTimeSendTaskStart(){
 			
 			var curlocaltime = Date.parse(new Date());
 			var calcSendLocalTime = curlocaltime-gettasklocalTime;
-			// console.log(calcSendLocalTime);
 			
 			if( calcSendLocalTime === ((4*60*1000)+3000) ){
 				sendTask(url,userid);
@@ -42,7 +41,6 @@ function sendTask(url,userid){
 	var protocolState = localStorage.getItem('protocolstate');
 	var version = localStorage.getItem('versioncode');
 	if(userid){
-		// console.log((typeof privateState),protocolState)
 		if(privateState === 'true' && protocolState === 'true'){
 			$.ajax({
 				type:'POST',
@@ -90,10 +88,7 @@ function sendTask(url,userid){
 							location.href = "./setup.html?tips=1";
 						}
 					}else{
-						setTimeout(function(){
-							//after five minutes send task start
-							setTimeSendTaskStart();
-						},5*60*1000);
+						setTimeout(setTimeSendTaskStart,5*60*1000);
 					}
 				},
 				error:function(err){
@@ -132,27 +127,28 @@ function showNextTask(){
 	
 	var gettasklocalTime = parseInt(localStorage.getItem('gettasklocalTime'));
 	var calcTime = parseInt(localStorage.getItem('getcalctime'));
-
-	var showTaskTimer = setInterval(function(){
-			var curlocaltime = Date.parse(new Date());
-			var calcLocalTime = curlocaltime-gettasklocalTime;
-			
-			if( calcLocalTime === calcTime){
-				var execute = localStorage.getItem('execute');
+	
+	if(typeof calcTime == 'number' && !isNaN(calcTime) ){
+		var showTaskTimer = setInterval(function(){
+				var curlocaltime = Date.parse(new Date());
+				var calcLocalTime = curlocaltime-gettasklocalTime;
 				
-				if(execute === 'true'){
-					setStyle();
+				if( calcLocalTime === calcTime){
+					var execute = localStorage.getItem('execute');
+					if(execute === 'true'){
+						setStyle();
+					}
+					clearInterval(showTaskTimer);
+					localStorage.removeItem('getcalctime');
 				}
-				clearInterval(showTaskTimer);
-				localStorage.removeItem('getcalctime');
-			}
 
-			if( calcLocalTime > calcTime){
-				localStorage.removeItem('getcalctime');
-				clearInterval(showTaskTimer);
-			}
-			
-		},1000);
+				if( calcLocalTime > calcTime){
+					localStorage.removeItem('getcalctime');
+					clearInterval(showTaskTimer);
+				}
+				
+			},1000);
+	}
 }
 
 //set task style
@@ -161,7 +157,7 @@ function setStyle(){
 	var data = JSON.parse(localStorage.getItem('gettaskdata'));
 	var taskType = data.taskType;
 	// var taskType = 1;
-
+	
 	var ringstate = localStorage.getItem('ringstate');
 	if(ringstate === 'true'){
 		setTimeout(function(){
@@ -500,25 +496,45 @@ function insertMap(data){
 	showPosition(posNoticeHtml);
 	$('#divsmall').fadeIn(500);
 	
-	setTimeout(function(){
-		$('#mapContain').animate({right:"0"},900);
-		
-		//set commission
-		if( location.href.indexOf('index.html') >= 0 ){
-			var getCommission = data.commission != '' ? parseFloat(data.commission).toFixed(2) : 0.00;
-			var totalMoney = parseFloat( $('#totalMoney').text() ).toFixed(2);//total money
-			var taskMoney = parseFloat( $('#taskMoney').text() ).toFixed(2);//commission money
-			var usableMoney = parseFloat( $('#usableMoney').text() ).toFixed(2);//usable money 
-		
-			totalMoney = ( parseFloat(getCommission) + parseFloat(totalMoney) ).toFixed(2);
-			taskMoney = ( parseFloat(getCommission) + parseFloat(taskMoney) ).toFixed(2);
-			usableMoney = ( parseFloat(getCommission) + parseFloat(usableMoney) ).toFixed(2);
-			
-			$('#totalMoney').text(totalMoney);
-			$('#taskMoney').text(taskMoney);
-			$('#usableMoney').text(usableMoney);
+	//show map contain and refresh money
+	setTimeout(showMapAndRefreshMoney,1800);
+}
+
+//show map contain and refresh money
+function showMapAndRefreshMoney(){
+	//set commission
+	if( location.href.indexOf('index.html') >= 0 ){
+		var userid = localStorage.getItem('userid');
+		if(userid){
+			$.ajax({
+				type:'POST',
+				url:url+'user/userInfo',
+				dataType:'json',
+				data:{
+					id:userid,
+				},
+				success:function(data){
+					if(data.code === 403){
+						location.href = './login.html';
+					}else if(data.code === 404){
+						alert('设备被锁');
+					}else if(data.code === 5000 ){
+						var userInfo = data.userInfo;
+						$('#totalMoney').text(userInfo.strCommission ? userInfo.strCommission : '0.00');
+						$('#prevMoney > em').text(userInfo.yesterdayIncome ? userInfo.yesterdayIncome : '0.00');
+						$('#taskMoney').text(userInfo.taskCommission ? userInfo.taskCommission : '0.00');
+						$('#recommendMoney').text(userInfo.recommendCommission ? userInfo.recommendCommission : '0.00');
+						$('#putforwardMoney').text(userInfo.withdrawMoney ? userInfo.withdrawMoney : '0.00');
+						$('#usableMoney').text(userInfo.strMoney ? userInfo.strMoney : '0.00');
+					}
+				}
+			});
+		}else{
+			location.href = './login.html';
 		}
-	},1800);
+	}
+	
+	$('#mapContain').animate({right:"0"},900);
 }
 
 //show positon
@@ -532,12 +548,7 @@ function showPosition(posNoticeHtml){
 		$('#musicDiv').remove();
 		closePosTips();
 	},5500);
-	
-	/*
-	//初始化
-	mui.init();
-	*/
-	
+
 	//show map
 	showMap();
 }
@@ -553,22 +564,7 @@ function closePosTips(){
 
 //show map
 function showMap(){
-	
-/* 	//第一步通过mui.plusReady
-	mui.plusReady(function(){
-		plus.geolocation.getCurrentPosition( geoInf, function ( e ) {},{geocode:true,provider:'amap'});
-	})
-	
-	//第二步通过geolnf 方法来获取具体的定位信息
-	function geoInf( position ) {
-		var codns = position.coords;//获取地理坐标信息；
-		var longt = codns.longitude;//获取到当前位置的经度
-		var lat = codns.latitude;//获取到当前位置的纬度；
-		
-		localStorage.setItem('longt',longt)
-		localStorage.setItem('lat',lat)
-	}
-	 */
+
 	//初始化地图
 	var jdXmin = 84.022152;
 	var jdXmax = 120.626226;

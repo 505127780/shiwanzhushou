@@ -20,7 +20,8 @@
  */
 (function(w){
 // var server="http://www.dcloud.io/helloh5/update.json",//获取升级描述文件服务器地址
-var server= "http://116.85.19.102:8080/platform-web/conf/update.json",
+// var server= "http://116.85.19.102:8080/platform-web/conf/update.json",//测试服务器url
+var server= "http://47.107.72.129:8080/platform-web/conf/update.json",//应用服务器url
 localDir="update",localFile="update.json",//本地保存升级描述目录和文件名
 keyUpdate="updateCheck",//取消升级键名
 keyAbort="updateAbort",//忽略版本键名
@@ -140,24 +141,13 @@ function checkUpdateData( j ){
 			$('#updateBtn').click(function(){
 				localStorage.clear();
 				
-				setTimeout(function(){
-					plus.runtime.openURL( inf.url );
-					$('#updateModal').hide();
-				},600);
+				var downLoadUrl = setTimeout(function(){
+						plus.runtime.openURL( inf.url );
+						$('#updateModal').hide();
+						clearTimeout(downLoadUrl);
+					},600);
 			});
 			
-			
-			// 提示用户是否升级
-			/* plus.nativeUI.confirm( inf.note, function(i){
-				if ( 0==i.index ) {
-					plus.runtime.openURL( inf.url );
-				} else if ( 1==i.index ) {
-					plus.storage.setItem( keyAbort, srvVer );
-					plus.storage.setItem( keyUpdate, (new Date()).getTime().toString() );
-				} else {
-					plus.storage.setItem( keyUpdate, (new Date()).getTime().toString() );
-				}
-			}, inf.title, ["立即更新","",""] ); */
 		}
 	}
 }
