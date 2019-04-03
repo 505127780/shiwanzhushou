@@ -96,6 +96,7 @@
 				function plusReady(){
 					imei = plus.device.imei;
 					localStorage.setItem('imei',imei);
+					
 					//check user vip
 					checkUserVip(url);
 				}  
@@ -104,7 +105,7 @@
 				}else{  
 					document.addEventListener("plusready",plusReady,false);  
 				}
-
+				
 				//check phone number
 				checkPhoneNumber();
 				
@@ -284,7 +285,6 @@
 								equipmentNumber:imei
 							},
 							success:function(data){
-								
 								if(data.id != ""){
 									localStorage.setItem('userid',data.id);
 									localStorage.setItem('loginstate',true);

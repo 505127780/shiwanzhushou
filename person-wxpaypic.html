@@ -201,7 +201,6 @@
 
 				var successCallBack = function (result) {
 					var src = result.data.source_url;
-					
 					//upload img src
 					uploadImg(url,userid,src);
 				};
@@ -267,6 +266,7 @@
 							type:1,
 						},
 						success:function (data) {
+							alert(data.code)
 							if(data.code === 403){
 								location.href = './login.html'
 							}else if(data.code === 404){

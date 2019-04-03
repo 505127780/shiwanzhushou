@@ -20,8 +20,8 @@
  */
 (function(w){
 // var server="http://www.dcloud.io/helloh5/update.json",//获取升级描述文件服务器地址
-// var server= "http://116.85.19.102:8080/platform-web/conf/update.json",//测试服务器url
-var server= "http://47.107.72.129:8080/platform-web/conf/update.json",//应用服务器url
+// var server= "http://116.85.19.102:8080/platform-web/conf/update.json",//应用服务器url
+var server= "http://47.107.72.129:8080/platform-web/conf/update.json",//测试服务器url
 localDir="update",localFile="update.json",//本地保存升级描述目录和文件名
 keyUpdate="updateCheck",//取消升级键名
 keyAbort="updateAbort",//忽略版本键名
@@ -175,7 +175,7 @@ function getUpdateData(){
                 		console.log( "获取升级数据，打开保存文件失败："+e.message );
                 	});
                 } else {
-                	console.log( "获取升级数据，联网请求失败："+xhr.status );
+                	alert( "获取升级数据，联网请求失败："+xhr.status );
                 }
                 break;
             default :

@@ -187,18 +187,19 @@
 		
 		<script>
 			
-			var taskstate = localStorage.getItem('taskstate');
-			if(taskstate === "true"){
-				//after five minutes send task start
-				setTimeSendTaskStart();
-			}
-			
 			$(function(){
+				
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
+				}
 				
 				var urlip = localStorage.getItem('urlip');
 				var url = 'http://'+ urlip +':8080/platform-web/';
 				var userid = localStorage.getItem('userid');
 				var paystyle = localStorage.getItem('paystyle');
+				var enablemoney = localStorage.getItem('enablemoney');
 				
 				switch(paystyle){
 					case 'alipay':$('#selectStyle').text('当前选择 支付宝收款');break;
@@ -209,9 +210,11 @@
 					case 'gs':$('#selectStyle').text('当前选择 工商银行收款');break;
 				}
 				
-				var enablemoney = localStorage.getItem('enablemoney');
-				
+				//check input money
 				checkInputMoney();
+				
+				//check putforward money and pwd style
+				checkPutforwardMoney(url,userid);
 				
 				function checkInputMoney(){
 					var enableMoney = localStorage.getItem('enablemoney');
@@ -219,12 +222,28 @@
 					$('#inputMoney').on('keyup',function(){
 						var curVal = $(this).val();
 						if(curVal){
-							if( parseFloat(enableMoney) >= parseFloat(curVal) ){
-								$('.input-notice').removeClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)')
-								$('#putforwardMoneyBtn').addClass('enableBtn').attr('disabled',false);
-								$('#putforwardMoneyBtn').text('确认提现');
+							if(parseFloat(curVal) > 100 || parseFloat(curVal) == 100 ){
+								if( parseInt(curVal)%100 == 0 && parseFloat(enableMoney) >= parseFloat(curVal) ){
+									$('.input-notice').removeClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)');
+									$('#putforwardMoneyBtn').addClass('enableBtn');
+									$('#putforwardMoneyBtn').attr('disabled',false);
+									$('#putforwardMoneyBtn').text('确认提现');
+								}else if(parseInt(curVal)%100 == 0 && parseFloat(curVal) > parseFloat(enableMoney) ){
+									$('.input-notice').addClass('error-notice').children('span').text('超过可提现金额');
+									$('#putforwardMoneyBtn').removeClass('enableBtn');
+									$('#putforwardMoneyBtn').attr('disabled',true);
+									$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+								}else{
+									$('.input-notice').addClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)');
+									$('#putforwardMoneyBtn').removeClass('enableBtn');
+									$('#putforwardMoneyBtn').attr('disabled',true);
+									$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+								}
 							}else{
-								$('.input-notice').addClass('error-notice').children('span').text('输入金额超过可提现金额');
+								$('.input-notice').removeClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)');
+								$('#putforwardMoneyBtn').removeClass('enableBtn');
+								$('#putforwardMoneyBtn').attr('disabled',true);
+								$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
 							}
 						}else{
 							$('#putforwardMoneyBtn').removeClass('enableBtn').attr('disabled',true);
@@ -233,9 +252,6 @@
 					});
 				}
 				
-				//check putforward money and pwd style
-				checkPutforwardMoney(url,userid)
-				
 				//close pwd modal
 				$('#closeModal').click(function(){
 					$('#pwdModal').hide();
@@ -243,7 +259,7 @@
 					$('#pwdCode').children('input').each(function(){
 						$(this).val('');
 					})
-				})
+				});
 				
 				//check putforward money and pwd ,style
 				function checkPutforwardMoney(url,userid){
@@ -254,9 +270,8 @@
 						var bankId = localStorage.getItem('bankid');;
 						
 						if(transferStyle){
-							if(parseInt(inputMoney) >= 100 && parseInt(inputMoney)%100 === 0){
+							if(parseInt(inputMoney) >= 100 && parseInt(inputMoney)%100 == 0){
 								$('.input-notice').removeClass('error-notice').children('span').text('最低提现金额为 100元(金额为100的整数倍)')
-								userid = true;
 								if(userid){
 									$('#pwdModal').show();
 									$('#putforwardMoney').text(inputMoney);
@@ -303,11 +318,15 @@
 							intpwd += this.value
 							if(next > txts.length - 1){
 								
-								putforwardMoneySubmit(url,userid,intpwd,inputMoney,styleNumber,bankId);
+								if(intpwd.length === 6){
+									putforwardMoneySubmit(url,userid,intpwd,inputMoney,styleNumber,bankId);
+									$('#putforwardMoneyBtn').removeClass('enableBtn').attr('disabled',true);
+									$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+								}
 								
 								$('#pwdModal').hide();
 								$('#pwdCode').children('input').each(function(){
-									$(this).val('')
+									$(this).val('');
 								});
 								$('#inputMoney').val('');
 							};
@@ -315,7 +334,7 @@
 							if (this.value) {
 								txts[next].focus();
 							}
-					  }
+						}
 					}
 					txts[0].removeAttribute("readonly");
 				}
@@ -335,12 +354,9 @@
 						},
 						success:function(data){
 							if(data.code === 403){
-								var confirmRes = confirm('请重新登录');
-								if(confirmRes){
-									location.href = './login.html'
-								}
+								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁')
+								alert('设备被锁');
 							}else if(data.code === 5000 ){
 								alert('提现成功');
 								location.href = "./putforward-record.html";
