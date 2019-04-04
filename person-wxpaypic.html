@@ -54,7 +54,7 @@
 	<body>
 		<div class="person-wxpay">
 			<div class="head">
-				<div class="head-back" onClick='location.href="./person-infor.html"'>
+				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./person-infor.html";'>
 					<i class="back"></i>
 					<span>返回</span>
 				</div>
@@ -137,9 +137,8 @@
 			}
 			
 			$(function(){
-				
-				var urlip = localStorage.getItem('urlip');
-				var url = 'http://'+ urlip +':8080/platform-web/';
+				//set hide animation
+				localStorage.setItem('showmodal',false);
 				
 				var userid = localStorage.getItem('userid');
 				
@@ -152,6 +151,33 @@
 				var wxpayimg = localStorage.getItem('wxpayimg');
 				if(wxpayimg && wxpayimg.indexOf('cossh.myqcloud') > 0){
 					$('#showImg').attr('src',wxpayimg)
+				}
+				
+				//upload img src
+				function uploadImg(url,userid,src){
+					$.ajax({
+						url:url+"user/uploadCharge",
+						type:"post",
+						dataType:"json",
+						data:{
+							id:userid,
+							fName:src,
+							type:1,
+						},
+						success:function (data) {
+							if(data.code === 403){
+								location.href = './login.html';
+							}else if(data.code === 404){
+								alert('设备被锁');
+							}else if(data.code === 5000 ){
+								localStorage.setItem('showmodal',true);
+								alert('保存成功');
+								location.href = './person-infor.html';
+							}else{
+								alert('上传失败');
+							}
+						}
+					});
 				}
 				
 				var bucket = 'try-project';
@@ -254,35 +280,6 @@
 					return YY+MM+dd+hh+mm+ss;
 				}
 				
-				//upload img src
-				function uploadImg(url,userid,src){
-					$.ajax({
-						url:url+"user/uploadCharge",
-						type:"post",
-						dataType:"json",
-						data:{
-							id:userid,
-							fName:src,
-							type:1,
-						},
-						success:function (data) {
-							alert(data.code)
-							if(data.code === 403){
-								location.href = './login.html'
-							}else if(data.code === 404){
-								alert('设备被锁');
-							}else if(data.code === 5000 ){
-								alert('保存成功');
-								location.href = './person-infor.html';
-							}else{
-								alert('上传失败');
-							}
-						}
-					});
-				}
-			
-			
-			
 			});
 		</script>
 	</body>

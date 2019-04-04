@@ -337,9 +337,8 @@
 													localStorage.setItem('userid',data.userInfo.id);
 													localStorage.setItem('privatestate',false);
 													localStorage.setItem('protocolstate',false);
-													
-													//set received task ring
-													localStorage.setItem('ringstate',true);
+													localStorage.setItem('showmodal',true);//set show animation
+													localStorage.setItem('ringstate',true);//set received task ring
 													
 													location.href = './index.html';
 												}else if(data.code === 404){
@@ -357,9 +356,8 @@
 													localStorage.setItem('userid',data.userInfo.id);
 													localStorage.setItem('privatestate',false);
 													localStorage.setItem('protocolstate',false);
-													
-													//set received task ring
-													localStorage.setItem('ringstate',true);
+													localStorage.setItem('showmodal',true);//set show animation
+													localStorage.setItem('ringstate',true);//set received task ring
 													
 													$('#errorMsg').show().children('span').text('注册成功');
 													location.href = './index.html';

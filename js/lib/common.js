@@ -5,7 +5,7 @@ window.onload = function(){
 	var urlip = '47.107.72.129';//test server ip
 	// var urlip = '192.168.101.9';//test request location server ip
 	localStorage.setItem('urlip',urlip);
-	var url = 'http://'+ urlip +':8080/platform-web/'
+	var url = 'http://'+ urlip +':8080/platform-web/';
 	var updatetimer = null;
 	
 	// H5 plus事件处理
@@ -43,6 +43,7 @@ window.onload = function(){
 			if(backConfirm){
 				// 关闭 保持程序唤醒状态
 				plus.device.setWakelock( false );
+				localStorage.setItem('taskstate',false);
 				var exitApp = setTimeout(function(){
 						plus.runtime.quit();
 						clearTimeout(exitApp);

@@ -293,11 +293,17 @@
 								var userInfo = data.userInfo;
 								localStorage.setItem('phone',userInfo.phone);
 								localStorage.setItem('invitecode',userInfo.code);
+								//总金额
 								$('#totalMoney').text(userInfo.strCommission ? userInfo.strCommission : '0.00');
+								//昨日收益
 								$('#prevMoney > em').text(userInfo.yesterdayIncome ? userInfo.yesterdayIncome : '0.00');
+								//任务佣金
 								$('#taskMoney').text(userInfo.taskCommission ? userInfo.taskCommission : '0.00');
+								//推荐佣金
 								$('#recommendMoney').text(userInfo.recommendCommission ? userInfo.recommendCommission : '0.00');
+								//已提现佣金
 								$('#putforwardMoney').text(userInfo.withdrawMoney ? userInfo.withdrawMoney : '0.00');
+								//可用余额
 								$('#usableMoney').text(userInfo.strMoney ? userInfo.strMoney : '0.00');
 							}
 						}

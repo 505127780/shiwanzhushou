@@ -154,7 +154,8 @@ function showNextTask(){
 //set task style
 function setStyle(){
 	
-	var data = JSON.parse(localStorage.getItem('gettaskdata'));
+	var data = localStorage.getItem('gettaskdata');
+		data = JSON.parse(data);
 	var taskType = data.taskType;
 	// var taskType = 1;
 	
@@ -167,23 +168,26 @@ function setStyle(){
 		$('#musicDiv').remove();
 	}
 	
-	if(taskType === 1){
-		//register task
-		registerTask(data);
-		//create advertisement 
-		createAdertisementHtml();
-	}else if(taskType === 2){
-		//download task
-		downloadTask(data);
-		//create advertisement 
-		createAdertisementHtml();
-	}else if(taskType === 3){
-		//advertisement task
-		advertisementTask(data);
-		//create advertisement 
-		createAdertisementHtml();
+	//set modal and animation hide or show
+	var showModal = localStorage.getItem('showmodal');
+	if(showModal === 'true'){
+		if(taskType === 1){
+			//register task
+			registerTask(data);
+			//create advertisement 
+			createAdertisementHtml();
+		}else if(taskType === 2){
+			//download task
+			downloadTask(data);
+			//create advertisement 
+			createAdertisementHtml();
+		}else if(taskType === 3){
+			//advertisement task
+			advertisementTask(data);
+			//create advertisement 
+			createAdertisementHtml();
+		}
 	}
-
 }
 
 //register task 1

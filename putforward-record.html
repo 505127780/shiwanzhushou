@@ -140,9 +140,7 @@
 					//after five minutes send task start
 					setTimeSendTaskStart();
 				}
-			
-				var urlip = localStorage.getItem('urlip');
-				var url = 'http://'+ urlip +':8080/platform-web/';
+				
 				var pageIndex = 1;
 				var pageTotal = null;
 				var isOver = false;
@@ -269,30 +267,30 @@
 							data:{
 								id:userid,
 								pageNum:pageIndex, 
-								pageDataCount:10
+								pageDataCount:20
 							},
 							success:function(data){
 								if(data.code === 403){
-									location.href = './login.html'
+									location.href = './login.html';
 								}else if(data.code === 404){
-									alert('设备被锁')
+									alert('设备被锁');
 								}else if(data.code === 5000 ){
 									pageTotal = data.pages;
-									if(data.pageList && data.pageList.length !== 0){
+									if(data.pageList.length != 0){
 										var putforwadRecordListHtml = '';
 										for(var i=0;i<data.pageList.length;i++){
 											if(data.pageList[i].status === 1){
-												putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核中')
+												putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核中');
 											}else if(data.pageList[i].status === 2){
 												if(data.pageList[i].assetStatus === 1){
-													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'资金处理中')
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核通过');
 												}else if(data.pageList[i].assetStatus === 2){
-													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'资金已到账')
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核通过');
 												}else if(data.pageList[i].assetStatus === 3){
-													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'资金处理失败')
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核通过');
 												}
 											}else if(data.pageList[i].status === 3){
-												putforwadRecordListHtml += showPutforwardAbnormal(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核失败',descript)
+												putforwadRecordListHtml += showPutforwardAbnormal(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核失败',descript);
 											}
 										}
 										$('#putforwardRecordList').append(putforwadRecordListHtml);

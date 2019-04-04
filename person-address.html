@@ -45,7 +45,7 @@
 	<body>
 		<div class="person-address">
 			<div class="head">
-				<div class="head-back" onClick='javascript:history.go(-1);'>
+				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./person-infor.html";'>
 					<i class="back"></i>
 					<span>返回</span>
 				</div>
@@ -147,6 +147,9 @@
 			
 			$(function(){
 				
+				//set hide animation
+				localStorage.setItem('showmodal',false);
+				
 				$('#changeAddressBtn').click(function(){
 					var userArea = $('#expressArea').val();
 					var detailArea = $('#detailArea').val();
@@ -168,17 +171,16 @@
 										type:3
 									},
 									success:function(data){
-										console.log(data);
 										if(data.code === 403){
 											location.href = './login.html'
 										}else if(data.code === 404){
 											alert('设备被锁');
 										}else if(data.code === 5000 ){
 											alert('修改成功');
-											location.href = './login.html';
+											location.href = './person-infor.html';
 										}
 									},
-								})
+								});
 							}else{
 								location.href = './login.html';
 							}
@@ -189,8 +191,7 @@
 						$('#errorMsg').addClass('error-notice').children('span').text('请选择所在区域');
 					}
 					
-					
-				})
+				});
 				
 			})
 		</script>

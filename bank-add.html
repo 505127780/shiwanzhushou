@@ -50,7 +50,7 @@
 	<body>
 		<div class="addbank">
 			<div class="head">
-				<div class="head-back" onClick='location.href="./bank.html"'>
+				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./bank.html"'>
 					<i class="back"></i>
 					<span>取消</span>
 				</div>
@@ -166,8 +166,9 @@
 				setTimeSendTaskStart();
 			}
 		
-			var urlip = localStorage.getItem('urlip')
-			var url = 'http://'+ urlip +':8080/platform-web/'
+			//set hide animation
+			localStorage.setItem('showmodal',false);
+			
 			var userid = localStorage.getItem('userid');
 			
 			var bankstyle = localStorage.getItem('bankstyle');
@@ -219,8 +220,8 @@
 														}else if(data.code === 404){
 															alert('设备被锁');
 														}else if(data.code === 5000 ){
-															$('#addbankInfor').children('input').val('')
-															
+															$('#addbankInfor').children('input').val('');
+															localStorage.setItem("showmodal",true);
 															alert('添加成功');
 															location.href = './bank.html';
 															

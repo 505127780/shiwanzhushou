@@ -43,7 +43,7 @@
 	<body>
 		<div class="person-phone">
 			<div class="head">
-				<div class="head-back" onClick='javascript:history.go(-1);'>
+				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./person-infor.html";'>
 					<i class="back"></i>
 					<span>返回</span>
 				</div>
@@ -106,8 +106,8 @@
 			
 			$(function(){
 				
-				var urlip = localStorage.getItem('urlip');
-				var url = 'http://'+ urlip +':8080/platform-web/';
+				//set hide animation
+				localStorage.setItem('showmodal',false);
 				
 				//check phone number
 				checkPhoneNumber();
@@ -140,7 +140,6 @@
 							$(this).val(endVal);
 							$('#sendCode').attr('disabled',true);
 							return false;
-							
 						}else{
 							$('#errorMsg').hide().children('span').text('');
 							$('#sendCode').attr('disabled',true);
@@ -219,7 +218,6 @@
 									phone:pn  //手机号码
 								},
 								success:function(data){
-									//console.log(data);
 									if(data.code === "5000"){
 										sendedCode = true;
 										var timer = 60;
@@ -275,6 +273,7 @@
 											}else if(data.code === 404){
 												alert('设备被锁');
 											}else if(data.code === 5000 ){
+												localStorage.setItem('showmodal',true);
 												alert('修改成功');
 												location.href = './person-infor.html';
 											}else if(data.code === 5001 ){
@@ -294,7 +293,6 @@
 							$('#errorMsg').show().children('span').text('手机号码不能为空');
 						}
 					});
-					
 					
 				}
 			});

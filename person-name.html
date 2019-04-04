@@ -39,7 +39,7 @@
 	<body>
 		<div class="person-name">
 			<div class="head">
-				<div class="head-back" onClick='javascript:history.go(-1);'>
+				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./person-infor.html";'>
 					<i class="back"></i>
 					<span>返回</span>
 				</div>
@@ -98,6 +98,9 @@
 				var urlip = localStorage.getItem('urlip');
 				var url = 'http://'+ urlip +':8080/platform-web/';
 				
+				//set hide animation
+				localStorage.setItem('showmodal',false);
+				
 				//checkName and modify
 				checkName(url);
 				
@@ -122,12 +125,12 @@
 										type:1
 									},
 									success:function(data){
-										console.log(data);
 										if(data.code === 403){
-											location.href = './login.html'
+											location.href = './login.html';
 										}else if(data.code === 404){
 											alert('设备被锁');
 										}else if(data.code === 5000 ){
+											localStorage.setItem('showmodal',true);
 											alert('修改成功');
 											location.href = './person-infor.html';
 										}

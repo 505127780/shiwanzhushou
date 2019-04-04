@@ -78,7 +78,7 @@
 	<body>
 		<div class="balance">
 			<div class="head">
-				<div class="head-back" onClick='location.href="./balance.html"'>
+				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./balance.html"'>
 					<i class="back"></i>
 					<span>返回</span>
 				</div>
@@ -195,11 +195,12 @@
 					setTimeSendTaskStart();
 				}
 				
-				var urlip = localStorage.getItem('urlip');
-				var url = 'http://'+ urlip +':8080/platform-web/';
 				var userid = localStorage.getItem('userid');
 				var paystyle = localStorage.getItem('paystyle');
 				var enablemoney = localStorage.getItem('enablemoney');
+				
+				//set hide animation
+				localStorage.setItem('showmodal',false);
 				
 				switch(paystyle){
 					case 'alipay':$('#selectStyle').text('当前选择 支付宝收款');break;
@@ -358,6 +359,8 @@
 							}else if(data.code === 404){
 								alert('设备被锁');
 							}else if(data.code === 5000 ){
+								//set show animation
+								localStorage.setItem('showmodal',true);
 								alert('提现成功');
 								location.href = "./putforward-record.html";
 							}else if(data.code === 5001){
