@@ -87,8 +87,9 @@
 		<script>
 			
 			$(function(){
-				var urlip = localStorage.getItem('urlip')
-				var url = 'http://'+ urlip +':8080/platform-web/'
+				
+				var urlip = localStorage.getItem('urlip');
+				var url = 'http://'+ urlip +':8080/platform-web/';
 				var sendedCode = false;
 				var imei = '';
 
@@ -110,9 +111,9 @@
 				checkPhoneNumber();
 				
 				//check activationCode
-				checkActivationCode('#activationCode01',1)
-				checkActivationCode('#activationCode02',2)
-				checkActivationCode('#activationCode03',3)
+				checkActivationCode('#activationCode01',1);
+				checkActivationCode('#activationCode02',2);
+				checkActivationCode('#activationCode03',3);
 				
 				//check sendCode
 				checkSendCode();
@@ -227,48 +228,53 @@
 			
 				//send message code number
 				function sendMessageCode(url){
+					var codeClick = 1;
 					//check phone number
 					checkPhoneNumber();
 					
 					$('#sendCode').click(function(){
-						var pn = $('#phone').val();
-						if(pn){
-							//get check code
-							$.ajax({
-								type:'POST',
-								url:url+'message/sendcode',
-								dataType:'json',
-								data:{
-									phone:pn  //手机号码
-								},
-								success:function(data){
-									//console.log(data);
-									if(data.code === "5000"){
-										sendedCode = true;
-										var timer = 60;
-										function timeCountDown(){
-											if(timer == 0){
-												$('#sendCode').text("发送验证码");
-												$('#sendCode').attr('disabled',false);
-												clearInterval(countTime);
-											}else{
-												$('#sendCode').text( timer + "s后发送" );
-												$('#sendCode').attr('disabled',true);
-												timer--;
+						if(codeClick === 1){
+							var pn = $('#phone').val();
+							if(pn){
+								//get check code
+								$.ajax({
+									type:'POST',
+									url:url+'message/sendcode',
+									dataType:'json',
+									data:{
+										phone:pn  //手机号码
+									},
+									success:function(data){
+										//console.log(data);
+										if(data.code === "5000"){
+											sendedCode = true;
+											var timer = 60;
+											function timeCountDown(){
+												if(timer == 0){
+													codeClick = 1;
+													$('#sendCode').text("发送验证码");
+													$('#sendCode').attr('disabled',false);
+													clearInterval(countTime);
+												}else{
+													$('#sendCode').text( timer + "s后发送" );
+													$('#sendCode').attr('disabled',true);
+													timer--;
+												}
 											}
+											timeCountDown();
+											var countTime = setInterval(timeCountDown,1000);
+										}else{
+											$('#errorMsg').show().children('span').text('获取验证码失败');
 										}
-										timeCountDown();
-										var countTime = setInterval(timeCountDown,1000);
-									}else{
-										$('#errorMsg').show().children('span').text('获取验证码失败');
 									}
-								}
-							});
-						}else{
-							$('#errorMsg').show().children('span').text('请输入正确的手机号码');
-							$('#sendCode').attr('disabled',true);
+								});
+							}else{
+								$('#errorMsg').show().children('span').text('请输入正确的手机号码');
+								$('#sendCode').attr('disabled',true);
+							}
 						}
-					})
+						codeClick++;
+					});
 				}
 				
 				//check user vip
@@ -285,7 +291,7 @@
 								equipmentNumber:imei
 							},
 							success:function(data){
-								if(data.id != ""){
+								if(data.id != ""){//处于登录状态会有 id
 									localStorage.setItem('userid',data.id);
 									localStorage.setItem('loginstate',true);
 									localStorage.setItem('privatestate',false);
@@ -381,7 +387,6 @@
 						
 					})
 				}
-			
 			
 			})
 		</script>

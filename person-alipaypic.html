@@ -104,39 +104,22 @@
 		</div>
 		
 		<div id="taskdiv"></div>
-		
-		<!-- putforward modal -->
-		<div class="infor-modal" id="inforModal">
-			<div class="infor-inner">
-				<div class="infor-contain">
-					<div class="informodal-title">
-						<div class="modal-title">
-							<span>试玩助手</span>
-						</div>
-					</div>
-					<div class="inforModal-content">
-						<span id="inforContextTitle"></span>
-						<span id="inforContext"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		
+
 		<script src="./js/sendtask.js"></script>
 		<script src="./js/update.js"></script>
-		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/map/maps-1.4.14.js"></script>
 		
 		<script type="text/javascript" src="./js/lib/upload/crypto.js"></script>
 		<script type="text/javascript" src="./js/lib/upload/cos-js-sdk-v4.js"></script>
 		
 		<script>
-			var taskstate = localStorage.getItem('taskstate');
-			if(taskstate === "true"){
-				//after five minutes send task start
-				setTimeSendTaskStart();
-			}
 			
 			$(function(){
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
+				}
 				
 				//set hide animation
 				localStorage.setItem('showmodal',false);
@@ -151,7 +134,7 @@
 				
 				var alipayimg = localStorage.getItem('alipayimg');
 				if(alipayimg && alipayimg.indexOf('cossh.myqcloud') > 0){
-					$('#showImg').attr('src',alipayimg)
+					$('#showImg').attr('src',alipayimg);
 				}
 				
 				//upload img src
@@ -167,7 +150,7 @@
 						},
 						success:function (data) {
 							if(data.code === 403){
-								location.href = './login.html'
+								location.href = './login.html';
 							}else if(data.code === 404){
 								alert('设备被锁');
 							}else if(data.code === 5000 ){

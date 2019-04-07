@@ -98,7 +98,6 @@ function checkUpdate() {
  * 检查升级数据
  */
 function checkUpdateData( j ){
-	
 	var updateModalState = localStorage.getItem('updatemodalstate');
 	if(updateModalState === '2'){
 		return;
@@ -139,7 +138,11 @@ function checkUpdateData( j ){
 			localStorage.setItem('execute',false);//set continue execute next task ,show task alert
 			
 			$('#updateBtn').click(function(){
-				localStorage.clear();
+				//点击更新按钮，设置重新启动任务
+				localStorage.setItem('taskstate',false);
+				localStorage.setItem('privatestate',false);
+				localStorage.setItem('protocolstate',false);
+				localStorage.setItem('ringstate',true);//set received task ring
 				
 				var downLoadUrl = setTimeout(function(){
 						plus.runtime.openURL( inf.url );
@@ -201,9 +204,9 @@ function compareVersion( ov, nv ){
 	nva = nv.split(".",4);
 	for ( var i=0; i<ova.length&&i<nva.length; i++ ) {
 		var so=ova[i],no=parseInt(so),sn=nva[i],nn=parseInt(sn);
-		if ( nn>no || sn.length>so.length  ) {
+		if( nn>no || sn.length>so.length  ){
 			return true;
-		} else if ( nn<no ) {
+		}else if( nn<no ){
 			return false;
 		}
 	}

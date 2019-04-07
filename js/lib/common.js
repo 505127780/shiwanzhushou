@@ -32,9 +32,15 @@ window.onload = function(){
 		}
 		//检查网络状态
 		if(plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE){
+			//set network state
+			localStorage.setItem('networkstate',false);
+			
 			alert('网络不能使用，请确认网络连接');
 			//set continue execute next task ,show task alert
 			localStorage.setItem('execute',false);
+		}else{
+			//set network state
+			localStorage.setItem('networkstate',true);
 		}
 		
 		// Android处理返回键
@@ -43,7 +49,7 @@ window.onload = function(){
 			if(backConfirm){
 				// 关闭 保持程序唤醒状态
 				plus.device.setWakelock( false );
-				localStorage.setItem('taskstate',false);
+				//localStorage.setItem('taskstate',false); //退出桌面任务终止
 				var exitApp = setTimeout(function(){
 						plus.runtime.quit();
 						clearTimeout(exitApp);
@@ -119,7 +125,11 @@ window.onload = function(){
 						localStorage.setItem('execute',false);//set continue execute next task ,show task alert
 						
 						$('#updateBtn').click(function(){
-							localStorage.clear();
+							//点击更新按钮，设置重新启动任务
+							localStorage.setItem('taskstate',false);
+							localStorage.setItem('privatestate',false);
+							localStorage.setItem('protocolstate',false);
+							localStorage.setItem('ringstate',true);//set received task ring
 							
 							setTimeout(function(){
 								plus.runtime.openURL( data.Android.url );

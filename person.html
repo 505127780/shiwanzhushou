@@ -183,40 +183,19 @@
 		</div>
 		
 		<div id="taskdiv"></div>
-		
-		<!-- putforward modal -->
-		<div class="infor-modal" id="inforModal">
-			<div class="infor-inner">
-				<div class="infor-contain">
-					<div class="informodal-title">
-						<div class="modal-title">
-							<span>试玩助手</span>
-						</div>
-					</div>
-					<div class="inforModal-content">
-						<span id="inforContextTitle"></span>
-						<span id="inforContext"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		
+
 		<script src="./js/sendtask.js"></script>
 		<script src="./js/update.js"></script>
-		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/map/maps-1.4.14.js"></script>
 		
 		<script>
 		
-			var taskstate = localStorage.getItem('taskstate');
-			if(taskstate === "true"){
-				//after five minutes send task start
-				setTimeSendTaskStart();
-			}
-			
 			$(function(){
-				
-				var urlip = localStorage.getItem('urlip')
-				var url = 'http://'+ urlip +':8080/platform-web/';
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
+				}
 				
 				var userphone = localStorage.getItem('phone');
 				$('#userPhone').text(userphone);
@@ -232,11 +211,9 @@
 						success:function(data){
 							if(data.code === 5000){
 								localStorage.clear();
-								window.location.href = './login.html'
-							}else if(data.code === 5001){
-								alert('已退出,无需在退出');
+								location.href = './login.html';
 							}else{
-								alert('退出失败');
+								location.href = './login.html';
 							}
 						}
 					});
@@ -268,8 +245,9 @@
 						$(this).css('border-color','#0c5dac');
 						$(this).children('div').attr("data-ringstate","on").animate({left:'0.72rem'});
 						$('.ringoff').text('');
-						setTimeout(function(){
+						var openRingTimer = setTimeout(function(){
 							$('.ringon').text('打开');
+							clearTimeout(openRingTimer);
 						},300);
 					}
 					if( ballState === 'on' ){
@@ -277,31 +255,13 @@
 						$(this).css('background','#efefef');
 						$(this).css('border-color','#ccc');
 						$(this).children('div').attr("data-ringstate","off").animate({left:'0'});
-						setTimeout(function(){
+						var closeRingTimer = setTimeout(function(){
 							$('.ringoff').text('关闭');
+							clearTimeout(closeRingTimer);
 						},300);
 						$('.ringon').text('');
 					}
 				});
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
 				
 			});
 			

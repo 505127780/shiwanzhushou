@@ -73,28 +73,9 @@
 		
 		<div id="taskdiv"></div>
 		
-		<!-- putforward modal -->
-		<div class="infor-modal" id="inforModal">
-			<div class="infor-inner">
-				<div class="infor-contain">
-					<div class="informodal-title">
-						<div class="modal-title">
-							<span>试玩助手</span>
-						</div>
-					</div>
-					<div class="inforModal-content">
-						<span id="inforContextTitle"></span>
-						<span id="inforContext"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		
-		
 		<script src="./js/sendtask.js"></script>
 		<script src="./js/update.js"></script>
-		<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+		<script src="./js/lib/map/maps-1.4.14.js"></script>
 		
 		<script>
 			
@@ -106,16 +87,14 @@
 			
 			$(function(){
 				
-				var urlip = localStorage.getItem('urlip');
-				var url = 'http://'+ urlip +':8080/platform-web/';
 				var userid = localStorage.getItem('userid');
 				var enableMoney = null;
 				
 				//show index info
-				showIndexInfo(url,userid)
+				showIndexInfo(url,userid);
 				
 				// check putforward style
-				checkPutforwardStyle(url,userid)
+				checkPutforwardStyle(url,userid);
 				
 				//show index info
 				function showIndexInfo(url,userid){
@@ -141,7 +120,7 @@
 						})
 					}else{
 						setTimeout(function(){
-							location.href = './login.html'
+							location.href = './login.html';
 						},1500);
 					}
 				}
@@ -160,9 +139,9 @@
 							},
 							success:function(data){
 								if(data.code === 403){
-									location.href = './login.html'
+									location.href = './login.html';
 								}else if(data.code === 404){
-									alert('设备被锁')
+									alert('设备被锁');
 								}else if(data.code === 5000 ){
 									if(data.userInfo.weChatCharge === "" && data.userInfo.alipayCharge === "" ){
 										payImg = 0;
@@ -195,9 +174,9 @@
 							},
 							success:function(data){
 								if(data.code === 403){
-									location.href = './login.html'
+									location.href = './login.html';
 								}else if(data.code === 404){
-									alert('设备被锁')
+									alert('设备被锁');
 								}else if(data.code === 5000 ){
 									if(data.pageList.length !== 0){
 										payCard = 1;
@@ -208,23 +187,25 @@
 							}
 						});
 						
-						setTimeout(function(){
+						var bindPayStyle =  setTimeout(function(){
 							if(payImg === 1 || payCard === 1){
 								localStorage.setItem('enablemoney',enableMoney);
+								clearTimeout(bindPayStyle);
 								location.href = "./putforward.html";
 							}else{
 								// alert('请添加收款类型');
 								var confirmRes = confirm('请添加收款类型','确定');
 								if(confirmRes){
+									clearTimeout(bindPayStyle);
 									location.href = './person-infor.html';
 								}
 							}
 						},800);
 					});
 				}
+				
+				
 			});
-			
-			
 		</script>
 	</body>
 </html>

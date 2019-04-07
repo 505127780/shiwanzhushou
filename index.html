@@ -184,58 +184,22 @@
 		</div>
 	</div>
 
-	<!-- private and protocol select state -->
-	<div class="state-modal" id="stateLayer">
-		<div class="statemodal-contain">
-			<div class="statemodal-content">
-				<div class="statemodal-icon">
-					<i class="" id="stateicon"></i>
-				</div>
-				<div class="statemodal-text" >
-					<span id="stateContext">数据加载中…</span>
-				</div>
-			</div>
-		</div>
-	</div>
-	
 	<div id="taskdiv"></div>
-		
-	<!-- putforward modal -->
-	<div class="infor-modal" id="inforModal">
-		<div class="infor-inner">
-			<div class="infor-contain">
-				<div class="informodal-title">
-					<div class="modal-title">
-						<span>试玩助手</span>
-					</div>
-				</div>
-				<div class="inforModal-content">
-					<span id="inforContextTitle"></span>
-					<span id="inforContext"></span>
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<script src="./js/sendtask.js"></script>
 	<script src="./js/update.js"></script>
-	<script type="text/javascript" src="./js/lib/map/maps.js"></script>
+	<script src="./js/lib/map/maps-1.4.14.js"></script>
 	
 	<script>
-		
 		$(function(){
 			
-			var urlip = localStorage.getItem('urlip')
-			var url = 'http://'+ urlip +':8080/platform-web/';
 			var userid = localStorage.getItem('userid');
 			var isLogin = localStorage.getItem('loginstate');
 			var rollTimer = null;
 			var curdeg = null;
-			var isclick = false;		
 			
 			var taskstate = localStorage.getItem('taskstate');
 			if(taskstate === 'true'){
-				
 				//after five minutes send task start
 				setTimeSendTaskStart();
 				
@@ -355,11 +319,12 @@
 						scroll_div.scrollLeft++;
 					}
 				}
-				setInterval(Marquee,speed);
+				var adMarquee = setInterval(Marquee,speed);
 			}
 			
 			//start task btn
 			function startTaskBtn(url,userid){
+				var isclick = false;
 				isclick = !isclick;
 				$('#enginBtn').click(function(){
 					if($(this).children('img').attr('src') === './img/icons/start.png' && isclick === true){
@@ -372,21 +337,27 @@
 							//set private and protocol
 							localStorage.setItem('ppkey',false);
 							
-							//send task
-							sendTask(url,userid);
-							
-							//set continue execute next task ,show task alert
-							localStorage.setItem('execute',true);
-							
-							//start roll rotate
-							startRoll();
-							
-							curdeg = 0.1;
-							localStorage.setItem('taskstate',true);
-							
-							setTimeout(function(){
-								location.href = "./tasking.html";
-							},500);
+							var netWorkState = localStorage.getItem('networkstate');
+							if(netWorkState === 'true'){
+								//send task
+								sendTask(url,userid);
+								
+								//set continue execute next task ,show task alert
+								localStorage.setItem('execute',true);
+								
+								//start roll rotate
+								startRoll();
+								
+								curdeg = 0.1;
+								localStorage.setItem('taskstate',true);
+								
+								var taskHrefTime =  setTimeout(function(){
+									clearTimeout(taskHrefTime);
+									location.href = "./tasking.html";
+								},500);
+							}else{
+								alert('请检查网络是否连接');
+							}
 						}else{
 							//set private and protocol
 							localStorage.setItem('ppkey',true);
@@ -413,25 +384,27 @@
 			function startRoll(){
 				var speed = 0.05;
 				var intervalNum = 0.1;
-				rollTimer = setInterval(function(){
-					if (curdeg >= 0.1 && curdeg <= 360) {
-						curdeg = curdeg + 0.1;
-						$('#enginBtn').children('div').css('transform','rotate('+ curdeg +'deg)')
-						$('#enginBtn').children('div').children('span').show();
-					}
-					if(curdeg > 360){
-						curdeg = 0.1;
-					}
-
-				},intervalNum/speed)
+				rollTimer = setInterval(setRollRotate,intervalNum/speed);
 				$('#enginBtn').children('img').show().attr('src','./img/icons/pause.png');
+			}
+			
+			//set roll rotate;
+			function setRollRotate(){
+				if (curdeg >= 0.1 && curdeg <= 360) {
+					curdeg = curdeg + 0.1;
+					$('#enginBtn').children('div').css('transform','rotate('+ curdeg +'deg)');
+					$('#enginBtn').children('div').children('span').show();
+				}
+				if(curdeg > 360){
+					curdeg = 0.1;
+				}
 			}
 			
 			//stop roll rotate
 			function stopRoll(){
 				clearInterval(rollTimer);
 				$('#enginBtn').children('img').show().attr('src','./img/icons/start.png');
-				$('#enginBtn').children('div').css('transform','rotate(0deg)')
+				$('#enginBtn').children('div').css('transform','rotate(0deg)');
 			}
 			
 		});

@@ -11,9 +11,11 @@ var userid = localStorage.getItem('userid');
 //after five minutes send task start
 function setTimeSendTaskStart(){
 	var gettasklocalTime = parseInt(localStorage.getItem('gettasklocalTime'));//发送请求成功后获取本地时间
-
+	if( isNaN(gettasklocalTime) ){ //获取当地时间失败设置当前时间为0，即立即发送请求
+		gettasklocalTime = 0;
+	}
+	
 	sendTaskTimer = setInterval(function(){
-			
 			var curlocaltime = Date.parse(new Date());
 			var calcSendLocalTime = curlocaltime-gettasklocalTime;
 			
@@ -92,9 +94,10 @@ function sendTask(url,userid){
 					}
 				},
 				error:function(err){
-					setTimeout(function(){
-						sendTask(url,userid);
-					},5000);
+					var continueSendTask = setTimeout(function(){
+							clearTimeout(continueSendTask);
+							sendTask(url,userid);
+						},5000);
 				}
 			})
 		}else{
@@ -110,16 +113,8 @@ function sendTask(url,userid){
 			
 		}
 	}else{
-		setTimeout(function(){
-			location.href = './login.html'
-		},1500)
+		location.href = './login.html';
 	}
-}
-
-function closeModal(){
-	setTimeout(function(){
-		$('#inforModal').hide();
-	},2000); 
 }
 
 //show next task
@@ -161,9 +156,7 @@ function setStyle(){
 	
 	var ringstate = localStorage.getItem('ringstate');
 	if(ringstate === 'true'){
-		setTimeout(function(){
-			$('body').append('<div id="musicDiv"><embed src="./img/sting.wav" autostart=true align="center" border="0" width="1" height="1" loop="false"/></div>');
-		},300);
+		$('body').append('<div id="musicDiv"><embed src="./img/sting.wav" autostart=true align="center" border="0" width="1" height="1" loop="false"/></div>');
 	}else{
 		$('#musicDiv').remove();
 	}
@@ -175,7 +168,7 @@ function setStyle(){
 			//register task
 			registerTask(data);
 			//create advertisement 
-			createAdertisementHtml();
+			// createAdertisementHtml();
 		}else if(taskType === 2){
 			//download task
 			downloadTask(data);
@@ -185,7 +178,7 @@ function setStyle(){
 			//advertisement task
 			advertisementTask(data);
 			//create advertisement 
-			createAdertisementHtml();
+			// createAdertisementHtml();
 		}
 	}
 }
@@ -217,7 +210,6 @@ function registerTask(data){
 				$('#divmodalTitleColor').addClass('divmodal-title-color');
 				$('#divmodalBodybg').addClass('divmodal-body-bg');
 				
-			// }else if(rdelaytime === 8){
 				rdelaytime = 0;
 				clearInterval(registertimer);
 			}
@@ -258,7 +250,6 @@ function downloadTask(data){
 				$('#divmodalTitleColor').addClass('divmodal-title-color');
 				$('#divmodalBodybg').addClass('divmodal-body-bg');
 				
-			// }else if(ddelaytime === 11){
 				ddelaytime = 0;
 				clearInterval(downloadtimer);
 			}
@@ -286,15 +277,17 @@ function advertisementTask(data){
 				var getMoney = data.commission;
 				//task style write
 				adAlertHtml(3,getMoney);
+				
 				$('#divmodal').css('background','none');
 				$('#divmodalTitleColor').addClass('divmodal-title-color');
 				$('#divmodalBodybg').addClass('divmodal-body-bg');
+				
 				$('#taskdiv').fadeIn(600);
 				closeTaskdivmodal();
 			}else if(adelaytime === 8){
 				//insert map
 				insertMap(data);
-			}else if(adelaytime === 9){
+				
 				adelaytime = 0;
 				clearInterval(advertisementtimer);
 			}
@@ -304,8 +297,9 @@ function advertisementTask(data){
 
 //close task divmodal
 function closeTaskdivmodal(){
-	setTimeout(function(){
+	var closeDivModalTimer = setTimeout(function(){
 		$('#taskdiv').fadeOut(500);
+		clearTimeout(closeDivModalTimer);
 	},1500);
 }
 
@@ -322,6 +316,9 @@ function registerAlertHtml(style,getMoney){
 	}
 	
 	$('#taskdiv').html(registerHtml);
+	if(style === 3){
+		$('.divmodal-contain').css({'margin-top':'35%'});
+	}
 }
 
 //task style write download 2
@@ -343,6 +340,9 @@ function downLoadAlertHtml(style,getMoney){
 	}
 	
 	$('#taskdiv').html(downloadHtml);
+	if(style === 4){
+		$('.divmodal-contain').css({'margin-top':'35%'});
+	}
 }
 
 //task style write advertisement 3
@@ -358,6 +358,9 @@ function adAlertHtml(style,getMoney){
 	}
 	
 	$('#taskdiv').html(advertisementHtml);
+	if(style === 3){
+		$('.divmodal-contain').css({'margin-top':'35%'});
+	}
 }
 
 // create task notice
@@ -407,6 +410,7 @@ function showRegisterImg(data){
 				localStorage.setItem('showrecordone',true);
 			}else if(rimgtime === 2){
 				$('#apkHrefModal').slideUp(500);
+				$('#apkHrefModal').remove();
 			}else if(rimgtime === 3){
 				$('#preimg').animate({right:'-100%'},800);
 			}else if(rimgtime === 4){
@@ -416,7 +420,7 @@ function showRegisterImg(data){
 			}else if(rimgtime === 6){
 				//insert map
 				insertMap(data);
-			// }else if(rimgtime === 7){
+				
 				rimgtime = 0;
 				clearInterval(registerimgtimer);
 			}
@@ -468,6 +472,7 @@ function showAppImg(data){
 				localStorage.setItem('showrecordone',true);
 			}else if(imgtime === 2){
 				$('#apkHrefModal').slideUp(500);
+				$('#apkHrefModal').remove();
 			}else if(imgtime === 3){
 				$('#preimg').animate({right:'-100%'},800);
 			}else if(imgtime === 4){
@@ -477,7 +482,7 @@ function showAppImg(data){
 			}else if(imgtime === 6){
 				//insert map
 				insertMap(data);
-			// }else if(imgtime === 7){
+				
 				imgtime = 0;
 				clearInterval(changeimgtimer);
 			}
@@ -544,13 +549,15 @@ function showMapAndRefreshMoney(){
 //show positon
 function showPosition(posNoticeHtml){
 	
-	setTimeout(function(){
+	var removePositionTimer = setTimeout(function(){
 		$('#mapContain').animate({right:"-100%"},800);
 		$('#posContext').text('重新虚拟定位成功');
 		$('#preimg').remove();
 		localStorage.removeItem('gettaskdata');
 		$('#musicDiv').remove();
+		$('#taskdiv').html('');
 		closePosTips();
+		clearTimeout(removePositionTimer);
 	},5500);
 
 	//show map
@@ -559,10 +566,11 @@ function showPosition(posNoticeHtml){
 
 //close pos tips
 function closePosTips(){
-	setTimeout(function(){
+	var closeTipsTimer = setTimeout(function(){
 		$('#divsmall').fadeOut(500);
 		$('#divsmall').remove();
 		$('#mapContain').remove();
+		clearTimeout(closeTipsTimer);
 	},1000);
 }
 
@@ -576,8 +584,9 @@ function showMap(){
 	var wdYmin = 30.624202;
 	var longt = Math.random()*(jdXmax-jdXmin+1)+jdXmin;
 	var lat = Math.random()*(wdYmax-wdYmin+1)+wdYmin;
-	setTimeout(function(){
+	var closeMapTimer = setTimeout(function(){
 		addMarker(longt,lat);
+		clearTimeout(closeMapTimer);
 	},4500)
 	
 	var marker,map = new AMap.Map('container', {
@@ -585,7 +594,6 @@ function showMap(){
 	  zoom: 5, //初始地图级别
 	  center: [longt, lat], //初始地图中心点
 	});
-	
 	
 	// 实例化点标记
 	function addMarker(x,y) {
