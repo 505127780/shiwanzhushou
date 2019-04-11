@@ -1,40 +1,52 @@
-
-var sendTaskTimer = null;
-
-//show next task
-showNextTask();
-
 var urlip = localStorage.getItem('urlip');
 var url = 'http://'+ urlip +':8080/platform-web/';
 var userid = localStorage.getItem('userid');
 
+//send task variable;
+var sendTaskTimer = false;
+var gettasklocalTime = null,
+	curlocaltime = null,
+	calcSendLocalTime = null;
+
+//show next task
+showNextTask();
+
+var calcSendTaskTime = function(){
+	curlocaltime = Date.parse(new Date());
+	calcSendLocalTime = curlocaltime-gettasklocalTime;
+	
+	if( calcSendLocalTime >= ((4*60*1000)+3000) ){
+		sendTask(url,userid);
+		sendTaskTimer = true;
+	}
+	
+	gettasklocalTime = null;
+	curlocaltime = null;
+	calcSendLocalTime = null;
+}
+
 //after five minutes send task start
 function setTimeSendTaskStart(){
-	var gettasklocalTime = parseInt(localStorage.getItem('gettasklocalTime'));//发送请求成功后获取本地时间
+	if(sendTaskTimer){
+		gettasklocalTime = null;
+		curlocaltime = null;
+		calcSendLocalTime = null;
+		
+		return;
+	}
+	
+	gettasklocalTime = parseInt(localStorage.getItem('gettasklocalTime'));//发送请求成功后获取本地时间
 	if( isNaN(gettasklocalTime) ){ //获取当地时间失败设置当前时间为0，即立即发送请求
 		gettasklocalTime = 0;
 	}
 	
-	sendTaskTimer = setInterval(function(){
-			var curlocaltime = Date.parse(new Date());
-			var calcSendLocalTime = curlocaltime-gettasklocalTime;
-			
-			if( calcSendLocalTime === ((4*60*1000)+3000) ){
-				sendTask(url,userid);
-				clearInterval(sendTaskTimer);
-			}
-			
-			if( calcSendLocalTime > ((4*60*1000)+3000) ){ 
-				sendTask(url,userid);
-				clearInterval(sendTaskTimer);
-			}
-			
-		},1000);
+	calcSendTaskTime();
+	setTimeout(setTimeSendTaskStart,1000);
 }
 
 //after five minutes send task end
 function setTimeSendTaskEnd(){
-	clearInterval(sendTaskTimer);
+	sendTaskTimer = true;
 }
 
 //send task
@@ -42,6 +54,7 @@ function sendTask(url,userid){
 	var privateState = localStorage.getItem('privatestate');
 	var protocolState = localStorage.getItem('protocolstate');
 	var version = localStorage.getItem('versioncode');
+
 	if(userid){
 		if(privateState === 'true' && protocolState === 'true'){
 			$.ajax({
@@ -70,27 +83,31 @@ function sendTask(url,userid){
 						localStorage.setItem('getcalctime',calcTime);
 						
 						var execute = localStorage.getItem('execute');//version update,prevent execute
+						
 						if(execute === 'true'){  // equal to "true" continue execute next task ,show task alert
 							//show next task
 							showNextTask();
 							
 							//after five minutes send task start
+							sendTaskTimer = false;
 							setTimeSendTaskStart();
 						
-							//set commission task record the first item
-							localStorage.setItem('showrecordone',false);
 						}else{
 							localStorage.setItem('taskstate',false);
 							//after five minutes send task end
 							setTimeSendTaskEnd();
 							$('#enginBtn').children('img').attr('src','./img/icons/start.png');
 							
-							//set private and protocol
-							localStorage.setItem('ppkey',true);
-							location.href = "./setup.html?tips=1";
+							//set key text
+							$('#keyNoticeText').text('一键自动执行');
+							$('.notice-dot').hide();
 						}
 					}else{
-						setTimeout(setTimeSendTaskStart,5*60*1000);
+						var otherContinueSendTaskTimer = setTimeout(function(){
+								sendTaskTimer = false;
+								setTimeSendTaskStart();
+								clearTimeout(otherContinueSendTaskTimer);
+							},5*60*1000);
 					}
 				},
 				error:function(err){
@@ -322,8 +339,9 @@ function registerAlertHtml(style,getMoney){
 }
 
 //task style write download 2
+var downloadHtml = '';
 function downLoadAlertHtml(style,getMoney){
-	var downloadHtml = '';
+
 	var getMoney = getMoney||'0.00';
 	if(style === 1){
 		downloadHtml = createNoticeHtml('<span>恭喜你</span>','抢到任务！','准备加载应用软件...');
@@ -340,6 +358,7 @@ function downLoadAlertHtml(style,getMoney){
 	}
 	
 	$('#taskdiv').html(downloadHtml);
+	downloadHtml = null;
 	if(style === 4){
 		$('.divmodal-contain').css({'margin-top':'35%'});
 	}
@@ -406,8 +425,6 @@ function showRegisterImg(data){
 				$('#divmodalTitleColor').addClass('divmodal-title-color');
 				$('#divmodalBodybg').addClass('divmodal-body-bg');
 				
-				//set commission task record the first item
-				localStorage.setItem('showrecordone',true);
 			}else if(rimgtime === 2){
 				$('#apkHrefModal').slideUp(500);
 				$('#apkHrefModal').remove();
@@ -461,15 +478,12 @@ function showAppImg(data){
 			if(imgtime === 1){
 				$('#apkHrefModal').slideDown(500);
 				
-				var getMoney = data.commission;
 				//task style write
-				downLoadAlertHtml(4,getMoney);
+				downLoadAlertHtml(4,data.commission);
 				$('#divmodal').css('background','none');
 				$('#divmodalTitleColor').addClass('divmodal-title-color');
 				$('#divmodalBodybg').addClass('divmodal-body-bg');
 				
-				//set commission task record the first item
-				localStorage.setItem('showrecordone',true);
 			}else if(imgtime === 2){
 				$('#apkHrefModal').slideUp(500);
 				$('#apkHrefModal').remove();

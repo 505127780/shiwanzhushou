@@ -13,6 +13,13 @@
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
 		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/vconsole.min.js"></script>
+		<script>
+			// init
+			
+			
+		</script>
+	
 		<script src="./js/lib/common.js"></script>
 	</head>
 	<style>
@@ -30,16 +37,6 @@
 		.recommend-code{width:100%;height:1rem;line-height:1rem;text-align:center;}
 		.recommend-code > span{color:#222;font-size:0.3rem;margin-right:15%;}
 		.recommend-code > span:last-child{margin-right:0 !important;}
-		
-		/*
-		.person-manager{width:100%;height:1.2rem;background:#fff;display:flex;flex-direction:row;align-items:center;}
-		.person-manager > a{flex:1;border-right:0.02rem solid #999;text-align:center;text-decoration:none;outline:none;}
-		.person-manager > a:last-child{border:0;}
-		.person-manager > a > i{width:0.4rem;height:0.4rem;display:block;margin:0 auto;}
-		.person-manager > a > i.pwd-manager{background:url('./img/icons/pwd-setup.png') no-repeat;background-size:0.4rem;}
-		.person-manager > a > i.bankCard-manager{background:url('./img/icons/bank-card.png') no-repeat;background-size:0.4rem;}
-		.person-manager > a > span{font-size:0.28rem;color:#222;}
-		*/
 	   
 		.bankCard-manager{background:url('./img/icons/bank-card.png') no-repeat;background-size:0.4rem;}
 		
@@ -96,17 +93,7 @@
 								<span id="userPhone"></span>
 							</div>
 						</div>
-						<!-- <div class="person-manager">
-							<a href="./password.html">
-								<i class="pwd-manager"></i>
-								<span>提现密码管理</span>
-							</a>
-							<a href="./bank.html">
-								<i class="bankCard-manager"></i>
-								<span>银行卡管理</span>
-							</a>
-						</div> -->
-						
+
 						<div class="person-code">
 							<div class="recommend-code">
 								<span>我的推荐码</span>
@@ -126,11 +113,7 @@
 							<span>我的余额</span>
 							<i class="right"></i>
 						</a>
-						<!-- <a href="./bank.html">
-							<i class="bankCard-manager"></i>
-							<span>银行卡管理</span>
-							<i class="right"></i>
-						</a> -->
+
 						<a href="./password.html">
 							<i class="pwd-manager"></i>
 							<span>提现密码管理</span>
@@ -186,7 +169,7 @@
 
 		<script src="./js/sendtask.js"></script>
 		<script src="./js/update.js"></script>
-		<script src="./js/lib/map/maps-1.4.14.js"></script>
+		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
 		
 		<script>
 		
@@ -204,10 +187,14 @@
 				$('#inviteCode').text(invitecode);
 				
 				$('#exitBtn').click(function(){
+					var userid = localStorage.getItem('userid');
 					$.ajax({
 						type:'POST',
-						url:url+'/user/exit',
+						url:url+'user/exit',
 						dataType:'json',
+						data:{
+							id:userid
+						},
 						success:function(data){
 							if(data.code === 5000){
 								localStorage.clear();

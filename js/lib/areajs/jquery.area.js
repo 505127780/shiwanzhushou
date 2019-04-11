@@ -570,7 +570,7 @@ function selectC(p,c) {
 	if (sCity != "省直辖县级行政单位") {
 		if (sCity == "东莞市" || sCity == "中山市" || sCity == "儋州市" || sCity == "嘉峪关市") {
 			expressArea += sCity;
-			$("#expressArea dl dd").html(expressArea);
+			$("#expressArea").attr("value",expressArea);
 			clockArea();
 		} else if (sCity == "市辖区" || sCity == "市辖县" || sCity == "香港岛" || sCity == "九龙半岛" || sCity == "新界" || sCity == "澳门半岛" || sCity == "离岛" || sCity == "无堂区划分区域") {
 			expressArea += "";

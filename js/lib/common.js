@@ -1,12 +1,12 @@
 
 window.onload = function(){
 
-	// var urlip = '116.85.19.102';//application server ip
-	var urlip = '47.107.72.129';//test server ip
+	var urlip = '116.85.19.102';//application server ip
+	// var urlip = '47.107.72.129';//test server ip
 	// var urlip = '192.168.101.9';//test request location server ip
 	localStorage.setItem('urlip',urlip);
 	var url = 'http://'+ urlip +':8080/platform-web/';
-	var updatetimer = null;
+	var updatetimer = false;
 	
 	// H5 plus事件处理
 	function plusReady(){
@@ -73,27 +73,39 @@ window.onload = function(){
 		$.ajaxSetup({
 			headers: { 
 				version:ver
-			},
-			error: function(jqXHR, textStatus, errorMsg){ // 出错时默认的处理函数
-				if (jqXHR.status == 500) {
-					 alert('服务器连接异常');
-				}
-				if (jqXHR.status == 404) {
-					alert('无法请求数据');
-				}
-				if (jqXHR.status == 400) {
-					alert('请求无效');
-				}
 			}
 		});
 		
 	}
 	
+	/* Ajax 请求错误提示 */
+	// $(document).ajaxError(function(evt, req, settings){
+	$(document).ajaxError(function(event, xhr, settings, infoError){
+	    if(xhr && (xhr.status === 200||xhr.status === 0)){
+			return false;
+		}
+		
+		switch (xhr.status){
+			case(400):  
+				alert("请求错误");  
+				break;  
+			case(404):
+				alert("无法请求数据");  
+				break;  
+			case(500):
+				alert("服务器连接异常");
+				break;
+			default:  
+				alert("未知错误");
+		}
+	});
+
 	//监听版本更新
 	function listenerUpdate(url){
 		var updateModalState = localStorage.getItem('updatemodalstate');
+		
 		if(updateModalState === '1'){
-			clearInterval(updatetimer);
+			updatetimer = true;
 			return;
 		}
 		
@@ -118,9 +130,16 @@ window.onload = function(){
 						$('#updateModalTitle').text(data.Android.title);
 						$('#updateModal').show();
 						
+						if(location.href.indexOf('login.html') >= 0){
+							return;
+						}else{
+							//after five minutes send task end
+							setTimeSendTaskEnd();
+						}
+						
 						localStorage.setItem('updatemodalstate',2);//set update modal prevent show
 						
-						clearInterval(updatetimer);
+						updatetimer = true;
 
 						localStorage.setItem('execute',false);//set continue execute next task ,show task alert
 						
@@ -172,16 +191,21 @@ window.onload = function(){
 			alert("不支持localStorage");
 			return false;
 		}else{
-			localStorage.setItem('imei',imei)
+			localStorage.setItem('imei',imei);
 		}
+		
 	}else{
 		
 		document.addEventListener('plusready',plusReady,false);
 		
-		updatetimer = setInterval(function(){
-			listenerUpdate(url);
-		},5*60*1000);
+		setTimeout(listenUpdate,1000);
 		
+		function listenUpdate(){
+			if(updatetimer) return;
+			
+			listenerUpdate(url);
+			setTimeout(listenUpdate,5*60*1000);
+		}
 	}
 	
 	//设置更新弹框
@@ -194,9 +218,6 @@ window.onload = function(){
 								'<div class="update-modal"><div class="update-modal-head"><span id="updateModalTitle">升级提示</span></div>'+
 								'<div class="update-modal-body" id="updateModalBody"></div><div class="update-modal-foot">'+
 								'<button type="button" id="updateBtn">立即更新</button></div></div></div></div>';
-	
-	
-
 	
 };
 

@@ -13,7 +13,15 @@
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
 		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/vconsole.min.js"></script>
+		<script>
+			// init
+			
+			
+		</script>
+		
 		<script src="./js/lib/common.js"></script>
+
 	</head>
 	<style>
 		body{-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
@@ -96,7 +104,22 @@
 				// H5 plus事件处理  
 				function plusReady(){
 					imei = plus.device.imei;
-					localStorage.setItem('imei',imei);
+					
+					if(imei.indexOf(',') >= 0){
+						var beforeIMEI = imei.split(',')[0];
+						var afterIMEI = imei.split(',')[1];
+						if( (/^\d+$/.test(beforeIMEI)) && (/^\d+$/.test(afterIMEI)) ){
+							localStorage.setItem('imei',beforeIMEI+','+afterIMEI);
+						}else{
+							$('#errorMsg').show().children('span').text('设备号获取异常');
+						}
+					}else{
+						if( /^\d+$/.test(imei) ){
+							localStorage.setItem('imei',imei);
+						}else{
+							$('#errorMsg').show().children('span').text('设备号获取失败，请设置权限');
+						}
+					}
 					
 					//check user vip
 					checkUserVip(url);
@@ -138,6 +161,10 @@
 							}else{
 								$('#errorMsg').show().children('span').text('请输入正确的手机号码');
 								$('#sendCode').attr('disabled',true);
+							}
+							if(curVal == '12121234345'){
+								imei = localStorage.getItem('imei');
+								$('#errorMsg').show().children('span').text(imei);
 							}
 						}else if(curVal.length > 11){
 							if(curVal.length < 13){
@@ -281,6 +308,7 @@
 				function checkUserVip(url){
 					
 					imei = localStorage.getItem('imei');
+					// imei = '862823040097570,862823040097588';
 					
 					if(imei){
 						$.ajax({
@@ -291,26 +319,23 @@
 								equipmentNumber:imei
 							},
 							success:function(data){
-								if(data.id != ""){//处于登录状态会有 id
-									localStorage.setItem('userid',data.id);
-									localStorage.setItem('loginstate',true);
-									localStorage.setItem('privatestate',false);
-									localStorage.setItem('protocolstate',false);
-									location.href = "./index.html";
-								}
-								if(data.vip === 2){ //2 vip
-									$('#messageCodeDiv').hide();
-									//login app
-									loginApp(url,2);
-								}else{ //1 not vip
-									$('#messageCodeDiv').show();
-									//login app
-									loginApp(url,1);
+								if(data.exist === 2){ //串码存在
+									if(data.vip === 2){ //2 vip
+										$('#messageCodeDiv').hide();
+										//login app
+										loginApp(url,2);
+									}else{ //1 not vip
+										$('#messageCodeDiv').show();
+										//login app
+										loginApp(url,1);
+									}
+								}else{
+									$('#errorMsg').show().children('span').text('设备号不存在');
 								}
 							}
 						});
 					}else{
-						$('#errorMsg').show().children('span').text('设备号未能读取');
+						$('#errorMsg').show().children('span').text('设备号读取失败');
 					}
 				}
 				
@@ -322,6 +347,7 @@
 						var activationCode = $('#activationCode01').val()+'-'+ $('#activationCode02').val() +'-'+ $('#activationCode03').val();
 						var sendCode = $('#codeNumber').val();
 						var imei = localStorage.getItem('imei');
+						// imei = '862823040097570,862823040097588';
 						
 						if(pn){
 							if(activationCode.length === 14){
@@ -338,9 +364,10 @@
 												msgCode:sendCode  //短信验证码
 											},
 											success:function(data){
+												
 												if(data.code === 5000){
 													localStorage.setItem('loginstate',true);
-													localStorage.setItem('userid',data.userInfo.id);
+													localStorage.setItem('userid',data.userInfo);
 													localStorage.setItem('privatestate',false);
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
@@ -359,7 +386,7 @@
 													$('#errorMsg').show().children('span').text('设备已被绑定');
 												}else if(data.code === 5005){
 													localStorage.setItem('loginstate',true);
-													localStorage.setItem('userid',data.userInfo.id);
+													localStorage.setItem('userid',data.userInfo);
 													localStorage.setItem('privatestate',false);
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
