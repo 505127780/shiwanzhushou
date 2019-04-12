@@ -1,8 +1,6 @@
 
-window.onload = function(){
-
-	var urlip = '116.85.19.102';//application server ip
-	// var urlip = '47.107.72.129';//test server ip
+	// var urlip = '116.85.19.102';//application server ip
+	var urlip = '47.107.72.129';//test server ip
 	// var urlip = '192.168.101.9';//test request location server ip
 	localStorage.setItem('urlip',urlip);
 	var url = 'http://'+ urlip +':8080/platform-web/';
@@ -43,19 +41,29 @@ window.onload = function(){
 			localStorage.setItem('networkstate',true);
 		}
 		
-		// Android处理返回键
-		plus.key.addEventListener('backbutton',function(){
-			var backConfirm = confirm('确认返回到桌面？');
-			if(backConfirm){
-				// 关闭 保持程序唤醒状态
-				plus.device.setWakelock( false );
-				//localStorage.setItem('taskstate',false); //退出桌面任务终止
-				var exitApp = setTimeout(function(){
-						plus.runtime.quit();
-						clearTimeout(exitApp);
-					},500);
-			}
-		},false);
+		if( location.href.indexOf('tasking.html') >= 0 ){
+			// Android处理返回键
+			plus.key.addEventListener('backbutton',function(){
+				location.href = "./index.html";
+			},false);
+			
+		}else{
+			// Android处理返回键
+			plus.key.addEventListener('backbutton',function(){
+				var backConfirm = confirm('确认返回到桌面？');
+				if(backConfirm){
+					// 关闭 保持程序唤醒状态
+					plus.device.setWakelock( false );
+					//localStorage.setItem('taskstate',false); //退出桌面任务终止
+					var exitApp = setTimeout(function(){
+							plus.runtime.quit();
+							clearTimeout(exitApp);
+						},500);
+				}
+			},false);
+		}
+		
+		
 		
 		// 关闭启动界面
 		plus.navigator.setStatusBarBackground('#D74B28');
@@ -79,7 +87,6 @@ window.onload = function(){
 	}
 	
 	/* Ajax 请求错误提示 */
-	// $(document).ajaxError(function(evt, req, settings){
 	$(document).ajaxError(function(event, xhr, settings, infoError){
 	    if(xhr && (xhr.status === 200||xhr.status === 0)){
 			return false;
@@ -87,10 +94,10 @@ window.onload = function(){
 		
 		switch (xhr.status){
 			case(400):  
-				alert("请求错误");  
+				alert("请求错误");
 				break;  
 			case(404):
-				alert("无法请求数据");  
+				alert("无法请求数据");
 				break;  
 			case(500):
 				alert("服务器连接异常");
@@ -109,8 +116,9 @@ window.onload = function(){
 			return;
 		}
 		
-		plus.runtime.getProperty(plus.runtime.appid, function (inf) {
-			var ver = inf.version;
+		var ver = localStorage.getItem('versioncode');
+		
+		if(ver && ver != 'undefined'){
 			$.ajax({
 				url:url+"conf/update.json",
 				success:function (data) {
@@ -130,9 +138,8 @@ window.onload = function(){
 						$('#updateModalTitle').text(data.Android.title);
 						$('#updateModal').show();
 						
-						if(location.href.indexOf('login.html') >= 0){
-							return;
-						}else{
+						if(location.href.indexOf('login.html') < 0){
+							
 							//after five minutes send task end
 							setTimeSendTaskEnd();
 						}
@@ -157,9 +164,15 @@ window.onload = function(){
 							
 						});
 					}
+					
+					updateModalState = null;
+					ver = null;
 				}
 			});
-		});
+		}else{
+			return;
+		}
+		
 	}
 	
 	
@@ -189,16 +202,14 @@ window.onload = function(){
 		var imei = plus.device.imei;
 		if(!window.localStorage){
 			alert("不支持localStorage");
-			return false;
 		}else{
 			localStorage.setItem('imei',imei);
 		}
 		
-	}else{
-		
+	}else{//phone access
 		document.addEventListener('plusready',plusReady,false);
 		
-		setTimeout(listenUpdate,1000);
+		setTimeout(listenUpdate,500);
 		
 		function listenUpdate(){
 			if(updatetimer) return;
@@ -208,16 +219,4 @@ window.onload = function(){
 		}
 	}
 	
-	//设置更新弹框
-	var updatebody = document.getElementsByTagName('body')[0]; 
-	var updateNode = document.createElement('div'); 
-	updateNode.setAttribute("id", "updateModalContain");
-	updatebody.appendChild(updateNode);
-	var updateModalObj = document.getElementById('updateModalContain');
-	updateModalObj.innerHTML = '<div class="update-modal-fixed" id="updateModal"><div class="update-modal-contain">'+
-								'<div class="update-modal"><div class="update-modal-head"><span id="updateModalTitle">升级提示</span></div>'+
-								'<div class="update-modal-body" id="updateModalBody"></div><div class="update-modal-foot">'+
-								'<button type="button" id="updateBtn">立即更新</button></div></div></div></div>';
 	
-};
-

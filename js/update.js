@@ -1,27 +1,8 @@
-/**
- * 判断应用升级模块，从url地址下载升级描述文件到本地local路径
- * yanyilin@dcloud.io
- * 
- * 升级文件为JSON格式数据，如下：
-{
-	"appid":"HelloH5",
-    "iOS":{
-    	"version":"iOS新版本号，如：1.0.0",
-    	"note":"iOS新版本描述信息，多行使用\n分割",
-    	"url":"Appstore路径，如：itms-apps://itunes.apple.com/cn/app/hello-h5+/id682211190?l=zh&mt=8"
-    },
-    "Android":{
-    	"version":"Android新版本号，如：1.0.1",
-    	"note":"Android新版本描述信息，多行使用\n分割",
-    	"url":"apk文件下载地址，如：http://www.dcloud.io/helloh5p/HelloH5.apk"
-    }
-}
- *
- */
+
 (function(w){
 // var server="http://www.dcloud.io/helloh5/update.json",//获取升级描述文件服务器地址
-var server= "http://116.85.19.102:8080/platform-web/conf/update.json",//应用服务器url
-// var server= "http://47.107.72.129:8080/platform-web/conf/update.json",//测试服务器url
+// var server= "http://116.85.19.102:8080/platform-web/conf/update.json",//应用服务器url
+var server= "http://47.107.72.129:8080/platform-web/conf/update.json",//测试服务器url
 localDir="update",localFile="update.json",//本地保存升级描述目录和文件名
 keyUpdate="updateCheck",//取消升级键名
 keyAbort="updateAbort",//忽略版本键名
@@ -178,7 +159,7 @@ function getUpdateData(){
                 		console.log( "获取升级数据，打开保存文件失败："+e.message );
                 	});
                 } else {
-                	alert( "获取升级数据，联网请求失败："+xhr.status );
+                	alert( "请求获取文件失败："+xhr.status );//获取update.json文件失败
                 }
                 break;
             default :

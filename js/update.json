@@ -1,9 +1,9 @@
 {
     "appid":"H5B7611E9",
     "Android":{
-    	"version":"1.2.14",
-    	"title":"试玩助手-1.2.14",
-    	"note":"1.优化界面\n2.增加解绑功能\n4.优化更新功能\n",
-    	"url":"http://try-project-1255372231.cossh.myqcloud.com/apk/shiwanzhushou-1.2.14.apk"
+    	"version":"1.2.15",
+    	"title":"试玩助手-测试版-1.2.15",
+    	"note":"1.优化更新功能\n2.防止页面加载缓存\n",
+    	"url":"http://try-project-1255372231.cossh.myqcloud.com/apk/shiwanzhushou-test-1.2.15.apk"
     }
 }

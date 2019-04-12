@@ -1,7 +1,5 @@
 # shiwanzhushou
-a app file of shiwanzhushou
 
-
-1.修改引入地图链接
-
-2.增加vconsole
+1.优化更新功能
+2.防止页面加载缓存
+3.vconsole设置
