@@ -107,13 +107,13 @@
 						if( (/^\d+$/.test(beforeIMEI)) && (/^\d+$/.test(afterIMEI)) ){
 							localStorage.setItem('imei',beforeIMEI+','+afterIMEI);
 						}else{
-							$('#errorMsg').show().children('span').text('设备号获取异常');
+							alert('设备号获取异常');
 						}
 					}else{
 						if( /^\d+$/.test(imei) ){
 							localStorage.setItem('imei',imei);
 						}else{
-							$('#errorMsg').show().children('span').text('设备号获取失败，请设置权限');
+							alert('设备号获取失败，请设置权限');
 						}
 					}
 					
