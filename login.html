@@ -91,7 +91,7 @@
 		<script>
 			
 			$(function(){
-
+				
 				var urlip = localStorage.getItem('urlip');
 				var url = 'http://'+ urlip +':8080/platform-web/';
 				var sendedCode = false;
@@ -368,6 +368,7 @@
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
 													localStorage.setItem('ringstate',true);//set received task ring
+													localStorage.removeItem('imei');
 													
 													location.href = './index.html';
 												}else if(data.code === 404){
@@ -387,8 +388,9 @@
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
 													localStorage.setItem('ringstate',true);//set received task ring
+													localStorage.removeItem('imei');
 													
-													$('#errorMsg').show().children('span').text('注册成功');
+													// $('#errorMsg').show().children('span').text('注册成功');
 													location.href = './index.html';
 												}
 											}

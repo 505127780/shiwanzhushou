@@ -95,14 +95,13 @@
 						if(curVal){
 							$('#errorMsg').removeClass('error-notice').children('span').text('');
 							//set vconsole show and hide
-							if(curVal === 'setvconsole'){
+							if(curVal.toLowerCase() === 'setcon'){
 								localStorage.setItem('showvconsole',true);
 								location.reload();
-							}else if(curVal === 'rmvconsole'){
+							}else if(curVal.toLowerCase() === 'rmcon'){
 								localStorage.removeItem('showvconsole');
 								location.reload();
 							}else{
-							
 								if(userid){
 									$.ajax({
 										type:'POST',
@@ -128,7 +127,6 @@
 								}else{
 									location.href = './login.html';
 								}
-								
 							}
 						}else{
 							$('#errorMsg').addClass('error-notice').children('span').text('真实姓名不能为空');

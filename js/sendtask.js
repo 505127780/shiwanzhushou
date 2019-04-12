@@ -141,25 +141,35 @@ function showNextTask(){
 	var calcTime = parseInt(localStorage.getItem('getcalctime'));
 	
 	if(typeof calcTime == 'number' && !isNaN(calcTime) ){
-		var showTaskTimer = setInterval(function(){
-				var curlocaltime = Date.parse(new Date());
-				var calcLocalTime = curlocaltime-gettasklocalTime;
-				
-				if( calcLocalTime === calcTime){
-					var execute = localStorage.getItem('execute');
-					if(execute === 'true'){
-						setStyle();
-					}
-					clearInterval(showTaskTimer);
-					localStorage.removeItem('getcalctime');
+		var showTaskTime = false;
+		showTaskTimeFunc();
+		function showTaskTimeFunc(){
+			if(showTaskTime) return;
+			
+			var curlocaltime = Date.parse(new Date());
+			var calcLocalTime = curlocaltime-gettasklocalTime;
+			
+			if( calcLocalTime === calcTime){
+				var execute = localStorage.getItem('execute');
+				if(execute === 'true'){
+					setStyle();
+					execute = null;
 				}
-
-				if( calcLocalTime > calcTime){
-					localStorage.removeItem('getcalctime');
-					clearInterval(showTaskTimer);
-				}
-				
-			},1000);
+				showTaskTime = true;
+				localStorage.removeItem('getcalctime');
+			}
+			
+			if( calcLocalTime > calcTime){
+				showTaskTime = true;
+				localStorage.removeItem('getcalctime');
+			}
+			
+			curlocaltime = null;
+			calcLocalTime = null;
+			
+			setTimeout(showTaskTimeFunc,1000);
+		}
+		
 	}
 }
 

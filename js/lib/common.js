@@ -1,6 +1,6 @@
 
-	// var urlip = '116.85.19.102';//application server ip
-	var urlip = '47.107.72.129';//test server ip
+	var urlip = '116.85.19.102';//application server ip
+	// var urlip = '47.107.72.129';//test server ip
 	// var urlip = '192.168.101.9';//test request location server ip
 	localStorage.setItem('urlip',urlip);
 	var url = 'http://'+ urlip +':8080/platform-web/';
@@ -63,8 +63,6 @@
 			},false);
 		}
 		
-		
-		
 		// 关闭启动界面
 		plus.navigator.setStatusBarBackground('#D74B28');
 		setTimeout(function(){
@@ -93,17 +91,17 @@
 		}
 		
 		switch (xhr.status){
-			case(400):  
-				alert("请求错误");
-				break;  
-			case(404):
-				alert("无法请求数据");
-				break;  
-			case(500):
-				alert("服务器连接异常");
+			case(400):
+				console.log("请求错误");
 				break;
-			default:  
-				alert("未知错误");
+			case(404):
+				console.log("无法请求数据");
+				break;
+			case(500):
+				console.log("服务器连接异常");
+				break;
+			default:
+				console.log("未知错误");
 		}
 	});
 
@@ -120,51 +118,60 @@
 		
 		if(ver && ver != 'undefined'){
 			$.ajax({
-				url:url+"conf/update.json",
+				type:'POST',
+				url:url+"configure/getJson",
+				dataType:'json',
 				success:function (data) {
-					if ( compareVersion(ver , data.Android.version) ) {
-						//弹出显示更新页面
-						var updateContent = data.Android.note.split('\n');
-						var updateHtml = '';
-						if(updateContent.length != 0){
-							for(var i=0;i<updateContent.length-1;i++){
-								updateHtml += '<p>'+ updateContent[i] +'</p>';
+					if(data.code === 5000){
+						var data = JSON.parse(data.json);
+						if ( compareVersion(ver , data.Android.version) ) {
+							//弹出显示更新页面
+							var updateContent = data.Android.note.split('\n');
+							var updateHtml = '';
+							if(updateContent.length != 0){
+								for(var i=0;i<updateContent.length-1;i++){
+									updateHtml += '<p>'+ updateContent[i] +'</p>';
+								}
+							}else{
+								updateHtml = '<p>有新版本上线,请下载更新</p>';
 							}
-						}else{
-							updateHtml = '<p>有新版本上线,请下载更新</p>';
-						}
-						
-						$('#updateModalBody').html(updateHtml);
-						$('#updateModalTitle').text(data.Android.title);
-						$('#updateModal').show();
-						
-						if(location.href.indexOf('login.html') < 0){
 							
-							//after five minutes send task end
-							setTimeSendTaskEnd();
-						}
-						
-						localStorage.setItem('updatemodalstate',2);//set update modal prevent show
-						
-						updatetimer = true;
+							$('#updateModalBody').html(updateHtml);
+							$('#updateModalTitle').text(data.Android.title);
+							$('#updateModal').show();
+							
+							if(location.href.indexOf('login.html') < 0){
+								
+								//after five minutes send task end
+								setTimeSendTaskEnd();
+							}
+							
+							localStorage.setItem('updatemodalstate',2);//set update modal prevent show
+							
+							updatetimer = true;
 
-						localStorage.setItem('execute',false);//set continue execute next task ,show task alert
-						
-						$('#updateBtn').click(function(){
-							//点击更新按钮，设置重新启动任务
-							localStorage.setItem('taskstate',false);
-							localStorage.setItem('privatestate',false);
-							localStorage.setItem('protocolstate',false);
-							localStorage.setItem('ringstate',true);//set received task ring
+							localStorage.setItem('execute',false);//set continue execute next task ,show task alert
 							
-							setTimeout(function(){
-								plus.runtime.openURL( data.Android.url );
-								$('#updateModal').hide();
-							},600);
-							
-						});
+							$('#updateBtn').click(function(){
+								//点击更新按钮，设置重新启动任务
+								localStorage.setItem('taskstate',false);
+								localStorage.setItem('privatestate',false);
+								localStorage.setItem('protocolstate',false);
+								localStorage.setItem('ringstate',true);//set received task ring
+								localStorage.removeItem('updatemodalstate');
+								localStorage.removeItem('showvconsole');
+								
+								setTimeout(function(){
+									plus.runtime.openURL( data.Android.url );
+									$('#updateModal').hide();
+								},600);
+								
+								
+							});
+						}
+					}else{
+						console.log('请求更新文件错误');
 					}
-					
 					updateModalState = null;
 					ver = null;
 				}
