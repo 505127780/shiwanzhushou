@@ -121,10 +121,10 @@
 				type:'POST',
 				url:url+"configure/getJson",
 				dataType:'json',
-				success:function (data) {
+				success:function(data){
 					if(data.code === 5000){
 						var data = JSON.parse(data.json);
-						if ( compareVersion(ver , data.Android.version) ) {
+						if ( compareVersion(ver , data.Android.version) ){
 							//弹出显示更新页面
 							var updateContent = data.Android.note.split('\n');
 							var updateHtml = '';

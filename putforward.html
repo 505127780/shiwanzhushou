@@ -277,27 +277,44 @@
 						var t = txts[i];
 						t.index = i;
 						t.setAttribute("readonly", true);
-						t.onkeyup=function(){
+						t.onkeyup=function(ev){
 							this.value=this.value.replace(/^(.).*$/,'$1');
 							var next = this.index + 1;
-							intpwd += this.value
-							if(next > txts.length - 1){
-								
-								if(intpwd.length === 6){
-									putforwardMoneySubmit(url,userid,intpwd,inputMoney,styleNumber,bankId);
-									$('#putforwardMoneyBtn').removeClass('enableBtn').attr('disabled',true);
-									$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+							intpwd += this.value;
+							
+							var ev = ev || event;
+							var keyCode = ev.keyCode;
+							
+							if(keyCode === 8){
+								$('#pwdCode').children('input').each(function(j){
+									$(this).val('');
+									txts[j].setAttribute("readonly",true);
+								});
+								txts[0].focus();
+								txts[0].removeAttribute("readonly");
+								intpwd = '';
+							}else{
+								if(next > txts.length - 1){
+									if(intpwd.length === 6){
+										putforwardMoneySubmit(url,userid,intpwd,inputMoney,styleNumber,bankId);
+										$('#putforwardMoneyBtn').removeClass('enableBtn').attr('disabled',true);
+										$('#putforwardMoneyBtn').text('预计24h内到账，确认提现');
+										
+										$('#pwdModal').hide();
+										$('#pwdCode').children('input').each(function(){
+											$(this).val('');
+										});
+										$('#inputMoney').val('');
+									}
 								}
 								
-								$('#pwdModal').hide();
-								$('#pwdCode').children('input').each(function(){
-									$(this).val('');
-								});
-								$('#inputMoney').val('');
-							};
-							if(next < txts.length ) txts[next].removeAttribute("readonly");
-							if (this.value) {
-								txts[next].focus();
+								if(next < txts.length){
+									txts[next].removeAttribute("readonly");
+									if (this.value) {
+										txts[next].focus();
+									}
+								}
+								
 							}
 						}
 					}
