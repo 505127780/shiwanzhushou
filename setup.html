@@ -9,8 +9,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>设置</title>
-		
+		<title data-platform="lang_settings"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -25,7 +25,8 @@
 		.setup-title > span{font-size:0.34rem;color:#fff;}
 		
 		.setup-accept{width:100%;height:0.8rem;margin:0.2rem 0;background:#fff;display:flex;flex-direction:row;align-items:center;justify-content:space-around;}
-		.setup-accept > div > input{display:inline;width:0.24rem;height:0.24rem;margin:0 !important;}
+		.setup-accept > div{display:flex;flex-direction:row;align-items:center;align-content:center;justify-content:flex-start;}
+		.setup-accept > div > input{width:0.4rem;height:0.4rem;margin:0 4% 0 3% !important;}
 		.setup-accept > div > label{font-size:0.26rem;color:#222;font-weight:normal;margin-bottom:0;}
 		
 		.setup-contain{width:100%;height:calc(100% - 3.4rem);background:#fff;padding-top:0.2rem;}
@@ -63,17 +64,17 @@
 	<body>
 		<div class="setup">
 			<div class="setup-title">
-				<span>平台接入接口设置</span>
+				<span data-platform="lang_platforminterface"></span>
 			</div>
 			
 			<div class="setup-accept">
 				<div>
 					<input type="checkbox" id="private">
-					<label for="private">私钥修复(不勾选无收益)</label>
+					<label for="private" data-platform="lang_privatekey"></label>
 				</div>
 				<div>
 					<input type="checkbox" id="protocol">
-					<label for="protocol">协议调用(不勾选无收益)</label>
+					<label for="protocol" data-platform="lang_protocolkey"></label>
 				</div>
 			</div>
 
@@ -83,7 +84,7 @@
 						
 						<div id="pullDown">
 							<span class="pullDownIcon" id="pullDownIcon"></span>
-							<span class="pullDownLabel">向下拖动刷新页面</span>
+							<span class="pullDownLabel" data-platform="lang_dragdownrefresh"></span>
 						</div>
 						
 						<div class="setup-wrap" id="platformList">
@@ -92,7 +93,7 @@
 						
 						<div id="pullUp">
 							<span class="pullUpIcon" id="pullUpIcon"></span>
-							<span class="pullUpLabel">向上拖动加载更多</span>
+							<span class="pullUpLabel" data-platform="lang_draguptoloadmore"></span>
 						</div>
 		
 					</div>
@@ -100,10 +101,10 @@
 			</div>
 			
 			<div class="f">
-				<a href="./index.html"><i class="index"></i><span>首页</span></a>
-				<a href="./setup.html"><i class="config-active"></i><span class="active-s">设置</span></a>
-				<a href="./position.html"><i class="position"></i><span>定位</span></a>
-				<a href="./person.html"><i class="mine"></i><span>我的</span></a>
+				<a href="./index.html"><i class="index"></i><span data-platform="lang_index"></span></a>
+				<a href="./setup.html"><i class="config-active"></i><span class="active-s" data-platform="lang_settings"></span></a>
+				<a href="./position.html"><i class="position"></i><span data-platform="lang_location"></span></a>
+				<a href="./person.html"><i class="mine"></i><span data-platform="lang_me"></span></a>
 			</div>
 		</div>
 		
@@ -114,8 +115,7 @@
 					<div class="statemodal-icon">
 						<i class="" id="loadicon"></i>
 					</div>
-					<div class="statemodal-text" >
-						<span id="loadContext"></span>
+					<div class="statemodal-text" id="loadContext">
 					</div>
 				</div>
 			</div>
@@ -125,221 +125,275 @@
 		
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
-		
 		<script src="./js/lib/iscroll/iscroll.js"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
-			
-			var taskstate = localStorage.getItem('taskstate');
-			if(taskstate === "true"){
-				//after five minutes send task start
-				setTimeSendTaskStart();
-			}
-			
-			var ppkey = localStorage.getItem('ppkey');
-			var tips = location.href.split('=')[1];
-			if(ppkey === "true" && tips === '1'){
-				$('#loadicon').removeAttr('class').addClass('tipsicon');
-				$('#loadLayer').show();
-				$('#loadContext').text('请勾选私钥和协议');
-				
-				setTimeout(hideLayer,2000);
-			}
-			
-			function hideLayer(){
-				$('#loadLayer').hide();
-			}
-			
-			//select protocol and private
-			setProtocolAndPrivateState()
-			
-			//select protocol and private
-			function setProtocolAndPrivateState(){
-				var privatestate = localStorage.getItem('privatestate')
-				if( privatestate === 'true'){
-					$('#private').attr('checked',true)
-				}else{
-					$('#private').attr('checked',false)
+			$(function(){
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
 				}
 				
-				var protocolstate = localStorage.getItem('protocolstate');
-				if( protocolstate === 'true'){
-					$('#protocol').attr('checked',true)
-				}else{
-					$('#protocol').attr('checked',false)
+				var ppkey = localStorage.getItem('ppkey');
+				var tips = location.href.split('=')[1];
+				if(ppkey === "true" && tips === '1'){
+					$('#loadicon').removeAttr('class').addClass('tipsicon');
+					$('#loadLayer').show();
+					$('#loadContext').html('<span data-platform="lang_checkppkey"></span>');
+					
+					setTimeout(hideLayer,2000);
 				}
 				
-				$('#private').on('changeprototype change',function(){
-					if( $(this).is(':checked') ){
-						localStorage.setItem('privatestate',true);
-					}else{
-						localStorage.setItem('privatestate',false);
-					}
-				})
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
 				
-				$('#protocol').on('changeprototype change',function(){
-					if( $(this).is(':checked') ){
-						localStorage.setItem('protocolstate',true);
+				function hideLayer(){
+					$('#loadLayer').hide();
+				}
+				
+				//select protocol and private
+				setProtocolAndPrivateState()
+				
+				//select protocol and private
+				function setProtocolAndPrivateState(){
+					var privatestate = localStorage.getItem('privatestate')
+					if( privatestate === 'true'){
+						$('#private').attr('checked',true)
 					}else{
-						localStorage.setItem('protocolstate',false);
+						$('#private').attr('checked',false)
 					}
-				})
-			}
-			
-			var pageIndex = 1;
-			var pageTotal = null;
-			var isOver = false;
-			
-			loadList(url,pageIndex);
-			
-			var myScroll,
-				pullDownEl, 
-				pullDownOffset,
-				pullUpEl, 
-				pullUpOffset,
-				generatedCount = 0;
+					
+					var protocolstate = localStorage.getItem('protocolstate');
+					if( protocolstate === 'true'){
+						$('#protocol').attr('checked',true)
+					}else{
+						$('#protocol').attr('checked',false)
+					}
+					
+					$('#private').on('changeprototype change',function(){
+						if( $(this).is(':checked') ){
+							localStorage.setItem('privatestate',true);
+						}else{
+							localStorage.setItem('privatestate',false);
+						}
+					})
+					
+					$('#protocol').on('changeprototype change',function(){
+						if( $(this).is(':checked') ){
+							localStorage.setItem('protocolstate',true);
+						}else{
+							localStorage.setItem('protocolstate',false);
+						}
+					})
+				}
+				
+				var pageIndex = 1;
+				var pageTotal = null;
+				var isOver = false;
+				
+				loaded();
+				loadList(url,pageIndex);
+				
+				var myScroll,
+					pullDownEl, 
+					pullDownOffset,
+					pullUpEl, 
+					pullUpOffset,
+					generatedCount = 0;
 
-			function pullDownAction () {
-				$('#platformList').html('');
-				loadList(url,1);
-				document.getElementById("pullUp").style.display="";
-				pageIndex = 1;
-				isOver = false;
-				setTimeout(loadRefresh, 1000);
-			}
-			
-			function pullUpAction () {
-				if(!isOver){
-					pageIndex++;
-					loadList(url,pageIndex);
+				function pullDownAction () {
+					$('#platformList').html('');
+					loadList(url,1);
+					document.getElementById("pullUp").style.display="";
+					pageIndex = 1;
+					isOver = false;
+					setTimeout(loadRefresh, 1000);
 				}
-				setTimeout(loadRefresh, 800);
-			}
-			
-			function loadRefresh(){
-				myScroll.refresh();
-			}
-			
-			function loaded() {
-				pullDownEl = document.getElementById('pullDown');
-				pullDownOffset = pullDownEl.offsetHeight;
-				pullUpEl = document.getElementById('pullUp');	
-				pullUpOffset = 10;
 				
-				myScroll = new iScroll('pullrefresh', {
-					useTransition: true,
-					topOffset: pullDownOffset,
-					onRefresh: function () {
-						if (pullDownEl.className.match('loading')) {
-							pullDownEl.className = '';
-							pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
-							$('#pullDownIcon').removeClass('loadingicon');
-						}
-						if (pullUpEl.className.match('loading')) {
-							pullUpEl.className = '';
-							pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
-							$('#pullUpIcon').removeClass('loadingicon');
-						}
-					},
-					onScrollMove: function () {
-						
-						if (this.y > 0) {
-							pullDownEl.className = 'flip';
-							pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
-							$('#pullDownIcon').removeClass('loadingicon');
-							this.minScrollY = 0;
-						}
-						if (this.y < 0 && pullDownEl.className.match('flip')) {
-							pullDownEl.className = '';
-							pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
-							$('#pullDownIcon').removeClass('loadingicon');
-							this.minScrollY = -pullDownOffset;
-						}
-						
-						if ( this.scrollerH < this.wrapperH && this.y < (this.minScrollY-pullUpOffset) || this.scrollerH > this.wrapperH && this.y < (this.maxScrollY - pullUpOffset) ) {
-							document.getElementById("pullUp").style.display="";
-							pullUpEl.className = 'flip';
-							pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
-							$('#pullUpIcon').removeClass('loadingicon');
-						} 
-						if (this.scrollerH < this.wrapperH && this.y > (this.minScrollY-pullUpOffset) && pullUpEl.className.match('flip') || this.scrollerH > this.wrapperH && this.y > (this.maxScrollY - pullUpOffset) && pullUpEl.className.match('flip')) {
-							document.getElementById("pullUp").style.display="none";
-							pullUpEl.className = '';
-							pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
-							$('#pullUpIcon').removeClass('loadingicon');
-						}
-					},
-					onScrollEnd: function () {
-						if (pullDownEl.className.match('flip')) {
-							pullDownEl.className = 'loading';
-							pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
-							$('#pullDownIcon').addClass('loadingicon');
-							pullDownAction();
-						} 
-						if (pullUpEl.className.match('flip')) {
-							document.getElementById("pullUp").style.display="block";
-							if(isOver){
-								pullUpEl.className = 'ended';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+				function pullUpAction () {
+					if(!isOver){
+						pageIndex++;
+						loadList(url,pageIndex);
+					}
+					setTimeout(loadRefresh, 800);
+				}
+				
+				function loadRefresh(){
+					myScroll.refresh();
+				}
+				
+				function loaded() {
+					pullDownEl = document.getElementById('pullDown');
+					pullDownOffset = pullDownEl.offsetHeight;
+					pullUpEl = document.getElementById('pullUp');	
+					pullUpOffset = 10;
+					
+					myScroll = new iScroll('pullrefresh', {
+						useTransition: true,
+						topOffset: pullDownOffset,
+						onRefresh: function () {
+							if (pullDownEl.className.match('loading')) {
+								pullDownEl.className = '';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-platform="lang_dragdownrefresh"></span>');
+								
+								$('#pullDownIcon').removeClass('loadingicon');
+							}
+							if (pullUpEl.className.match('loading')) {
+								pullUpEl.className = '';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-platform="lang_draguptoloadmore"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
-								$('#pullUpIcon').removeClass('pullUpIcon');
-							}else{
-								pullUpEl.className = 'loading';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
-								$('#pullUpIcon').addClass('loadingicon');
-								setTimeout(pullUpAction,1000);
+							}
+							setShowLanguage(langstyle);
+						},
+						onScrollMove: function () {
+							
+							if (this.y > 0) {
+								pullDownEl.className = 'flip';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-platform="lang_unloadeddata"></span>');
+								
+								$('#pullDownIcon').removeClass('loadingicon');
+								this.minScrollY = 0;
+							}
+							if (this.y < 0 && pullDownEl.className.match('flip')) {
+								pullDownEl.className = '';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-platform="lang_dragdownrefresh"></span>');
+								
+								$('#pullDownIcon').removeClass('loadingicon');
+								this.minScrollY = -pullDownOffset;
 							}
 							
-						}
-					}
-				});
-			
-			}
-			
-			document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-
-			document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 800);}, false);
-			
-			//load list 
-			function loadList(url,pageIndex){
-				$.ajax({
-					type:'POST',
-					url:url+'platform/platformList',
-					dataType:'json',
-					data:{
-						pageNum:pageIndex, //当前页
-						pageDataCount:20 //每页的数据条数
-					},
-					success:function(data){
-						if(data.code === 403){
-							location.href = './login.html';
-						}else if(data.code === 404){
-							alert('设备被锁');
-						}else if(data.code == 5000 ){
-							pageTotal = data.pages;
-							if(data.pageList.length !== 0){
-								var platformListHtml = '';
-								for(var i=0;i<data.pageList.length;i++){
-									platformListHtml += '<div class="setup-item" data-listId="'+ data.pageList[i].id +'"><div class="platform-img">'+
-														'<img src="'+ data.pageList[i].image +'" alt="">'+
-														'</div><div class="platform-infor"><div class="platform-title">'+
-														'<span>'+ data.pageList[i].title +'</span>'+
-														'</div><div class="platform-descript">'+
-														'<p>'+ data.pageList[i].introduce +'</p>'+
-														'</div></div></div>'
+							if ( this.scrollerH < this.wrapperH && this.y < (this.minScrollY-pullUpOffset) || this.scrollerH > this.wrapperH && this.y < (this.maxScrollY - pullUpOffset) ) {
+								document.getElementById("pullUp").style.display="";
+								pullUpEl.className = 'flip';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-platform="lang_unloadeddata"></span>');
+								
+								$('#pullUpIcon').removeClass('loadingicon');
+							} 
+							if (this.scrollerH < this.wrapperH && this.y > (this.minScrollY-pullUpOffset) && pullUpEl.className.match('flip') || this.scrollerH > this.wrapperH && this.y > (this.maxScrollY - pullUpOffset) && pullUpEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="none";
+								pullUpEl.className = '';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-platform="lang_draguptoloadmore"></span>');
+								
+								$('#pullUpIcon').removeClass('loadingicon');
+							}
+							setShowLanguage(langstyle);
+						},
+						onScrollEnd: function () {
+							if (pullDownEl.className.match('flip')) {
+								pullDownEl.className = 'loading';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-platform="lang_dataloading"></span>');
+								
+								$('#pullDownIcon').addClass('loadingicon');
+								pullDownAction();
+							} 
+							if (pullUpEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="block";
+								if(isOver){
+									pullUpEl.className = 'ended';
+									
+									$('#pullUp').html('');
+									$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-platform="lang_nomoredata"></span>');
+									
+									$('#pullUpIcon').removeClass('loadingicon');
+									$('#pullUpIcon').removeClass('pullUpIcon');
+								}else{
+									pullUpEl.className = 'loading';
+									
+									$('#pullUp').html('');
+									$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-platform="lang_dataloading"></span>');
+									
+									$('#pullUpIcon').addClass('loadingicon');
+									setTimeout(pullUpAction,1000);
 								}
-								$('#platformList').append(platformListHtml);
 							}
-							
-							if(pageIndex == pageTotal){
-								isOver = true;
-							}
+							setShowLanguage(langstyle);
+						}
+					});
+				
+				}
+				
+				document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
 
+				document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 800);}, false);
+				
+				//load list 
+				function loadList(url,pageIndex){
+					$.ajax({
+						type:'POST',
+						url:url+'platform/platformList',
+						dataType:'json',
+						data:{
+							pageNum:pageIndex, //当前页
+							pageDataCount:20 //每页的数据条数
+						},
+						success:function(data){
+							if(data.code === 403){
+								location.href = './login.html';
+							}else if(data.code === 404){
+								alert('设备被锁');
+							}else if(data.code == 5000 ){
+								pageTotal = data.pages;
+								if(data.pageList.length !== 0){
+									var platformListHtml = '';
+									for(var i=0;i<data.pageList.length;i++){
+										platformListHtml += '<div class="setup-item" data-listId="'+ data.pageList[i].id +'"><div class="platform-img">'+
+															'<img src="'+ data.pageList[i].image +'" alt="">'+
+															'</div><div class="platform-infor"><div class="platform-title">'+
+															'<span>'+ data.pageList[i].title +'</span>'+
+															'</div><div class="platform-descript">'+
+															'<p>'+ data.pageList[i].introduce +'</p>'+
+															'</div></div></div>'
+									}
+									$('#platformList').append(platformListHtml);
+								}
+								
+								if(pageIndex == pageTotal){
+									isOver = true;
+								}
+
+							}
+						}
+					});
+				}
+			
+			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							$("[data-platform]").each(function(){
+								$(this).html($.i18n.prop($(this).data("platform")));
+							});
+						}catch(err){
+							console.log(err);
 						}
 					}
 				});
 			}
-			
 		</script>
 		
 	</body>

@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>关于我们</title>
-		
+		<title data-aboutus="lang_aboutus"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -33,20 +33,21 @@
 		.aboutus-img > img{width:2rem;height:2rem;border-radius:50%;}
 		.aboutus-public{height:0.8rem;line-height:0.8rem;}
 		.aboutus-public > span{font-size:0.3rem;color:#222;}
-		.aboutus-public > span > em{font-size:0.3rem;font-style:normal;color:#333;}
+		.aboutus-public > em{font-size:0.3rem;font-style:normal;color:#333;margin-left:0.2rem;}
 		
 		.aboutus-c{width:100%;height:auto;padding:0 8%}
 		.aboutus-c > p{height:auto;line-height:0.6rem;font-size:0.32rem;color:#222;text-indent:2em;}
+
 	</style>
 	<body>
 		<div class="aboutus">
 			<div class="head">
 				<div class="head-back" onClick='javascript:history.go(-1);'>
 					<i class="back"></i>
-					<span class="lang_back">返回</span>
+					<span data-aboutus="lang_back"></span>
 				</div>
 				<div class="head-title">
-					<span>关于我们</span>
+					<span data-aboutus="lang_aboutus"></span>
 				</div>
 			</div>
 
@@ -56,11 +57,11 @@
 						<img src="./img/aboutus.png" alt="">
 					</div>
 					<div class="aboutus-public">
-						<span>当前版本 <em id="curVersion"></em></span>
+						<span  data-aboutus="lang_currentversion"></span><em id="curVersion"></em>
 					</div>
 				</div>
 				<div class="aboutus-c">
-					<p>在使用 试玩助手 过程中，遇到任何问题请联系代理商。</p>
+					<p data-aboutus="lang_aboutuscontent"></p>
 				</div>
 			</div>
 		</div>
@@ -69,16 +70,40 @@
 
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 	<script>
-		var taskstate = localStorage.getItem('taskstate');
-		if(taskstate === "true"){
-			//after five minutes send task start
-			setTimeSendTaskStart();
-		}
+		$(function(){
+			var taskstate = localStorage.getItem('taskstate');
+			if(taskstate === "true"){
+				//after five minutes send task start
+				setTimeSendTaskStart();
+			}
+			
+			var curVer = localStorage.getItem('versioncode');
+			$('#curVersion').text(curVer);
+			
+			var style = localStorage.getItem('langstyle');
+			setShowLanguage(style);
+			
+		});
 		
-		var curVer = localStorage.getItem('versioncode');
-		$('#curVersion').text(curVer);
+		function setShowLanguage(style){
+			var style = style || 'zh_CN';
+			
+			$.i18n.properties({  
+				name: 'Messages',  
+				path: './js/lib/i18n/bundle/', //资源文件路径  
+				mode: 'map', //用Map的方式使用资源文件中的值  
+				language:style,
+				async:false,
+				callback: function() { //加载成功后设置显示内容  
+					$("[data-aboutus]").each(function(){
+						$(this).html($.i18n.prop($(this).data("aboutus")));
+					});
+				}
+			});
+		}
 
 	</script>
 	</body>

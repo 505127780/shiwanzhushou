@@ -1,8 +1,8 @@
-	// show vconsole
-	var showVconsole = localStorage.getItem('showvconsole');
-	if( showVconsole === 'true' ){
-		var vConsole = new VConsole();
-	}
+// show vconsole
+var showVconsole = localStorage.getItem('showvconsole');
+if( showVconsole === 'true' ){
+	var vConsole = new VConsole();
+}
 	
 window.onload = function(){
 	
@@ -34,6 +34,7 @@ window.onload = function(){
 	
 	var fileArr = ["./js/update.js","./js/lib/common.js"];
 	loadFileToPage(fileArr);
+
 	
 	//设置更新弹框
 	var updatebody = document.getElementsByTagName('body')[0]; 

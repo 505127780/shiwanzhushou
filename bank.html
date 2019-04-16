@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>银行卡管理</title>
-		
+		<title data-bankmanage="lang_bankmanage"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -39,7 +39,7 @@
 		.bank-img{width:25%;height:1.2rem;line-height:1.2rem;text-align:center;}
 		.bank-img > img{width:0.7rem;height:0.7rem;}
 		.bank-infor{width:50%;height:1.2rem;display:flex;flex-direction:column;justify-content:center;}
-		.bank-infor > span{color:#222;font-size:0.32rem;}
+		.bank-infor > span{display:inline-block;width:100%;overflow:hidden;word-break:break-all;color:#222;font-size:0.32rem;}
 		.bank-infor > p{color:#999;font-size:0.26rem;margin:0 !important;}
 		.unbind-card{width:25%;height:1.2rem;line-height:1.2rem;text-align:center;}
 		.unbind-card > span{font-size:0.28rem;color:#f00;}
@@ -58,10 +58,10 @@
 			<div class="head">
 				<div class="head-back" onClick='location.href="./person-infor.html"'>
 					<i class="back"></i>
-					<span>返回</span>
+					<span data-bankmanage="lang_back"></span>
 				</div>
 				<div class="head-title">
-					<span>银行卡管理</span>
+					<span data-bankmanage="lang_bankmanage"></span>
 				</div>
 				<a href="./bank-add.html" class="add-bank" >
 					<i class="add"></i>
@@ -76,10 +76,10 @@
 			<div id="unbindCard" class="unbind-bankCard-bg">
 				<div class="unbind-contain">
 					<div id="confirmUnbind">
-						<span>确定解除绑定</span>
+						<span data-bankmanage="lang_confirmunbind"></span>
 					</div>
 					<div id="cancelBtn">
-						<span>取消</span>
+						<span data-bankmanage="lang_cancel"></span>
 					</div>
 				</div>
 			</div>
@@ -89,22 +89,27 @@
 		
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
+			$(function(){
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
+				}
+				
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
+				
+				var userid = localStorage.getItem('userid');
+				var pageIndex = 1;
+				var pageTotal = null;
+				
+				showBindBankCardList(url,userid,pageIndex,langstyle);
+			});
 			
-			var taskstate = localStorage.getItem('taskstate');
-			if(taskstate === "true"){
-				//after five minutes send task start
-				setTimeSendTaskStart();
-			}
-			
-			var userid = localStorage.getItem('userid');
-			var pageIndex = 1;
-			var pageTotal = null;
-			
-			showBindBankCardList(url,userid,pageIndex);
-			
-			function showBindBankCardList(url,userid,pageIndex){
+			function showBindBankCardList(url,userid,pageIndex,langstyle){
 				if(userid){
 					$.ajax({
 						type:'POST',
@@ -127,19 +132,22 @@
 									var bankImg = '';
 									for(var i=0;i<data.pageList.length;i++){
 										switch(data.pageList[i].openingBank){
-											case '中国银行': bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-zg.png','中国银行',data.pageList[i].bankNumber);;break;
-											case '中国建设银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-js.png','中国建设银行',data.pageList[i].bankNumber);;break;
-											case '中国农业银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-ny.png','中国农业银行',data.pageList[i].bankNumber);;break;
-											case '中国工商银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-gs.png','中国工商银行',data.pageList[i].bankNumber);;break;
+											case '中国银行': bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-zg.png','中国银行','BOC',data.pageList[i].bankNumber);;break;
+											case '中国建设银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-js.png','中国建设银行','CCB',data.pageList[i].bankNumber);;break;
+											case '中国农业银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-ny.png','中国农业银行','ABC',data.pageList[i].bankNumber);;break;
+											case '中国工商银行':bankListHtml += bankInfor(data.pageList[i].id,'./img/bank-gs.png','中国工商银行','ICBC',data.pageList[i].bankNumber);;break;
 										}
 									}
 									
 									$('#bankList').append(bankListHtml);
+									
 									//show unbind bank card modal
 									showUnbindCardModal(url,userid);
 								}else{
-									$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span>暂无数据</span></div>');
+									$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-bankmanage="lang_nodata">暂无数据</span></div>');
 								}
+								
+								setShowLanguage(langstyle);
 							}
 						}
 					});
@@ -148,13 +156,14 @@
 				}
 			}
 			
-			function bankInfor(bankid,bankimg,bankname,banknumber){
+			function bankInfor(bankid,bankimg,bankname,simpleName,banknumber){
 				return '<div class="bank-item"><div class="bank-img" data-bankid="'+ bankid +'">'+
 								'<img src="'+ bankimg +'" alt="">'+
 								'</div><div class="bank-infor">'+
-								'<span>'+ bankname +'</span>'+
-								'<p>尾号'+ banknumber.substr(banknumber.length-4,4) +' 储蓄卡</p>'+
-								'</div><div class="unbind-card"><span>解除绑定</span></div></div>';
+								'<span data-bankmanage="lang_'+ simpleName +'">'+ bankname +'</span>'+
+								'<p><span data-bankmanage="lang_endingnumber"></span> '+ banknumber.substr(banknumber.length-4,4) +
+								' <span data-bankmanage="lang_bankstyle"></span></p>'+
+								'</div><div class="unbind-card"><span data-bankmanage="lang_unbind"></span></div></div>';
 			}
 			
 			//show unbind bank card modal
@@ -195,14 +204,30 @@
 								alert('设备被锁');
 							}else if(data.code === 5000 ){
 								alert('银行卡解绑成功');
-								location.href = './bank.html';
+								location.reload();
+							}else{
+								alert('银行卡解绑失败');
 							}
 						}
 					});
 				})
 			}
 			
-			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						$("[data-bankmanage]").each(function(){
+							$(this).html($.i18n.prop($(this).data("bankmanage")));
+						});
+					}
+				});
+			}
 		</script>
 		
 	</body>

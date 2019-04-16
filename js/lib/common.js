@@ -1,6 +1,6 @@
 
-	var urlip = '116.85.19.102';//application server ip
-	// var urlip = '47.107.72.129';//test server ip
+	// var urlip = '116.85.19.102';//application server ip
+	var urlip = '47.107.72.129';//test server ip
 	// var urlip = '192.168.101.9';//test request location server ip
 	localStorage.setItem('urlip',urlip);
 	var url = 'http://'+ urlip +':8080/platform-web/';

@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>添加银行卡</title>
-		
+		<title data-addbank="lang_addbankcard"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<script src="./js/lib/rem.js"></script>
 		<script src="./js/lib/jquery-3.3.1.min.js"></script>
@@ -32,17 +32,16 @@
 		
 		.bank-section,.bank-subbranch,.bank-code,.bank-username,.addbank-name{width:100%;height:0.8rem;margin-bottom:0.2rem;display:flex;flex-direction:row;border-bottom:0.02rem solid #ccc;}
 		
-		.addbank-name{justify-content:center;align-items:center;text-decoration:none !important;outline:none;}
-		.addbank-content > div > span,.addbank-name > span{width:25%;height:0.8rem;line-height:0.8rem;text-align:center;font-size:0.26rem;color:#999;}
-		.addbank-content > div > input,.addbank-name > input{width:75%;height:0.78rem;padding:0 3%;border:none;outline:none;font-size:0.28rem;color:#222;}
+		.addbank-name{justify-content:space-between;align-items:center;text-decoration:none !important;outline:none;}
+		.addbank-content > div > span,.addbank-name > span{width:30%;height:0.8rem;line-height:0.8rem;padding-left:3%;font-size:0.26rem;color:#999;}
+		.addbank-content > div > input,.addbank-name > input{width:70%;height:0.78rem;padding:0 3%;border:none;outline:none;font-size:0.28rem;color:#222;}
 		.addbank-name > input{width:60% !important;}
-		.addbank-name > i.right{width:0.4rem;height:0.4rem;display:block;background:url('./img/icons/right.png') no-repeat;background-size:0.4rem;}
+		.addbank-name > i.right{width:15%;height:0.4rem;display:block;background:url('./img/icons/right.png') no-repeat;background-size:0.4rem;background-position:center;}
 		.bank-username > span{width:30% !important;}
 		.bank-username > input{width:70% !important;}
 		
-		
-		.bank-notice{width:100%;height:0.8rem;line-height:0.8rem;padding-left:3%;}
-		.bank-notice > span{font-size:0.28rem !important;color:#f00 !important;}
+		.bank-notice{width:100%;height:auto;min-height:0.5rem;padding-left:3%;}
+		.bank-notice > span{height:auto !important;line-height:0.4rem !important;font-size:0.28rem !important;color:#f00 !important;}
 		
 		.update-btn{width:100%;height:0.8rem;margin-top:0.3rem;text-align:center;}
 		.update-btn > button{width:80%;height:0.8rem;margin:0 auto;background:#217bd1;outline:none;border:none;color:#fff;font-size:0.32rem;border-radius:0.1rem;}
@@ -53,42 +52,42 @@
 			<div class="head">
 				<div class="head-back" onClick='localStorage.setItem("showmodal","true");localStorage.removeItem("bankstyle");location.href="./bank.html"'>
 					<i class="back"></i>
-					<span>取消</span>
+					<span data-addbank="lang_cancel"></span>
 				</div>
 				<div class="head-title">
-					<span>添加银行卡</span>
+					<span data-addbank="lang_addbankcard"></span>
 				</div>
 			</div>
 			
 			<div class="addbank-content" id="addbankInfor">
 				<a href="./bank-list.html" class="addbank-name">
-					<span>开户银行：</span>
-					<input type="text" readonly="readonly" id="openingBank" placeholder="请选择开户银行">
+					<span data-addbank="lang_depositbank"></span>
+					<input type="text" readonly="readonly" id="openingBank" data-addbank-placeholder="lang_depositbank_placeholder">
 					<i class="right"></i>
 				</a>
 				<div class="bank-section">
-					<span>开户省市：</span>
-					<input type="text" id="expressArea" data-name="custUa" data-required="true" readonly="readonly" placeholder="请选择开户省市">
+					<span data-addbank="lang_accountaddress"></span>
+					<input type="text" id="expressArea" data-name="custUa" data-required="true" readonly="readonly" data-addbank-placeholder="lang_accountaddress_placeholder">
 				</div>
 				<div class="bank-subbranch">
-					<span>支行名称：</span>
-					<input type="text" id="subbranchName" placeholder="请输入支行名称">
+					<span data-addbank="lang_branchbankname"></span>
+					<input type="text" id="subbranchName" data-addbank-placeholder="lang_branchbankname_placeholder">
 				</div>
 				<div class="bank-username">
-					<span>持卡人姓名：</span>
-					<input type="text" id="cardholderName" placeholder="请输入持卡人姓名">
+					<span data-addbank="lang_cardholdername"></span>
+					<input type="text" id="cardholderName" data-addbank-placeholder="lang_cardholdername_placeholder">
 				</div>
 				<div class="bank-code">
-					<span>银行卡号：</span>
-					<input type="number" id="bankCode" placeholder="请输入银行卡号">
+					<span data-addbank="lang_bankcardnumber"></span>
+					<input type="number" id="bankCode" data-addbank-placeholder="lang_bankcardnumber_placeholder">
 				</div>
 				
 				<div class="bank-notice" id="addBankNotice">
-					<span>注：请填写真实有效的银行卡,以免交易失败</span>
+					<span data-addbank="lang_addbanknotice"></span>
 				</div>
 				
 				<div class="update-btn">
-					<button type="button" id="addBankBtn">确认添加</button>
+					<button type="button" id="addBankBtn" data-addbank="lang_confirmaddbank"></button>
 				</div>
 				
 			</div>
@@ -97,14 +96,14 @@
 				<!--选择地区弹层-->
 				<section id="areaLayer" class="express-area-box">
 					<header>
-						<h3>选择省市区</h3>
+						<h3 data-addbank="lang_choiceAddress"></h3>
 						<div class="selet-area-wrap">
 							<p><span class="one"></span></p>
 							<p><span class="two"></span></p>
 							<p><span class="three"></span></p>
 						</div>
 						<div class="hot-city">
-							<p>热门城市</p>
+							<p data-addbank="lang_hotcity"></p>
 							<ul>
 								<li onClick="selectPP(0,1)">北京</li>
 								<li onClick="selectPP(10,1)">上海</li>
@@ -119,7 +118,7 @@
 								<li onClick="selectPP(21,1)">重庆</li>
 								<li onClick="quickselectC(22,0)">成都</li>
 							</ul>
-							<p class="selct-define">选择省份/地区</p>
+							<p class="selct-define" data-addbank="lang_choicedistric"></p>
 						</div>
 						
 					</header>
@@ -140,6 +139,7 @@
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
 		<script src="./js/lib/banktype.js"></script>
 		<script src="./js/lib/areajs/jquery.area.js?v=121763" type="text/javascript"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 			$(function(){
@@ -150,98 +150,142 @@
 					setTimeSendTaskStart();
 				}
 				
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
+				
 				//set hide animation
 				localStorage.setItem('showmodal',false);
 				
 				var userid = localStorage.getItem('userid');
-				
 				var bankstyle = localStorage.getItem('bankstyle');
+				
 				switch(bankstyle){
-					case '1': $('#openingBank').val('中国银行');break;
-					case '2': $('#openingBank').val('中国建设银行');break;
-					case '3': $('#openingBank').val('中国农业银行');break;
-					case '4': $('#openingBank').val('中国工商银行');break;
+					case '1': 
+						$('#openingBank').val('中国银行-BOC');
+						break;
+					case '2':
+						$('#openingBank').val('中国建设银行-CCB');
+						break;
+					case '3':
+						$('#openingBank').val('中国农业银行-ABC');
+						break;
+					case '4':
+						$('#openingBank').val('中国工商银行-ICBC');
+						break;
 				}
 				
 				//add bank
-				addBank(url,userid);
-				
-				function addBank(url,userid){
-					$('#addBankBtn').click(function(){
-						
-						var openingBank = $('#openingBank').val();
-						var expressArea = $('#expressArea').val();
-						var subbranchName = $('#subbranchName').val();
-						var cardholderName = $('#cardholderName').val();
-						var bankCode = $('#bankCode').val();
-						
-						if(userid){
-							if(openingBank){
-								if(expressArea){
-									var openAccountProvince = expressArea.split(' ')[0];
-									var openAccountCity = expressArea.split(' ')[1];
-									if(subbranchName){
-										if(cardholderName){
-											if(bankCode){
-												var bankName = bankCardAttribution(bankCode).bankName;
-												if( openingBank === bankName ){
-													$.ajax({
-														type:'POST',
-														url:url+'bank/addBank',
-														dataType:'json',
-														data:{
-															userId:userid,
-															openingBank:openingBank,
-															openAccountProvince:openAccountProvince,
-															openAccountCity:openAccountCity,
-															subbranchName:subbranchName,
-															cardholderName:cardholderName,
-															bankNumber:bankCode
-														},
-														success:function(data){
-															if(data.code === 403){
-																location.href = './login.html'
-															}else if(data.code === 404){
-																alert('设备被锁');
-															}else if(data.code === 5000 ){
-																$('#addbankInfor').children('input').val('');
-																localStorage.setItem("showmodal",true);
-																alert('添加成功');
-																location.href = './bank.html';
-															}else if(data.code === 5001){
-																alert('设备已绑定该银行卡');
-															}else if(data.code === 5002){
-																alert('银行卡绑定超过设备数量限制');
-															}
-														}
-													});
-												}else{
-													$('#addBankNotice > span').text('银行卡号与开户行不一致');
-												}
-											}else{
-												$('#addBankNotice > span').text('请输入银行卡号');
-											}
-										}else{
-											$('#addBankNotice > span').text('请输入持卡人姓名');
-										}
-									}else{
-										$('#addBankNotice > span').text('请选择银行卡支行名称');
-									}
-								}else{
-									$('#addBankNotice > span').text('请选择银行卡开户省市');
-								}
-							}else{
-								$('#addBankNotice > span').text('请选择银行卡开户银行');
-							}
-						}else{
-							location.href = './login.html';
-						}
-					});
-					
-				}
-				
+				addBank(url,userid,langstyle);
 				
 			});
+				
+			function addBank(url,userid,langstyle){
+				$('#addBankBtn').click(function(){
+					
+					var openingBank = $('#openingBank').val();
+					var expressArea = $('#expressArea').val();
+					var subbranchName = $('#subbranchName').val();
+					var cardholderName = $('#cardholderName').val();
+					var bankCode = $('#bankCode').val();
+					
+					if(userid){
+						if(openingBank){
+							if(expressArea){
+								var openAccountProvince = expressArea.split(' ')[0];
+								var openAccountCity = expressArea.split(' ')[1];
+								if(subbranchName){
+									if(cardholderName){
+										if(bankCode){
+											var bankName = bankCardAttribution(bankCode).bankName;
+											if( openingBank === bankName ){
+												$.ajax({
+													type:'POST',
+													url:url+'bank/addBank',
+													dataType:'json',
+													data:{
+														userId:userid,
+														openingBank:openingBank,
+														openAccountProvince:openAccountProvince,
+														openAccountCity:openAccountCity,
+														subbranchName:subbranchName,
+														cardholderName:cardholderName,
+														bankNumber:bankCode
+													},
+													success:function(data){
+														if(data.code === 403){
+															location.href = './login.html'
+														}else if(data.code === 404){
+															alert('设备被锁');
+														}else if(data.code === 5000 ){
+															$('#addbankInfor').children('input').val('');
+															localStorage.setItem("showmodal",true);
+															alert('添加成功');
+															location.href = './bank.html';
+														}else if(data.code === 5001){
+															alert('设备已绑定该银行卡');
+														}else if(data.code === 5002){
+															alert('银行卡绑定超过设备数量限制');
+														}
+													}
+												});
+											}else{
+												$('#addBankNotice > span').remove();
+												$('#addBankNotice').html('<span data-addbank="lang_error1"></span>');
+											}
+										}else{
+											$('#addBankNotice > span').remove();
+											$('#addBankNotice').html('<span data-addbank="lang_error2"></span>');
+										}
+									}else{
+										$('#addBankNotice > span').remove();
+										$('#addBankNotice').html('<span data-addbank="lang_error3"></span>');
+									}
+								}else{
+									$('#addBankNotice > span').remove();
+									$('#addBankNotice').html('<span data-addbank="lang_error4"></span>');
+								}
+							}else{
+								$('#addBankNotice > span').remove();
+								$('#addBankNotice').html('<span data-addbank="lang_error5"></span>');
+							}
+						}else{
+							$('#addBankNotice > span').remove();
+							$('#addBankNotice').html('<span data-addbank="lang_error6"></span>');
+						}
+						
+						setShowLanguage(langstyle);
+					}else{
+						location.href = './login.html';
+					}
+					
+				});
+				
+			}
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							//初始化页面元素
+							$('[data-addbank-placeholder]').each(function () {
+								$(this).attr('placeholder', $.i18n.prop($(this).data('addbank-placeholder')));
+							});
+							
+							$("[data-addbank]").each(function(){
+								$(this).html($.i18n.prop($(this).data("addbank")));
+							});
+						}catch(err){
+							console.log(err);
+						}
+					}
+				});
+			}	
 		</script>
 	</body>
 </html>

@@ -8,8 +8,8 @@
 	<meta content="yes" name="apple-mobile-web-app-capable">
 	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>首页</title>
-	
+    <title data-index="lang_index"></title>
+	<link rel="shortcut icon" href="./favicon.ico" />
 	<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="./css/common/style.css">
 	<script src="./js/lib/rem.js"></script>
@@ -28,7 +28,7 @@
 	.t-head{height:0.8rem;display:flex;flex-direction:row;justify-content:space-between;}
 	.t-avatar{width:20%;line-height:0.9rem;text-align:center;}
 	.t-avatar > img{width:0.6rem;height:0.6rem;border-radius:50%;}
-	.t-service{width:26%;line-height:0.9rem;text-align:center;text-decoration:none;outline:none;display:flex;flex-direction:row;justify-content:center;align-items:center;}
+	.t-service{width:35%;line-height:0.9rem;text-align:center;text-decoration:none;outline:none;display:flex;flex-direction:row;justify-content:center;align-items:center;}
 	.t-service > span{font-size:0.3rem;color:#fff;}
 	.t-service > img{width:0.5rem;height:0.5rem;margin-right:0.1rem;}
 	.t-money{width:100%;height:1.3rem;}
@@ -71,10 +71,15 @@
 	.b-btn > div{position:relative;width:2rem;height:2rem;line-height:2rem;text-align:center;margin:0 auto;border-radius:50%;border:0.02rem #bdbdbd solid;}
 	.b-btn > div > img{display:none;width:1rem;height:1rem;}
 
-	.b-key-contain{height:0.8rem;text-align:center;}
-	.b-key-contain > span{font-size:0.32rem;color:#222;}
+	.b-key-contain{height:0.8rem;text-align:center;display:flex;flex-direction:row;justify-content:center;}
+	.b-key-contain > div{}
+	.b-key-contain > div > span{font-size:0.32rem;color:#222;}
+	.key-dot{height:0.28rem;width:0.4rem;position:relative;margin-left:0.05rem;}
 	
 	.notice-dot{
+		position:absolute;
+		bottom:-0.07rem;
+		left:0;
 		display:inline-block;
 		width: 0.35rem;
 		height: 0.07rem;
@@ -124,19 +129,19 @@
 				<div class="t-head">
 					<a href="./person.html" class="t-avatar"><img src="./img/avatar.png" alt=""></a>
 					<a href="javascript:;" onclick="plus.runtime.openURL('http://api.pop800.com/chat/474007')" class="t-service">
-						<img src="./img/icons/service.png" alt=""><span>客服</span>
+						<img src="./img/icons/service.png" alt=""><span data-index="lang_customservice"></span>
 					</a>
 				</div>
 				<div class="t-money">
 					<div class="t-mtitle">
-						<div class="t-mtitle-l"><span>总收益(元)</span></div>
+						<div class="t-mtitle-l"><span data-index="lang_totalmoney"></span></div>
 					</div>
 					<div class="t-mcount">
 						<span id="totalMoney">0.00</span>
 					</div>
 				</div>
 				<div class="t-lastMoney">
-					<div><span>昨日收益(元)</span></div>
+					<div><span data-index="lang_yesterdayearnings"></span></div>
 					<div class="t-lastAcount"><span id="prevMoney">+<em>0.00</em></span><img src="./img/icons/icon.png" alt=""></div>
 				</div>
 			</div>
@@ -144,22 +149,22 @@
 			<div class="t-bottom">
 				<div class="commission">
 					<a href="./commission-task.html">
-						<p>任务佣金</p>
+						<p data-index="lang_taskcommission"></p>
 						<span id="taskMoney">0.00</span>
 					</a>
 					<a href="./commission-recommend.html">
-						<p>推荐佣金</p>
+						<p data-index="lang_recommendcommission"></p>
 						<span id="recommendMoney">0.00</span>
 					</a>
 				</div>
 
 				<div class="balance">
 					<a href="./putforward-record.html">
-						<p>已经提现</p>
+						<p data-index="lang_withdrawalmoney"></p>
 						<span id="putforwardMoney">0.00</span>
 					</a>
 					<a href="./balance.html">
-						<p>可用余额</p>
+						<p data-index="lang_enablemoney"></p>
 						<span id="usableMoney">0.00</span>
 					</a>
 				</div>
@@ -170,7 +175,7 @@
 			<div class="b-notice-contain">
 				<div class="notice-left">
 					<i class="noticeicon"></i>
-					<span>通知：</span>
+					<span data-index="lang_notification"></span>
 				</div>
 				<div class="b-notice-content" id="noticeContent">
 					<span id="noticeBegin"></span>
@@ -184,7 +189,7 @@
 				<div class="b-help-contain">
 					<a href="./help.html">
 						<span class="b-help-img"></span>
-						<span>新手帮助</span>
+						<span data-index="lang_newcomerhelp"></span>
 					</a>
 				</div>
 			</div>
@@ -195,16 +200,20 @@
 				</div>
 			</div>
 			<div class="b-key-contain">
-				<span id="keyNoticeText"></span>
-				<span class="notice-dot"></span>
+				<div class="keydiv" id="keyNoticeText">
+					
+				</div>
+				<div class="key-dot" id="keyDot">
+					<span class="notice-dot"></span>
+				</div>
 			</div>
 		</div>
 
 		<div class="f">
-			<a href="./index.html"><i class="index-active"></i><span class="active-s">首页</span></a>
-			<a href="./setup.html" id="preloadPosition"><i class="config"></i><span>设置</span></a>
-			<a href="./position.html"><i class="position"></i><span>定位</span></a>
-			<a href="./person.html"><i class="mine"></i><span>我的</span></a>
+			<a href="./index.html"><i class="index-active"></i><span class="active-s" data-index="lang_index"></span></a>
+			<a href="./setup.html" id="preloadPosition"><i class="config"></i><span data-index="lang_settings"></span></a>
+			<a href="./position.html"><i class="position"></i><span data-index="lang_location"></span></a>
+			<a href="./person.html"><i class="mine"></i><span data-index="lang_me"></span></a>
 		</div>
 	</div>
 
@@ -212,6 +221,7 @@
 	
 	<script src="./js/sendtask.js"></script>
 	<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+	<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 	
 	<script>
 		$(function(){
@@ -221,6 +231,9 @@
 			if( curLocalVersion === '1.2.14' && curLocalUpdateState ){
 				localStorage.removeItem('updatemodalstate');
 			}
+			
+			var langstyle = localStorage.getItem('langstyle');
+			setShowLanguage(langstyle);
 			
 			var userid = localStorage.getItem('userid');
 			var isLogin = localStorage.getItem('loginstate');
@@ -233,15 +246,19 @@
 				$('#enginBtn').children('img').show().attr('src','./img/icons/pause.png');
 				
 				//set key text
-				$('#keyNoticeText').text('正在抓取任务');
-				$('.notice-dot').show();
+				$('#keyNoticeText').html('<span data-index="lang_grabbingtasks"></span>');
+				$('#keyDot').show();
+				
+				setShowLanguage(langstyle);
 				
 			}else{
 				$('#enginBtn').children('img').show().attr('src','./img/icons/start.png');
 
 				//set key text
-				$('#keyNoticeText').text('一键自动执行');
-				$('.notice-dot').hide();
+				$('#keyNoticeText').html('<span data-index="lang_automaticexecution"></span>');
+				$('#keyDot').hide();
+				
+				setShowLanguage(langstyle);
 				
 				//after five minutes send task end
 				setTimeSendTaskEnd();
@@ -257,189 +274,208 @@
 			showNoticeInfo(url)
 			
 			//start task btn
-			startTaskBtn(url,userid);
+			startTaskBtn(url,userid,langstyle);
 			
-			//init index page
-			function init(userid,isLogin){
-				if( (!userid || userid === 'undefined') || (!isLogin || isLogin === 'undefined' || isLogin !== 'true') ){
-					location.href = './login.html';
-				}else{
-					return false;
-				}
+		});
+		
+		
+		//init index page
+		function init(userid,isLogin){
+			if( (!userid || userid === 'undefined') || (!isLogin || isLogin === 'undefined' || isLogin !== 'true') ){
+				location.href = './login.html';
+			}else{
+				return false;
 			}
-			
-			//show index info
-			function showIndexInfo(url,userid){
-				if(userid){
-					$.ajax({
-						type:'POST',
-						url:url+'user/userInfo',
-						dataType:'json',
-						data:{
-							id:userid,
-						},
-						success:function(data){
-							if(data.code === 403){
-								location.href = './login.html';
-							}else if(data.code === 404){
-								alert('设备被锁');
-							}else if(data.code === 5000 ){
-								var userInfo = data.userInfo;
-								localStorage.setItem('phone',userInfo.phone);
-								localStorage.setItem('invitecode',userInfo.code);
-								//总金额
-								$('#totalMoney').text(userInfo.strCommission ? userInfo.strCommission : '0.00');
-								//昨日收益
-								$('#prevMoney > em').text(userInfo.yesterdayIncome ? userInfo.yesterdayIncome : '0.00');
-								//任务佣金
-								$('#taskMoney').text(userInfo.taskCommission ? userInfo.taskCommission : '0.00');
-								//推荐佣金
-								$('#recommendMoney').text(userInfo.recommendCommission ? userInfo.recommendCommission : '0.00');
-								//已提现佣金
-								$('#putforwardMoney').text(userInfo.withdrawMoney ? userInfo.withdrawMoney : '0.00');
-								//可用余额
-								$('#usableMoney').text(userInfo.strMoney ? userInfo.strMoney : '0.00');
-							}
-						}
-					});
-				}else{
-					location.href = './login.html';
-				}
-			}
-			
-			//show notice infor
-			function showNoticeInfo(url){
+		}
+		
+		//show index info
+		function showIndexInfo(url,userid){
+			if(userid){
 				$.ajax({
 					type:'POST',
-					url:url+'notice/noticeList',
+					url:url+'user/userInfo',
 					dataType:'json',
+					data:{
+						id:userid,
+					},
 					success:function(data){
 						if(data.code === 403){
 							location.href = './login.html';
 						}else if(data.code === 404){
 							alert('设备被锁');
 						}else if(data.code === 5000 ){
-							var contentState = null;
-							if(data.notice.length != 0){
-								var noticeText = ''
-								for(var i=0;i<data.notice.length;i++){
-									noticeText += data.notice[i].context + '&nbsp;&nbsp;&nbsp;&nbsp;';
-								}
-								
-								$('#noticeBegin').html(noticeText);
-								contentState = true;
-								//notice scroll
-								ScrollImgLeft(contentState);
-							}else{
-								contentState = false;
-								//notice scroll
-								ScrollImgLeft(contentState);
-							}
+							var userInfo = data.userInfo;
+							localStorage.setItem('phone',userInfo.phone);
+							localStorage.setItem('invitecode',userInfo.code);
+							//总金额
+							$('#totalMoney').text(userInfo.strCommission ? userInfo.strCommission : '0.00');
+							//昨日收益
+							$('#prevMoney > em').text(userInfo.yesterdayIncome ? userInfo.yesterdayIncome : '0.00');
+							//任务佣金
+							$('#taskMoney').text(userInfo.taskCommission ? userInfo.taskCommission : '0.00');
+							//推荐佣金
+							$('#recommendMoney').text(userInfo.recommendCommission ? userInfo.recommendCommission : '0.00');
+							//已提现佣金
+							$('#putforwardMoney').text(userInfo.withdrawMoney ? userInfo.withdrawMoney : '0.00');
+							//可用余额
+							$('#usableMoney').text(userInfo.strMoney ? userInfo.strMoney : '0.00');
 						}
 					}
 				});
+			}else{
+				location.href = './login.html';
 			}
-			
-			//notice scroll
-			function ScrollImgLeft(contentState){
-				var marqueeTimer = '';
-				if(contentState){
-					scrollTimer();
-					var marqueeTimer = contentState;
-						marqueeTimer = !marqueeTimer;
-					var speed = 28;
-					function scrollTimer(){
-						if(marqueeTimer) return;
-						Marquee();
-						setTimeout(scrollTimer,speed);
-					}
-				}else{
-					marqueeTimer = false;
-				}
-			}
-			
-			//滚动效果;
-			function Marquee(){
-				var scroll_begin = document.getElementById("noticeBegin");
-				var scroll_end = document.getElementById("noticeEnd");
-				var scroll_div = document.getElementById("noticeContent");
-				scroll_end.innerHTML = scroll_begin.innerHTML;
-				
-				if(scroll_end.offsetWidth - scroll_div.scrollLeft <= 0){
-					scroll_div.scrollLeft -= scroll_begin.offsetWidth;
-				}else{
-					scroll_div.scrollLeft++;
-				}
-				scroll_begin = null;
-				scroll_end = null;
-				scroll_div = null;
-			}
-
-			//start task btn
-			function startTaskBtn(url,userid){
-				var isclick = false;
-				isclick = !isclick;
-				$('#enginBtn').click(function(){
-					if($(this).children('img').attr('src') === './img/icons/start.png' && isclick === true){
-						
-						isclick = false;
-						
-						var privateState = localStorage.getItem('privatestate');
-						var protocolState = localStorage.getItem('protocolstate');
-						if(privateState === 'true' && protocolState === 'true'){
-							//set private and protocol
-							localStorage.setItem('ppkey',false);
+		}
+		
+		//show notice infor
+		function showNoticeInfo(url){
+			$.ajax({
+				type:'POST',
+				url:url+'notice/noticeList',
+				dataType:'json',
+				success:function(data){
+					if(data.code === 403){
+						location.href = './login.html';
+					}else if(data.code === 404){
+						alert('设备被锁');
+					}else if(data.code === 5000 ){
+						var contentState = null;
+						if(data.notice.length != 0){
+							var noticeText = ''
+							for(var i=0;i<data.notice.length;i++){
+								noticeText += data.notice[i].context + '&nbsp;&nbsp;&nbsp;&nbsp;';
+							}
 							
-							var netWorkState = localStorage.getItem('networkstate');
-							if(netWorkState === 'true'){
-								//send task
-								sendTask(url,userid);
-								
-								//set continue execute next task ,show task alert
-								localStorage.setItem('execute',true);
-								
-								$('#enginBtn').children('img').show().attr('src','./img/icons/pause.png');
-								
-								//set key text
-								$('#keyNoticeText').text('正在抓取任务');
-								$('.notice-dot').show();
-								
-								localStorage.setItem('taskstate',true);
-								
-								var taskHrefTime =  setTimeout(function(){
-									clearTimeout(taskHrefTime);
-									location.href = "./tasking.html";
-								},300);
-							}else{
-								alert('请检查网络是否连接');
-							}
+							$('#noticeBegin').html(noticeText);
+							contentState = true;
+							//notice scroll
+							ScrollImgLeft(contentState);
 						}else{
-							//set private and protocol
-							localStorage.setItem('ppkey',true);
-							location.href = "./setup.html?tips=1";
+							contentState = false;
+							//notice scroll
+							ScrollImgLeft(contentState);
 						}
-						
-					}else{
-						isclick = true;
-						
-						//set continue execute next task ,show task alert
-						localStorage.setItem('execute',false);
-						
-						$('#enginBtn').children('img').show().attr('src','./img/icons/start.png');
-						
-						//set key text
-						$('#keyNoticeText').text('一键自动执行');
-						$('.notice-dot').hide();
-						
-						localStorage.setItem('taskstate',false);
-						
-						//after five minutes send task end
-						setTimeSendTaskEnd();
 					}
-				});
+				}
+			});
+		}
+		
+		//notice scroll
+		function ScrollImgLeft(contentState){
+			var marqueeTimer = '';
+			if(contentState){
+				scrollTimer();
+				var marqueeTimer = contentState;
+					marqueeTimer = !marqueeTimer;
+				var speed = 28;
+				function scrollTimer(){
+					if(marqueeTimer) return;
+					Marquee();
+					setTimeout(scrollTimer,speed);
+				}
+			}else{
+				marqueeTimer = false;
 			}
+		}
+		
+		//滚动效果;
+		function Marquee(){
+			var scroll_begin = document.getElementById("noticeBegin");
+			var scroll_end = document.getElementById("noticeEnd");
+			var scroll_div = document.getElementById("noticeContent");
+			scroll_end.innerHTML = scroll_begin.innerHTML;
 			
-		});
+			if(scroll_end.offsetWidth - scroll_div.scrollLeft <= 0){
+				scroll_div.scrollLeft -= scroll_begin.offsetWidth;
+			}else{
+				scroll_div.scrollLeft++;
+			}
+			scroll_begin = null;
+			scroll_end = null;
+			scroll_div = null;
+		}
+
+		//start task btn
+		function startTaskBtn(url,userid,langstyle){
+			var isclick = false;
+			isclick = !isclick;
+			$('#enginBtn').click(function(){
+				if($(this).children('img').attr('src') === './img/icons/start.png' && isclick === true){
+					
+					isclick = false;
+					
+					var privateState = localStorage.getItem('privatestate');
+					var protocolState = localStorage.getItem('protocolstate');
+					if(privateState === 'true' && protocolState === 'true'){
+						//set private and protocol
+						localStorage.setItem('ppkey',false);
+						
+						var netWorkState = localStorage.getItem('networkstate');
+						if(netWorkState === 'true'){
+							//send task
+							sendTask(url,userid);
+							
+							//set continue execute next task ,show task alert
+							localStorage.setItem('execute',true);
+							
+							$('#enginBtn').children('img').show().attr('src','./img/icons/pause.png');
+							
+							//set key text
+							$('#keyNoticeText').html('<span data-index="lang_grabbingtasks"></span>');
+							$('#keyDot').show();
+							setShowLanguage(langstyle);
+							
+							localStorage.setItem('taskstate',true);
+							
+							var taskHrefTime =  setTimeout(function(){
+								clearTimeout(taskHrefTime);
+								location.href = "./tasking.html";
+							},300);
+						}else{
+							alert('请检查网络是否连接');
+						}
+					}else{
+						//set private and protocol
+						localStorage.setItem('ppkey',true);
+						location.href = "./setup.html?tips=1";
+					}
+					
+				}else{
+					isclick = true;
+					
+					//set continue execute next task ,show task alert
+					localStorage.setItem('execute',false);
+					
+					$('#enginBtn').children('img').show().attr('src','./img/icons/start.png');
+					
+					//set key text
+					$('#keyNoticeText').html('<span data-index="lang_automaticexecution"></span>');
+					$('#keyDot').hide();
+					setShowLanguage(langstyle);
+					
+					localStorage.setItem('taskstate',false);
+					
+					//after five minutes send task end
+					setTimeSendTaskEnd();
+				}
+			});
+		}
+			
+		function setShowLanguage(style){
+			var style = style || 'zh_CN';
+			$.i18n.properties({  
+				name: 'Messages',  
+				path: './js/lib/i18n/bundle/',
+				mode: 'map',
+				language:style,
+				async:true,
+				callback: function() {
+					$("[data-index]").each(function(){
+						$(this).html($.i18n.prop($(this).data("index")));
+					});
+				}
+			});
+		}
 		
 	</script>
 </body>

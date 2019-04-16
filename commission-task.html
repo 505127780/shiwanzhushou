@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>佣金记录-交易记录</title>
-		
+		<title data-taskrecord="lang_taskcommission"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -36,9 +36,11 @@
 		.navTap > a.navActive > span{color:#2c64c5 !important;}
 		.navTap > a > span{font-size:0.3rem;color:#222;}
 		
-		.navbarTap{width:100%;height:0.8rem;margin-top:0.2rem;background:#fff;}
-		.navbarTap > a{display:inline-block;width:25%;height:0.8rem;text-align:center;margin:0 1%;line-height:0.8rem;text-decoration:none;outline:none;font-size:0.28rem;color:#333;}
-		.navbarActive{background:#2281de !important;color:#fff !important;}
+		.navbarTap{width:100%;height:0.8rem;margin-top:0.2rem;background:#fff;display:flex;flex-direction:row;align-items:center;}
+		.navbarTap > a{width:30%;height:0.8rem;text-align:center;margin:0 1%;padding:0 3%;text-decoration:none;outline:none;}
+		.navbarTap > a > span{display:flex;flex-direction:column;justify-content:center;align-items:center;height:0.8rem;font-size:0.28rem;color:#333;}
+		.navbarActive{background:#2281de !important;}
+		.navbarActive > span{color:#fff !important;}
 		
 		.commission-contain{width:100%;height:calc(100% - 3.2rem);margin-top:0.2rem;background:#fff;overflow:hidden;}
 		.commission-list{width:102%;height:calc(100% - 0.2rem);margin:0 auto 0.2rem;padding-top:0.2rem;overflow:hidden;position:relative;}
@@ -50,7 +52,7 @@
 		.commission-state > span{display:block;width:100%;height:0.5rem;line-height:0.5rem;font-size:0.28rem;color:#222;}
 		.commission-state > p{width:100%;height:0.4rem;font-size:0.24rem;color:#666;margin:0 !important;}
 		.commission-money{width:35%;height:1rem;line-height:1rem;text-align:center;}
-		.commission-money > span{font-size:0.32rem;color:#222;}
+		.commission-money > span{font-size:0.32rem;color:#f00;}
 		
 		.platform-empty{width:100%;height:4rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
 		.platform-empty > img{width:1.5rem;height:1rem;}
@@ -66,10 +68,10 @@
 			<div class="head">
 				<a href="./person.html" class="head-back">
 					<i class="back"></i>
-					<span>返回</span>
+					<span data-taskrecord="lang_back"></span>
 				</a>
 				<div class="head-title">
-					<span>交易记录</span>
+					<span data-taskrecord="lang_tradingrecord"></span>
 				</div>
 				<a href="./index.html" class="head-back-index">
 					<i class="back-index"></i>
@@ -77,19 +79,19 @@
 			</div>
 			<div class="navTap">
 				<a href="./putforward-record.html" class="putforward">
-					<span>提现记录</span>
+					<span data-taskrecord="lang_withdrawalrecord"></span>
 				</a>
 				<a href="./commission-task.html" class="commission navActive">
-					<span>佣金记录</span>
+					<span data-taskrecord="lang_commissionrecord"></span>
 				</a>
 			</div>
 			
 			<div class="navbarTap">
 				<a href="./commission-task.html" class="commission-task navbarActive">
-					<span>任务佣金</span>
+					<span data-taskrecord="lang_taskcommission"></span>
 				</a>
 				<a href="./commission-recommend.html" class="commission-recommend">
-					<span>推荐佣金</span>
+					<span data-taskrecord="lang_recommendcommission"></span>
 				</a>
 			</div>
 			
@@ -99,7 +101,7 @@
 					<div class="commission-scroll" >
 						<div id="pullDown">
 							<span class="pullDownIcon" id="pullDownIcon"></span>
-							<span class="pullDownLabel">向下拖动刷新页面</span>
+							<span class="pullDownLabel" data-taskrecord="lang_dragdownrefresh"></span>
 						</div>
 						
 						<div class="commission-wrap" id="commissionTaskList">
@@ -108,7 +110,7 @@
 						
 						<div id="pullUp">
 							<span class="pullUpIcon" id="pullUpIcon"></span>
-							<span class="pullUpLabel">向上拖动加载更多</span>
+							<span class="pullUpLabel" data-taskrecord="lang_draguptoloadmore"></span>
 						</div>
 					</div>
 					
@@ -125,7 +127,7 @@
 						<i class="" id="loadicon"></i>
 					</div>
 					<div class="statemodal-text" >
-						<span id="loadContext">数据加载中…</span>
+						<span id="loadContext" data-taskrecord="lang_dataloading"></span>
 					</div>
 				</div>
 			</div>
@@ -137,6 +139,7 @@
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
 		
 		<script src="./js/lib/iscroll/iscroll.js"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 			$(function(){
@@ -145,6 +148,9 @@
 					//after five minutes send task start
 					setTimeSendTaskStart();
 				}
+				
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
 				
 				var pageIndex = 1;
 				var pageTotal = null;
@@ -174,7 +180,7 @@
 						pageIndex++;
 						loadList(url,pageIndex);
 					}
-					setTimeout(loadRefresh,600);
+					setTimeout(loadRefresh,800);
 				}
 				
 				function loadRefresh(){
@@ -193,26 +199,43 @@
 						onRefresh: function () {
 							if (pullDownEl.className.match('loading')) {
 								pullDownEl.className = '';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-taskrecord="lang_dragdownrefresh"></span>');
+								
 								$('#pullDownIcon').removeClass('loadingicon');
 							}
 							if (pullUpEl.className.match('loading')) {
 								pullUpEl.className = '';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								// pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-taskrecord="lang_draguptoloadmore"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
 							}
+							setShowLanguage(langstyle);
 						},
 						onScrollMove: function () {
 							
 							if (this.y > 0) {
 								pullDownEl.className = 'flip';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-taskrecord="lang_unloadeddata"></span>');
+								
 								$('#pullDownIcon').removeClass('loadingicon');
 								this.minScrollY = 0;
 							}
 							if (this.y < 0 && pullDownEl.className.match('flip')) {
 								pullDownEl.className = '';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-taskrecord="lang_dragdownrefresh"></span>');
+								
 								$('#pullDownIcon').removeClass('loadingicon');
 								this.minScrollY = -pullDownOffset;
 							}
@@ -220,20 +243,33 @@
 							if ( this.scrollerH < this.wrapperH && this.y < (this.minScrollY-pullUpOffset) || this.scrollerH > this.wrapperH && this.y < (this.maxScrollY - pullUpOffset) ) {
 								document.getElementById("pullUp").style.display="";
 								pullUpEl.className = 'flip';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
+								// pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-taskrecord="lang_unloadeddata"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
 							} 
 							if (this.scrollerH < this.wrapperH && this.y > (this.minScrollY-pullUpOffset) && pullUpEl.className.match('flip') || this.scrollerH > this.wrapperH && this.y > (this.maxScrollY - pullUpOffset) && pullUpEl.className.match('flip')) {
 								document.getElementById("pullUp").style.display="none";
 								pullUpEl.className = '';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								// pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-taskrecord="lang_draguptoloadmore"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
 							}
+							setShowLanguage(langstyle);
 						},
 						onScrollEnd: function () {
 							if (pullDownEl.className.match('flip')) {
 								pullDownEl.className = 'loading';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-taskrecord="lang_dataloading"></span>');
+								
 								$('#pullDownIcon').addClass('loadingicon');
 								pullDownAction();
 							} 
@@ -241,17 +277,26 @@
 								document.getElementById("pullUp").style.display="block";
 								if(isOver){
 									pullUpEl.className = 'ended';
-									pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+									// pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+									
+									$('#pullUp').html('');
+									$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-taskrecord="lang_nomoredata"></span>');
+									
 									$('#pullUpIcon').removeClass('loadingicon');
 									$('#pullUpIcon').removeClass('pullUpIcon');
 								}else{
 									pullUpEl.className = 'loading';
-									pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
+									// pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
+									
+									$('#pullUp').html('');
+									$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-taskrecord="lang_dataloading"></span>');
+									
 									$('#pullUpIcon').addClass('loadingicon');
 									setTimeout(pullUpAction,1000);
 								}
 								
 							}
+							setShowLanguage(langstyle);
 						}
 					});
 				
@@ -300,7 +345,7 @@
 										for(var i=0;i<data.pageList.length;i++){
 											strTaskTime = new Date(data.pageList[i].strGetTime).getTime();
 											if(getserviceTime >= parseInt(new Date(data.pageList[i].strGetTime).getTime()) ){
-												comTaskListHtml += '<div class="commission-item"><div class="commission-state"><span>获得任务佣金</span>'+
+												comTaskListHtml += '<div class="commission-item"><div class="commission-state"><span data-taskrecord="lang_gettaskcommission"></span>'+
 																	'<p>'+ data.pageList[i].strGetTime +'</p>'+
 																	'</div><div class="commission-money">'+
 																	'<span>+ '+ data.pageList[i].strCommission +'</span>'+
@@ -310,9 +355,9 @@
 						
 										$('#commissionTaskList').append(comTaskListHtml);
 									}else{
-										$('#commissionTaskList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span>暂无数据</span></div>');
+										$('#commissionTaskList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-taskrecord="lang_nodata"></span></div>');
 									}
-									
+									setShowLanguage(langstyle);
 									if(pageIndex == pageTotal){
 										isOver = true;
 									}
@@ -325,6 +370,22 @@
 				}
 				
 			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						$("[data-taskrecord]").each(function(){
+							$(this).html($.i18n.prop($(this).data("taskrecord")));
+						});
+					}
+				});
+			}
 		</script>
 		
 	</body>

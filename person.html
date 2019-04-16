@@ -8,7 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>我的</title>
+		<title data-person="lang_me"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -44,6 +45,7 @@
 		
 		.person-c > a > i.myBalance{background:url('./img/icons/my-balance.png') no-repeat;background-size:0.4rem;}
 		.person-c > a > i.tradeRecord{background:url('./img/icons/trade-record.png') no-repeat;background-size:0.4rem;}
+		.person-c > a > i.languageChange{background:url('./img/icons/language.png') no-repeat;background-size:0.4rem;}
 		.person-c > a > i.onlineService{background:url('./img/icons/online-service.png') no-repeat;background-size:0.4rem;}
 		.person-c > a > i.aboutus{background:url('./img/icons/about-us.png') no-repeat;background-size:0.4rem;}
 		.person-c > a > i.right{background:url('./img/icons/right.png') no-repeat;background-size:0.4rem;position:absolute;right:5%;top:0.3rem;}
@@ -91,7 +93,7 @@
 
 						<div class="person-code">
 							<div class="recommend-code">
-								<span>我的推荐码</span>
+								<span data-person="lang_recommendationcode"></span>
 								<span id="inviteCode"></span>
 							</div>
 						</div>
@@ -100,34 +102,42 @@
 					<div class="person-c">
 						<a href="./person-infor.html">
 							<i class="myInfo"></i>
-							<span>我的信息</span>
+							<span data-person="lang_mymessage"></span>
 							<i class="right"></i>
 						</a>
 						<a href="./balance.html">
 							<i class="myBalance"></i>
-							<span>我的余额</span>
+							<span data-person="lang_mybalance"></span>
 							<i class="right"></i>
 						</a>
 
 						<a href="./password.html">
 							<i class="pwd-manager"></i>
-							<span>提现密码管理</span>
+							<span data-person="lang_pwdmanage"></span>
 							<i class="right"></i>
 						</a>
 						
 						<a href="./putforward-record.html">
 							<i class="tradeRecord"></i>
-							<span>交易记录</span>
+							<span data-person="lang_tradingrecord"></span>
 							<i class="right"></i>
 						</a>
+						
+						<a href="./language-change.html">
+							<i class="languageChange"></i>
+							<span data-person="lang_setlanguage"></span>
+							<i class="right"></i>
+						</a>
+						
 						<a href="javascript:;" onclick="plus.runtime.openURL('http://api.pop800.com/chat/474007')">
 							<i class="onlineService"></i>
-							<span>在线客服</span>
+							<span data-person="lang_onlineservice"></span>
 							<i class="right"></i>
 						</a>
+						
 						<a href="./aboutus.html">
 							<i class="aboutus"></i>
-							<span>关于我们</span>
+							<span data-person="lang_aboutus"></span>
 							<i class="right"></i>
 						</a>
 					</div>
@@ -135,28 +145,28 @@
 					<div class="person-ring">
 						<div class="ring-l">
 							<i class="ringIcon"></i>
-							<span>任务铃声</span>
+							<span data-person="lang_taskring"></span>
 						</div>
 						<div class="ring-r">
 							<div class="ring-contain" id="ringBtn">
 								<div data-ringstate="on"></div>
-								<span class="ringon">打开</span>
-								<span class="ringoff"></span>
+								<span class="ringon" data-person="lang_on"></span>
+								<span class="ringoff"data-person="lang_off"></span>
 							</div>
 						</div>
 					</div>
 					
 					<div class="person-btn" id="exitBtn">
-						<span>安全退出</span>
+						<span data-person="lang_exit"></span>
 					</div>
 				</div>
 			</div>
 			
 			<div class="f">
-				<a href="./index.html"><i class="index"></i><span>首页</span></a>
-				<a href="./setup.html"><i class="config"></i><span>设置</span></a>
-				<a href="./position.html"><i class="position"></i><span>定位</span></a>
-				<a href="./person.html"><i class="mine-active"></i><span class="active-s">我的</span></a>
+				<a href="./index.html"><i class="index"></i><span data-person="lang_index"></span></a>
+				<a href="./setup.html"><i class="config"></i><span data-person="lang_settings"></span></a>
+				<a href="./position.html"><i class="position"></i><span data-person="lang_location"></span></a>
+				<a href="./person.html"><i class="mine-active"></i><span class="active-s" data-person="lang_me"></span></a>
 			</div>
 		</div>
 		
@@ -164,6 +174,7 @@
 
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 		
@@ -173,6 +184,9 @@
 					//after five minutes send task start
 					setTimeSendTaskStart();
 				}
+				
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
 				
 				var userphone = localStorage.getItem('phone');
 				$('#userPhone').text(userphone);
@@ -206,15 +220,15 @@
 					$('#ringBtn').css('background','#0c5dac');
 					$('#ringBtn').css('border-color','#0c5dac');
 					$('#ringBtn').children('div').attr("data-ringstate","on").css({'right':'0'});
-					$('.ringon').text('打开');
-					$('.ringoff').text('');
+					$('.ringon').show();
+					$('.ringoff').hide();
 				}
 				if(curRingState === 'false'){
 					$('#ringBtn').css('background','#efefef');
 					$('#ringBtn').css('border-color','#ccc');
 					$('#ringBtn').children('div').attr("data-ringstate","off").css({'right':'0.72rem'});
-					$('.ringoff').text('关闭');
-					$('.ringon').text('');
+					$('.ringon').hide();
+					$('.ringoff').show();
 				}
 				
 				//set ring state
@@ -225,26 +239,40 @@
 						$(this).css('background','#0c5dac');
 						$(this).css('border-color','#0c5dac');
 						$(this).children('div').attr("data-ringstate","on").animate({left:'0.72rem'});
-						$('.ringoff').text('');
-						var openRingTimer = setTimeout(function(){
-							$('.ringon').text('打开');
-							clearTimeout(openRingTimer);
-						},300);
+						
+						$('.ringon').show();
+						$('.ringoff').hide();
+						
 					}
 					if( ballState === 'on' ){
 						localStorage.setItem('ringstate',false);
 						$(this).css('background','#efefef');
 						$(this).css('border-color','#ccc');
 						$(this).children('div').attr("data-ringstate","off").animate({left:'0'});
-						var closeRingTimer = setTimeout(function(){
-							$('.ringoff').text('关闭');
-							clearTimeout(closeRingTimer);
-						},300);
-						$('.ringon').text('');
+						
+						$('.ringon').hide();
+						$('.ringoff').show();
+						
 					}
 				});
 				
 			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						$("[data-person]").each(function(){
+							$(this).html($.i18n.prop($(this).data("person")));
+						});
+					}
+				});
+			}
 			
 		</script>
 		

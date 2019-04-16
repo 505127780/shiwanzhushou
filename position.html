@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>位置</title>
-		
+		<title data-position="lang_position"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/map/demo-center.css"/>
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
@@ -49,7 +49,7 @@
 	<body>
 		<div class="location">
 			<div class="location-title">
-				<span>位置</span>
+				<span data-position="lang_position"></span>
 			</div>
 			
 			<div class="location-map">
@@ -57,17 +57,17 @@
 			</div>			
 			
 			<div class="f">
-				<a href="./index.html"><i class="index"></i><span>首页</span></a>
-				<a href="./setup.html"><i class="config"></i><span>设置</span></a>
-				<a href="./position.html"><i class="position-active"></i><span class="active-s">定位</span></a>
-				<a href="./person.html"><i class="mine"></i><span>我的</span></a>
+				<a href="./index.html"><i class="index"></i><span data-position="lang_index"></span></a>
+				<a href="./setup.html"><i class="config"></i><span data-position="lang_settings"></span></a>
+				<a href="./position.html"><i class="position-active"></i><span class="active-s" data-position="lang_location"></span></a>
+				<a href="./person.html"><i class="mine"></i><span data-position="lang_me"></span></a>
 			</div>
 		</div>
 		
 		<div class="divsmallmodal" id="renewLocation">
 			<div class="divsmallmodal-contain">
-				<div class="divsmallmodal-content">
-					<span id="showpostiontipsContent">正在重新定位</span>
+				<div class="divsmallmodal-content" id="showpostiontipsContent">
+					<span data-position="lang_virtualpositioning"></span>
 				</div>
 			</div>
 		</div>
@@ -76,7 +76,8 @@
 
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
-
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
+		
 		<script type="text/javascript">
 			$(function(){
 				var taskstate = localStorage.getItem('taskstate');
@@ -85,28 +86,32 @@
 					setTimeSendTaskStart();
 				}
 				
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
+				
 				//show position tips 
 				showPosTips();
 				
 				//show position tips 
 				function showPosTips(){
-					$('#showpostiontipsContent').text('正在重新虚拟定位');
 					$('#renewLocation').fadeIn(500);
 					
-					var n = 0;
+					var n = 6;
 					var showpostimer = setInterval(function(){
-						n++;
+						n--;
 						if(n === 3){
 							$('#renewLocation').fadeOut(500);
-						}else if(n === 4){
-							$('#showpostiontipsContent').text('重新虚拟定位成功');
+						}else if(n === 2){
+							$('#showpostiontipsContent').html('<span data-position="lang_revirtuallocation"></span>');
+							setShowLanguage(langstyle);
 							$('#renewLocation').fadeIn(500);
-						}else if(n === 7){
+						}else if(n === 0){
 							$('#renewLocation').fadeOut(500);
-							n = 0;
+							n = null;
 							clearInterval(showpostimer);
 						}
 					},1000);
+					
 				}
 				
 				//初始化地图
@@ -155,6 +160,26 @@
 				}
 			
 			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							$("[data-position]").each(function(){
+								$(this).html($.i18n.prop($(this).data("position")));
+							});
+						}catch(err){
+							console.log(err);
+						}
+					}
+				});
+			}
 		</script>
 	</body>
 </html>
