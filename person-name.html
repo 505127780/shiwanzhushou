@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>真实姓名修改</title>
-		
+		<title data-realname="lang_realnamechange"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -42,10 +42,10 @@
 			<div class="head">
 				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./person-infor.html";'>
 					<i class="back"></i>
-					<span>返回</span>
+					<span data-realname="lang_back"></span>
 				</div>
 				<div class="head-title">
-					<span>真实姓名修改</span>
+					<span data-realname="lang_realnamechange"></span>
 				</div>
 			</div>
 			
@@ -54,11 +54,10 @@
 					<input type="text" id="realName" >
 				</div>
 				<div class="name-notice" id="errorMsg">
-					<span>请输入真实姓名</span>
 				</div>
 				
 				<div class="update-btn">
-					<button type="button" id="changeNameBtn">确认修改</button>
+					<button type="button" id="changeNameBtn" data-realname="lang_save"></button>
 				</div>
 			</div>
 		
@@ -68,6 +67,7 @@
 		
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 			
@@ -79,21 +79,31 @@
 					setTimeSendTaskStart();
 				}
 				
+				$('#errorMsg').html('<span data-realname="lang_realnamenotice"></span>');
+				
+				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
+				setShowLanguage(langstyle);
+				
 				//set hide animation
 				localStorage.setItem('showmodal',false);
 				
 				//checkName and modify
-				checkName(url);
+				checkName(url,langtype);
 				
 				//checkName and modify
-				function checkName(url){
+				function checkName(url,langtype){
 					//check real name
 					$('#changeNameBtn').on('click',function(){
 						var curVal = $('#realName').val();
 						var userid = localStorage.getItem('userid');
 						
 						if(curVal){
-							$('#errorMsg').removeClass('error-notice').children('span').text('');
+							$('#errorMsg').removeClass('error-notice');
+							$('#errorMsg').html('');
 							//set vconsole show and hide
 							if(curVal.toLowerCase() === 'setcon'){
 								localStorage.setItem('showvconsole',true);
@@ -116,10 +126,10 @@
 											if(data.code === 403){
 												location.href = './login.html';
 											}else if(data.code === 404){
-												alert('设备被锁');
+												langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 											}else if(data.code === 5000 ){
 												localStorage.setItem('showmodal',true);
-												alert('修改成功');
+												langtype === 1 ? alert('Modified success') : alert('修改成功')
 												location.href = './person-infor.html';
 											}
 										},
@@ -129,12 +139,34 @@
 								}
 							}
 						}else{
-							$('#errorMsg').addClass('error-notice').children('span').text('真实姓名不能为空');
+							$('#errorMsg').addClass('error-notice');
+							$('#errorMsg').html('<span data-realname="lang_realnameerror1"></span>');
 						}
+						setShowLanguage(langstyle);
 					});
 				}
 				
-			})
+			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							$("[data-realname]").each(function(){
+								$(this).html($.i18n.prop($(this).data("realname")));
+							});
+						}catch(err){
+							console.log(err);
+						}
+					}
+				});
+			}
 		</script>
 	</body>
 </html>

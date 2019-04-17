@@ -107,20 +107,7 @@
 				<a href="./person.html"><i class="mine"></i><span data-platform="lang_me"></span></a>
 			</div>
 		</div>
-		
-		<!-- private and protocol select state -->
-		<div class="state-modal" id="loadLayer">
-			<div class="statemodal-contain">
-				<div class="statemodal-content">
-					<div class="statemodal-icon">
-						<i class="" id="loadicon"></i>
-					</div>
-					<div class="statemodal-text" id="loadContext">
-					</div>
-				</div>
-			</div>
-		</div>
-		
+
 		<div id="taskdiv"></div>
 		
 		<script src="./js/sendtask.js"></script>
@@ -147,6 +134,10 @@
 				}
 				
 				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
 				setShowLanguage(langstyle);
 				
 				function hideLayer(){
@@ -193,19 +184,18 @@
 				var pageTotal = null;
 				var isOver = false;
 				
-				loaded();
-				loadList(url,pageIndex);
+				loadList(url,pageIndex,langtype);
+				setTimeout(loaded,1000);
 				
 				var myScroll,
 					pullDownEl, 
 					pullDownOffset,
 					pullUpEl, 
-					pullUpOffset,
-					generatedCount = 0;
+					pullUpOffset;
 
 				function pullDownAction () {
 					$('#platformList').html('');
-					loadList(url,1);
+					loadList(url,1,langtype);
 					document.getElementById("pullUp").style.display="";
 					pageIndex = 1;
 					isOver = false;
@@ -215,7 +205,7 @@
 				function pullUpAction () {
 					if(!isOver){
 						pageIndex++;
-						loadList(url,pageIndex);
+						loadList(url,pageIndex,langtype);
 					}
 					setTimeout(loadRefresh, 800);
 				}
@@ -294,7 +284,9 @@
 							setShowLanguage(langstyle);
 						},
 						onScrollEnd: function () {
+							document.getElementById("pullUp").style.display="block";
 							if (pullDownEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="none";
 								pullDownEl.className = 'loading';
 								
 								$('#pullDown').html('');
@@ -331,10 +323,8 @@
 				
 				document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
 
-				document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 800);}, false);
-				
 				//load list 
-				function loadList(url,pageIndex){
+				function loadList(url,pageIndex,langtype){
 					$.ajax({
 						type:'POST',
 						url:url+'platform/platformList',
@@ -347,7 +337,7 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code == 5000 ){
 								pageTotal = data.pages;
 								if(data.pageList.length !== 0){

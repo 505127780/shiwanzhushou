@@ -94,6 +94,10 @@
 				}
 				
 				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
 				setShowLanguage(langstyle);
 				
 				var userid = localStorage.getItem('userid');
@@ -118,8 +122,8 @@
 					$('#bankList > div:eq(1)').hide();
 				}
 				
-				getPayStyle(url,userid);
-				getBankList(url,userid);
+				getPayStyle(url,userid,langtype);
+				getBankList(url,userid,langtype);
 				
 				var writeHtmlTimer = setTimeout(function(){
 					writeHtml(bankListHtml,langstyle);
@@ -127,7 +131,7 @@
 				},500);
 				
 				//getpay style
-				function getPayStyle(url,userid){
+				function getPayStyle(url,userid,langtype){
 					if(userid){
 						$.ajax({
 							type:'POST',
@@ -140,7 +144,7 @@
 								if(data.code === 403){
 									location.href = './login.html';
 								}else if(data.code === 404){
-									alert('设备被锁');
+									langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 								}else if(data.code === 5000 ){
 									if(data.userInfo.weChatCharge){
 										bankListHtml += '<div class="putforward-bank" data-style="wxpay">'+
@@ -166,7 +170,7 @@
 				}
 				
 				//get bank list
-				function getBankList(url,userid){
+				function getBankList(url,userid,langtype){
 					
 					$.ajax({
 						type:'POST',
@@ -181,7 +185,7 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
 								if(data.pageList.length !== 0){
 									var bankImg = '';
@@ -217,7 +221,7 @@
 				if(bankListHtml){
 					$('#bankList').html(bankListHtml);
 				}else{
-					$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-bankmanage="lang_nobindpaystyle">暂无绑定支付类型</span></div>');
+					$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-bankmanage="lang_nobindpaystyle"></span></div>');
 				}
 				
 				setShowLanguage(langstyle);

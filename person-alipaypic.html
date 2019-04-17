@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>支付宝收款码</title>
-		
+		<title data-alipay="lang_alipaycode"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -59,10 +59,10 @@
 			<div class="head">
 				<div class="head-back" onClick='localStorage.setItem("showmodal","true");location.href="./person-infor.html";'>
 					<i class="back"></i>
-					<span>返回</span>
+					<span data-alipay="lang_back"></span>
 				</div>
 				<div class="head-title">
-					<span>支付宝收款码</span>
+					<span data-alipay="lang_alipaycode"></span>
 				</div>
 			</div>
 			
@@ -79,7 +79,7 @@
 					</div>
 					
 					<div class="alipay-upload" id="uploadAlipay">
-						<span>上传</span>
+						<span data-alipay="lang_upload"></span>
 						<input type="file" id="uploadPic" name="file" accept="image/*" capture="camera">
 					</div>
 					
@@ -90,7 +90,7 @@
 				<div class="upload-modal-content">
 					<div class="upload-notice">
 						<div class="upload-title">
-							<span>上传进度</span>
+							<span data-alipay="lang_uploadprogress"></span>
 						</div>
 						<div class="notice-content">
 							<div class="upload-bg" id="uploadProgress"></div>
@@ -111,6 +111,7 @@
 		
 		<script type="text/javascript" src="./js/lib/upload/crypto.js"></script>
 		<script type="text/javascript" src="./js/lib/upload/cos-js-sdk-v4.js"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 			
@@ -120,6 +121,13 @@
 					//after five minutes send task start
 					setTimeSendTaskStart();
 				}
+				
+				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
+				setShowLanguage(langstyle);
 				
 				//set hide animation
 				localStorage.setItem('showmodal',false);
@@ -138,7 +146,7 @@
 				}
 				
 				//upload img src
-				function uploadImg(url,userid,src){
+				function uploadImg(url,userid,src,langtype){
 					$.ajax({
 						url:url+"user/uploadCharge",
 						type:"post",
@@ -152,13 +160,13 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
 								localStorage.setItem('showmodal',true);
-								alert('保存成功');
+								langtype === 1 ? alert('Save successfully') : alert('保存成功')
 								location.href = './person-infor.html';
 							}else{
-								alert('上传失败');
+								langtype === 1 ? alert('Save failed') : alert('上传失败')
 							}
 						}
 					});
@@ -213,12 +221,12 @@
 				var successCallBack = function (result) {
 					var src = result.data.source_url;
 					//upload img src
-					uploadImg(url,userid,src);
+					uploadImg(url,userid,src,langtype);
 				};
 				
 				var errorCallBack = function (result) {
 					result = result || {};
-					alert('上传失败');
+					langtype === 1 ? alert('Save failed') : alert('上传失败')
 				};
 				
 				var progressCallBack = function (curr, sha1) {
@@ -267,6 +275,26 @@
 				}
 				
 			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							$("[data-alipay]").each(function(){
+								$(this).html($.i18n.prop($(this).data("alipay")));
+							});
+						}catch(err){
+							console.log(err);
+						}
+					}
+				});
+			}
 		</script>
 	</body>
 </html>

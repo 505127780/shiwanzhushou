@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>我的信息</title>
-		
+		<title data-information="lang_myinformation"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -30,15 +30,16 @@
 		.infor-contain{width:100%;height:calc(100% - 1rem);padding-top:0.2rem;background:#fff;}
 		.infor-list{width:100%;height:auto;}
 		.infor-list > a{width:94%;height:1rem;margin:0 3%;text-decoration:none;outline:none;display:flex;flex-direction:row;}
-		.infor-list > a > div:first-child{width:20%;height:1rem;line-height:1rem;}
-		.infor-list > a > div:last-child{width:80%;height:1rem;line-height:1rem;padding-right:8%;text-align:right;position:relative;}
+		.infor-list > a > div:first-child{width:30%;height:1rem;line-height:1rem;}
+		.infor-list > a > div:last-child{width:70%;height:1rem;line-height:1rem;padding-right:8%;text-align:right;position:relative;}
+		.infor-list > a.address > div{line-height:0.4rem !important;display:flex;flex-direction:row;justify-content:flex-start;align-items:center;}
 		.infor-list > a.address > div:last-child{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;}
 		.infor-list > a > div:first-child > span{color:#222;font-size:0.28rem;}
 		.infor-list > a > div:last-child > span{color:#666;font-size:0.26rem;}
 		.infor-list > a > div > p{width:90%;height:0.8rem;line-height:0.4rem;margin:0 !important;font-size:0.24rem;color:#666;overflow:hidden;}
 		.infor-list > a > div:last-child > i.right{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/right-01.png') no-repeat;background-size:0.4rem;position:absolute;right:0;top:0.3rem;}
-		.paypic > div:first-child{width:35% !important;}
-		.wxpay-code,.alipay-code{width:65% !important;}
+		.paypic > div:first-child{width:45% !important;}
+		.wxpay-code,.alipay-code{width:55% !important;}
 		.wxpay-code > img{width:0.43rem;height:0.43rem;}
 		.alipay-code > img{width:0.4rem;height:0.4rem;}
 	
@@ -48,10 +49,10 @@
 			<div class="head">
 				<div class="head-back" onClick='location.href="./person.html"'>
 					<i class="back"></i>
-					<span>返回</span>
+					<span data-information="lang_back"></span>
 				</div>
 				<div class="head-title">
-					<span>我的信息</span>
+					<span data-information="lang_myinformation"></span>
 				</div>
 			</div>
 			
@@ -59,7 +60,7 @@
 				<div class="infor-list">
 					<a href="./person-name.html">
 						<div>
-							<span>真实姓名</span>
+							<span data-information="lang_realname"></span>
 						</div>
 						<div>
 							<span id="username"></span>
@@ -69,7 +70,7 @@
 					
 					<a href="./person-phone.html">
 						<div>
-							<span>手机号码</span>
+							<span data-information="lang_cellphonenumber"></span>
 						</div>
 						<div>
 							<span id="userphone"></span>
@@ -79,7 +80,7 @@
 					
 					<a href="./person-id.html">
 						<div>
-							<span>身份证号</span>
+							<span data-information="lang_identity"></span>
 						</div>
 						<div>
 							<span id="useridentity"></span>
@@ -89,7 +90,7 @@
 					
 					<a href="./bank.html">
 						<div>
-							<span>银行卡</span>
+							<span data-information="lang_bankcard"></span>
 						</div>
 						<div>
 							<!-- <span id="userbank"></span> -->
@@ -100,7 +101,7 @@
 					
 					<a href="./person-address.html" class="address">
 						<div>
-							<span>邮寄地址</span>
+							<span data-information="lang_mailingaddress"></span>
 						</div>
 						<div>
 							<p id="useraddress"></p>
@@ -110,7 +111,7 @@
 						
 					<a href="./person-wxpaypic.html" class="paypic">
 						<div>
-							<span>微信收款码</span>
+							<span data-information="lang_wechatcode"></span>
 						</div>
 						<div class="wxpay-code">
 							<img src="./img/icons/wxpay-pic.png" alt="">
@@ -120,7 +121,7 @@
 					
 					<a href="./person-alipaypic.html" class="paypic">
 						<div>
-							<span>支付宝收款码</span>
+							<span data-information="lang_alipaycode"></span>
 						</div>
 						<div class="alipay-code">
 							<img src="./img/icons/alipay-pic.png" alt="">
@@ -135,6 +136,7 @@
 
 		<script src="./js/sendtask.js"></script>
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 			
@@ -145,13 +147,20 @@
 					setTimeSendTaskStart();
 				}
 				
+				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
+				setShowLanguage(langstyle);
+				
 				var userid = localStorage.getItem('userid');
 				
 				//show user information
-				showUserInfor(url,userid);
+				showUserInfor(url,userid,langtype);
 				
 				//show user information
-				function showUserInfor(url,userid){
+				function showUserInfor(url,userid,langtype){
 					$.ajax({
 						type:'POST',
 						url:url+'user/myInfo',
@@ -163,11 +172,18 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
-								$('#username').text(data.userInfo.name ? data.userInfo.name : '请设置');
-								$('#userphone').text(data.userInfo.phone ? data.userInfo.phone : '请设置');
-								$('#useridentity').text(data.userInfo.idCard ? data.userInfo.idCard : '请设置');
+								if(langtype === 1){
+									$('#username').text(data.userInfo.name ? data.userInfo.name : 'Please add');
+									$('#userphone').text(data.userInfo.phone ? data.userInfo.phone : 'Please add');
+									$('#useridentity').text(data.userInfo.idCard ? data.userInfo.idCard : 'Please add');
+								}else{
+									$('#username').text(data.userInfo.name ? data.userInfo.name : '请设置');
+									$('#userphone').text(data.userInfo.phone ? data.userInfo.phone : '请设置');
+									$('#useridentity').text(data.userInfo.idCard ? data.userInfo.idCard : '请设置');
+								}
+								
 								$('#useraddress').text(data.userInfo.address ? data.userInfo.address : '');
 								localStorage.setItem('wxpayimg',data.userInfo.weChatCharge);
 								localStorage.setItem('alipayimg',data.userInfo.alipayCharge);
@@ -177,6 +193,26 @@
 				}
 				
 			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							$("[data-information]").each(function(){
+								$(this).html($.i18n.prop($(this).data("information")));
+							});
+						}catch(err){
+							console.log(err);
+						}
+					}
+				});
+			}
 		</script>
 	</body>
 </html>

@@ -123,7 +123,7 @@ function checkUpdateData( j ){
 				localStorage.setItem('taskstate',false);
 				localStorage.setItem('privatestate',false);
 				localStorage.setItem('protocolstate',false);
-				localStorage.setItem('ringstate',true);//set received task ring
+				localStorage.setItem('ringstate',false);//set received task ring
 				localStorage.removeItem('updatemodalstate');
 				localStorage.removeItem('showvconsole');
 				
@@ -162,7 +162,7 @@ function getUpdateData(){
                 		console.log( "获取升级数据，打开保存文件失败："+e.message );
                 	});
                 } else {
-                	alert( "请求获取文件失败："+xhr.status );//获取update.json文件失败
+                	console.log( "请求获取文件失败："+xhr.status );//获取update.json文件失败
                 }
                 break;
             default :

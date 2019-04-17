@@ -45,7 +45,13 @@
 		
 		.update-btn{width:100%;height:0.8rem;margin-top:0.3rem;text-align:center;}
 		.update-btn > button{width:80%;height:0.8rem;margin:0 auto;background:#217bd1;outline:none;border:none;color:#fff;font-size:0.32rem;border-radius:0.1rem;}
-		
+		.update-btn > button:active{
+			background-image: linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -o-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -moz-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -webkit-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+			background-image: -ms-linear-gradient(bottom, rgb(26,105,181) 0%, rgb(15,75,130) 100%);
+		}
 	</style>
 	<body>
 		<div class="addbank">
@@ -151,6 +157,10 @@
 				}
 				
 				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
 				setShowLanguage(langstyle);
 				
 				//set hide animation
@@ -175,11 +185,11 @@
 				}
 				
 				//add bank
-				addBank(url,userid,langstyle);
+				addBank(url,userid,langstyle,langtype);
 				
 			});
 				
-			function addBank(url,userid,langstyle){
+			function addBank(url,userid,langstyle,langtype){
 				$('#addBankBtn').click(function(){
 					
 					var openingBank = $('#openingBank').val();
@@ -215,16 +225,16 @@
 														if(data.code === 403){
 															location.href = './login.html'
 														}else if(data.code === 404){
-															alert('设备被锁');
+															langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 														}else if(data.code === 5000 ){
 															$('#addbankInfor').children('input').val('');
 															localStorage.setItem("showmodal",true);
-															alert('添加成功');
+															langtype === 1 ? alert('Add success') : alert('添加成功')
 															location.href = './bank.html';
 														}else if(data.code === 5001){
-															alert('设备已绑定该银行卡');
+															langtype === 1 ? alert('The device is bound to the bank card') : alert('设备已绑定该银行卡')
 														}else if(data.code === 5002){
-															alert('银行卡绑定超过设备数量限制');
+															langtype === 1 ? alert('Bank card binding over equipment quantity limit') : alert('银行卡绑定超过设备数量限制')
 														}
 													}
 												});
@@ -285,7 +295,7 @@
 						}
 					}
 				});
-			}	
+			}
 		</script>
 	</body>
 </html>

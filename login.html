@@ -18,7 +18,7 @@
 		<script src="./js/lib/rem.js"></script>
 		<script src="./js/lib/jquery-3.3.1.min.js"></script>
 		<script src="./js/lib/vconsole.min.js"></script>
-		<script src="./js/lib/requirefile.js"></script>
+		<script src="./js/lib/common.js"></script>
 		
 	</head>
 	<style>
@@ -37,8 +37,8 @@
 		.input-contain > input{width:25%;height:0.5rem;line-height:0.48rem;vertical-align:middle;text-align:center;border:0.02rem solid #999;outline:none;user-select:none;font-size:0.3rem;color:#222;}
 		.input-contain > span{font-size:0.3rem;margin:0 2%;}
 		.messageCode{width:100%;height:0.6rem;}
-		.messageCode > input{width:65%;height:0.5rem;line-height:0.48rem;vertical-align:middle;border:none;outline:none;user-select:none;font-size:0.3rem;padding-left:10%;}
-		.messageCode > button{width:33%;height:0.6rem;line-height:0.6rem;margin-top:0.1rem;background:#4787ca;border:none;outline:none;border-radius:0.1rem;font-size:0.3rem;color:#fff;}
+		.messageCode > input{width:55%;height:0.5rem;line-height:0.48rem;vertical-align:middle;border:none;outline:none;user-select:none;font-size:0.3rem;padding-left:10%;}
+		.messageCode > button{width:42%;height:0.6rem;line-height:0.6rem;margin-top:0.1rem;background:#4787ca;border:none;outline:none;border-radius:0.1rem;font-size:0.3rem;color:#fff;}
 		.input-error{width:100%;height:0.6rem;line-height:0.8rem;text-align:center;border-bottom:none !important;}
 		.input-error > span{display:inline !important;color:#f00 !important;font-size:0.28rem !important;}
 		.login-btn{width:100%;height:1.5rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
@@ -98,6 +98,12 @@
 				var sendedCode = false;
 				var imei = '';
 				
+				// show vconsole
+				var showVconsole = localStorage.getItem('showvconsole');
+				if( showVconsole === 'true' ){
+					var vConsole = new VConsole();
+				}
+				
 				//获取设备浏览器当前语言
 				var getNavLanguage = function(){
 					if(navigator.appName == "Netscape"){
@@ -108,12 +114,18 @@
 				}
 				
 				var langstyle = getNavLanguage();
+				langstyle = langstyle.toLowerCase();
 				if(langstyle.indexOf('en-') >= 0){
 					langstyle = langstyle.split('-')[0];
 				}
 				
+				var langtype = null;
 				if(langstyle.toLowerCase() === 'zh-cn' || langstyle.toLowerCase() === 'en'){
 					localStorage.setItem('langstyle',langstyle);
+					
+					if(langstyle.indexOf('en') >= 0){
+						langtype = 1;
+					}
 					setShowLanguage(langstyle);
 				}else{
 					setShowLanguage('zh-CN');
@@ -130,13 +142,13 @@
 						if( (/^\d+$/.test(beforeIMEI)) && (/^\d+$/.test(afterIMEI)) ){
 							localStorage.setItem('imei',beforeIMEI+','+afterIMEI);
 						}else{
-							alert('设备号获取异常');
+							langtype === 1 ? alert('The device number gets the exception') : alert('设备号获取异常')
 						}
 					}else{
 						if( /^\d+$/.test(imei) ){
 							localStorage.setItem('imei',imei);
 						}else{
-							alert('设备号获取失败，请设置权限');
+							langtype === 1 ? alert('Failed to get device number. Please set permissions') : alert('设备号获取失败，请设置权限')
 						}
 					}
 					
@@ -161,11 +173,8 @@
 				checkSendCode();
 				
 				//send message code number
-				sendMessageCode(url);
+				sendMessageCode(url,langtype);
 				
-				//login app
-				loginApp(url);
-
 				//check phone number
 				function checkPhoneNumber(){
 					var endVal = '';
@@ -184,6 +193,14 @@
 							if(curVal == '12121234345'){
 								imei = localStorage.getItem('imei');
 								$('#errorMsg').show().children('span').text(imei);
+							}
+							if(curVal == '23232345456'){
+								localStorage.setItem('showvconsole',true);
+								location.reload();
+							}
+							if(curVal == '34343456567'){
+								localStorage.setItem('showvconsole',true);
+								location.reload();
 							}
 						}else if(curVal.length > 11){
 							if(curVal.length < 13){
@@ -273,7 +290,7 @@
 				}
 			
 				//send message code number
-				function sendMessageCode(url){
+				function sendMessageCode(url,langtype){
 					var codeClick = 1;
 					//check phone number
 					checkPhoneNumber();
@@ -298,11 +315,11 @@
 											function timeCountDown(){
 												if(timer == 0){
 													codeClick = 1;
-													$('#sendCode').text("发送验证码");
+													langtype === 1 ? $('#sendCode').text("send code") : $('#sendCode').text("发送验证码")
 													$('#sendCode').attr('disabled',false);
 													clearInterval(countTime);
 												}else{
-													$('#sendCode').text( timer + "s后发送" );
+													langtype === 1 ? $('#sendCode').text("after "+ timer +"s send") : $('#sendCode').text(timer + "s后发送")
 													$('#sendCode').attr('disabled',true);
 													timer--;
 												}
@@ -383,13 +400,14 @@
 												msgCode:sendCode  //短信验证码
 											},
 											success:function(data){
+												console.log(data)
 												if(data.code === 5000){
 													localStorage.setItem('loginstate',true);
 													localStorage.setItem('userid',data.userInfo);
 													localStorage.setItem('privatestate',false);
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
-													localStorage.setItem('ringstate',true);//set received task ring
+													localStorage.setItem('ringstate',false);//set received task ring
 													localStorage.removeItem('imei');
 													
 													location.href = './index.html';
@@ -409,7 +427,7 @@
 													localStorage.setItem('privatestate',false);
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
-													localStorage.setItem('ringstate',true);//set received task ring
+													localStorage.setItem('ringstate',false);//set received task ring
 													localStorage.removeItem('imei');
 													
 													// $('#errorMsg').show().children('span').text('注册成功');

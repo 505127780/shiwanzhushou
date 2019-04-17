@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Cache-Control" content="private">
+		<meta content="telephone=no,email=no" name="format-detection">
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title data-setlanguage="lang_setlanguage"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
+		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
+		<link rel="stylesheet" href="./css/common/style.css">
+		<script src="./js/lib/rem.js"></script>
+		<script src="./js/lib/jquery-3.3.1.min.js"></script>
+		<script src="./js/lib/vconsole.min.js"></script>
+		<script src="./js/lib/requirefile.js"></script>
+		
+	</head>
+	<style>
+		.language{width:100%;height:100%;background:#fff;position:fixed;}
+		.head{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;position:relative}
+		.head-back{width:20%;height:1rem;position:absolute;left:0;top:0;display:flex;flex-direction:row;align-items:center;justify-content:center;}
+		.head-back > i.back{width:0.4rem;height:0.4rem;display:inline-block;background:url('./img/icons/left.png') no-repeat;background-size:0.4rem;}
+		.head-back > span{font-size:0.3rem;color:#fff;}
+		.head-title{width:100%;height:1rem;line-height:1rem;text-align:center;background:#0c5dac;}
+		.head-title > span{font-size:0.34rem;color:#fff;}
+		
+		.language-list{width:100%;height:calc(100% - 1rem);}
+		.language-item{width:100%;height:1rem;margin-top:0.3rem;border-bottom:0.02rem #ccc solid;display:flex;flex-direction:row;justify-content:space-around;}
+		.language-style{width:60%;height:0.8rem;line-height:0.8rem;}
+		.language-style > span{color:#222;font-size:0.32rem;}
+		.select{width:15%;height:0.8rem;display:flex;flex-direction:row;justify-content:center;align-items:center;}
+		.select > i.selectok{width:0.55rem;height:0.3rem;display:block;background:url('./img/icons/select-ok.png') no-repeat;background-size:0.55rem 0.3rem;}
+
+	</style>
+	<body>
+		<div class="language">
+			<div class="head">
+				<div class="head-back" onClick='javascript:history.go(-1);'>
+					<i class="back"></i>
+					<span data-setlanguage="lang_cancel"></span>
+				</div>
+				<div class="head-title">
+					<span data-setlanguage="lang_setlanguage"></span>
+				</div>
+			</div>
+			
+			<div class="language-list">
+				
+				<div class="language-item">
+					<div class="language-style">
+						<span data-language="zh_CN">中文</span>
+					</div>
+					<div class="select">
+						<i></i>
+					</div>
+				</div>
+				
+				<div class="language-item">
+					<div class="language-style">
+						<span data-language="en">English</span>
+					</div>
+					<div class="select">
+						<i></i>
+					</div>
+				</div>
+
+			</div>
+			
+		</div>
+		
+		<div id="taskdiv"></div>
+
+		<script src="./js/sendtask.js"></script>
+		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
+		
+		<script>
+			
+			$(function(){
+				
+				var taskstate = localStorage.getItem('taskstate');
+				if(taskstate === "true"){
+					//after five minutes send task start
+					setTimeSendTaskStart();
+				}
+				
+				var langstyle = localStorage.getItem('langstyle');
+				setShowLanguage(langstyle);
+				
+				var defaultLanguage = localStorage.getItem('langstyle');
+				
+				switch(defaultLanguage){
+					case 'zh-CN':
+						$('.language-list > div:eq(0)').siblings('div').children('div.select').children('i').removeClass('selectok');
+						$('.language-list > div:eq(0)').children('div.select').children('i').addClass('selectok');
+						break;
+					case 'en':
+						$('.language-list > div:eq(1)').siblings('div').children('div.select').children('i').removeClass('selectok');
+						$('.language-list > div:eq(1)').children('div.select').children('i').addClass('selectok');
+						break;
+					default:
+						$('.language-list > div:eq(0)').siblings('div').children('div.select').children('i').removeClass('selectok');
+						$('.language-list > div:eq(0)').children('div.select').children('i').addClass('selectok');
+						break;
+				}
+				
+				
+				$('.language-item').each(function(){
+					$(this).click(function(){
+						console.log($(this).children('div.language-style').children('span').attr('data-language'));
+						var curLanguage = $(this).children('div.language-style').children('span').attr('data-language');
+						$(this).siblings('div').children('div.select').children('i').removeClass('selectok');
+						$(this).children('div.select').children('i').addClass('selectok');
+						
+						localStorage.setItem('langstyle',curLanguage);
+						var setLanguageTimer = setTimeout(function(){
+							location.href = './person.html';
+						},300);
+					});
+				});
+				
+			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						$("[data-setlanguage]").each(function(){
+							$(this).html($.i18n.prop($(this).data("setlanguage")));
+						});
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

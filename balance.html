@@ -90,14 +90,18 @@
 				var userid = localStorage.getItem('userid');
 				
 				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
 				setShowLanguage(langstyle);
 				
 				//show index info
-				showIndexInfo(url,userid);
+				showIndexInfo(url,userid,langtype);
 			});
 			
 			//show index info
-			function showIndexInfo(url,userid){
+			function showIndexInfo(url,userid,langtype){
 				if(userid){
 					$.ajax({
 						type:'POST',
@@ -110,7 +114,7 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
 								var userInfo = data.userInfo;
 								$('#usableMoney').text(userInfo.strMoney ? userInfo.strMoney : '0.00');
@@ -118,9 +122,9 @@
 								
 								if(enableMoney && parseInt(enableMoney) >= 100){
 									// check putforward style
-									checkPutforwardStyle(url,userid,enableMoney);
+									checkPutforwardStyle(url,userid,enableMoney,langtype);
 								}else{
-									alert('当前金额不足以提现');
+									langtype === 1 ? alert('The current amount is insufficient for cash.') : alert('当前金额不足以提现')
 									setTimeout(function(){
 										location.href = './person.html';
 									},300);
@@ -136,7 +140,7 @@
 			}
 			
 			// check putforward style
-			function checkPutforwardStyle(url,userid,enableMoney){
+			function checkPutforwardStyle(url,userid,enableMoney,langtype){
 				var payImg = 0;
 				var payCard = 0;
 				$('#putforwardBtn').click(function(){
@@ -151,7 +155,7 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
 								if(data.userInfo.weChatCharge === "" && data.userInfo.alipayCharge === "" ){
 									payImg = 0;
@@ -186,7 +190,7 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
 								if(data.pageList.length !== 0){
 									payCard = 1;
@@ -204,11 +208,20 @@
 							location.href = "./putforward.html";
 						}else{
 							// alert('请添加收款类型');
-							var confirmRes = confirm('请添加收款类型','确定');
-							if(confirmRes){
-								clearTimeout(bindPayStyle);
-								location.href = './person-infor.html';
+							if( langtype === 1 ){
+								var confirmRes = confirm('Please add the type of receipt','ok');
+								if(confirmRes){
+									clearTimeout(bindPayStyle);
+									location.href = './person-infor.html';
+								}
+							}else{
+								var confirmRes = confirm('请添加收款类型','确定');
+								if(confirmRes){
+									clearTimeout(bindPayStyle);
+									location.href = './person-infor.html';
+								}
 							}
+							
 						}
 					},800);
 				});

@@ -6,8 +6,33 @@
 	var url = 'http://'+ urlip +':8080/platform-web/';
 	var updatetimer = false;
 	
+	function checkLanguage(){
+		//获取设备浏览器当前语言
+		var getNavLanguage = function(){
+			if(navigator.appName == "Netscape"){
+				var navLanguage = navigator.language;
+				return navLanguage;
+			}
+			return false;
+		}
+		
+		var getlangtype = null;
+		var langstyle = getNavLanguage();
+		langstyle = langstyle.toLowerCase();
+		if(langstyle.indexOf('en-') >= 0){
+			langstyle = langstyle.split('-')[0];
+			getlangtype = 1;
+		}else{
+			getlangtype = 2;
+		}
+		
+		return getlangtype;
+	}
+	
 	// H5 plus事件处理
 	function plusReady(){
+		
+		var checknetstate = checkLanguage();
 		
 		//处理屏幕只能竖向
 		plus.screen.lockOrientation("portrait-primary");
@@ -33,7 +58,7 @@
 			//set network state
 			localStorage.setItem('networkstate',false);
 			
-			alert('网络不能使用，请确认网络连接');
+			checknetstate === 1 ? alert('The network is not available. Please confirm the network connection.') : alert('网络不能使用，请确认网络连接')
 			//set continue execute next task ,show task alert
 			localStorage.setItem('execute',false);
 		}else{
@@ -50,11 +75,12 @@
 		}else{
 			// Android处理返回键
 			plus.key.addEventListener('backbutton',function(){
-				var backConfirm = confirm('确认返回到桌面？');
+				
+				var backConfirm = checknetstate === 1 ? confirm("Confirm to return to the desktop ?") : confirm('确认返回到桌面？');
 				if(backConfirm){
 					// 关闭 保持程序唤醒状态
 					plus.device.setWakelock( false );
-					//localStorage.setItem('taskstate',false); //退出桌面任务终止
+					localStorage.setItem('taskstate',false); //退出桌面任务终止
 					var exitApp = setTimeout(function(){
 							plus.runtime.quit();
 							clearTimeout(exitApp);
@@ -157,7 +183,7 @@
 								localStorage.setItem('taskstate',false);
 								localStorage.setItem('privatestate',false);
 								localStorage.setItem('protocolstate',false);
-								localStorage.setItem('ringstate',true);//set received task ring
+								localStorage.setItem('ringstate',false);//set received task ring
 								localStorage.removeItem('updatemodalstate');
 								localStorage.removeItem('showvconsole');
 								

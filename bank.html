@@ -100,16 +100,20 @@
 				}
 				
 				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
 				setShowLanguage(langstyle);
 				
 				var userid = localStorage.getItem('userid');
 				var pageIndex = 1;
 				var pageTotal = null;
 				
-				showBindBankCardList(url,userid,pageIndex,langstyle);
+				showBindBankCardList(url,userid,pageIndex,langstyle,langtype);
 			});
 			
-			function showBindBankCardList(url,userid,pageIndex,langstyle){
+			function showBindBankCardList(url,userid,pageIndex,langstyle,langtype){
 				if(userid){
 					$.ajax({
 						type:'POST',
@@ -124,7 +128,7 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
 								pageTotal = data.pages;
 								if(data.pageList.length !== 0){
@@ -142,11 +146,10 @@
 									$('#bankList').append(bankListHtml);
 									
 									//show unbind bank card modal
-									showUnbindCardModal(url,userid);
+									showUnbindCardModal(url,userid,langtype);
 								}else{
 									$('#bankList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-bankmanage="lang_nodata">暂无数据</span></div>');
 								}
-								
 								setShowLanguage(langstyle);
 							}
 						}
@@ -167,7 +170,7 @@
 			}
 			
 			//show unbind bank card modal
-			function showUnbindCardModal(url,userid){
+			function showUnbindCardModal(url,userid,langtype){
 				$('.unbind-card').unbind('click').click(function(){
 					var curIndex = $(this).index();
 					var bankid = $(this).siblings('div').attr('data-bankid');
@@ -175,7 +178,7 @@
 					$('#unbindCard').animate({bottom:'0'},300);
 					
 					//confirm unbind bank card 
-					confirmUnbindBankCard(url,userid,bankid);
+					confirmUnbindBankCard(url,userid,bankid,langtype);
 				});
 				
 				//hide bottom cancel unbind bank card Modal
@@ -187,7 +190,7 @@
 			}
 			
 			//confirm unbind bank card 
-			function confirmUnbindBankCard(url,userid,bankid){
+			function confirmUnbindBankCard(url,userid,bankid,langtype){
 				$('#confirmUnbind').unbind('click').click(function(){
 					$.ajax({
 						type:'POST',
@@ -201,12 +204,12 @@
 							if(data.code === 403){
 								location.href = './login.html';
 							}else if(data.code === 404){
-								alert('设备被锁');
+								langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 							}else if(data.code === 5000 ){
-								alert('银行卡解绑成功');
+								langtype === 1 ? alert('Bank Card Untied Successfully') : alert('银行卡解绑成功')
 								location.reload();
 							}else{
-								alert('银行卡解绑失败');
+								langtype === 1 ? alert('Bank Card Untied Failed') : alert('银行卡解绑失败')
 							}
 						}
 					});

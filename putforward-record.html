@@ -8,8 +8,8 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>提现记录-交易记录</title>
-		
+		<title data-withdrawalrecord="lang_withdrawalrecord"></title>
+		<link rel="shortcut icon" href="./favicon.ico" />
 		<link rel="stylesheet" href="./css/bootstrap/css/bootstrap.css">
 		<link rel="stylesheet" href="./css/common/style.css">
 		<script src="./js/lib/rem.js"></script>
@@ -44,16 +44,16 @@
 		.putforward-item{width:100%;height:auto;margin-bottom:0.2rem;}
 		.putforward-infor{height:1rem;display:flex;flex-direction:row;border-bottom:0.02rem solid #ccc;}
 		.putforward-money{width:80%;padding-left:3%;}
-		.putforward-state{width:100%;height:0.5rem;line-height:0.5rem;overflow:hidden;word-break:break-all;}
+		.putforward-state{width:100%;height:0.5rem;line-height:0.5rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;word-break:break-all;}
 		.putforward-state > span{font-size:0.28rem;color:#222;}
 		.putforward-time{width:100%;height:0.4rem;}
 		.putforward-time > span{font-size:0.24rem;color:#999;}
 		.putforward-ok{width:100% !important;padding:0 3%;border-bottom:0.02rem solid #ccc;}
-		.putforward-result{width:20%;height:1rem;line-height:1rem;text-align:center;}
+		.putforward-result{width:20%;height:1rem;display:flex;flex-direction:row;align-items:center;justify-content:center;}
 		.putforward-result > span{font-size:0.24rem;color:#222;}
 		
 		.putforword-detail{width:100%;height:1rem;background:#f6f6f6;}
-		.putforword-detail > p{width:100%;height:1rem;line-height:0.42rem;padding:0.1rem 3%;margin:0 !important;font-size:0.28rem;color:#333;text-indent:1em;overflow: hidden;word-break:break-all;}
+		.putforword-detail > p{width:100%;height:1rem;line-height:0.42rem;padding:0.1rem 3%;margin:0 !important;font-size:0.28rem;color:#f00;text-indent:1em;overflow: hidden;word-break:break-all;}
 		.hide{display:none;}
 		
 		.platform-empty{width:100%;height:4rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}
@@ -69,10 +69,10 @@
 			<div class="head">
 				<a href="./person.html" class="head-back">
 					<i class="back"></i>
-					<span>返回</span>
+					<span data-withdrawalrecord="lang_cancel"></span>
 				</a>
 				<div class="head-title">
-					<span>交易记录</span>
+					<span data-withdrawalrecord="lang_tradingrecord"></span>
 				</div>
 				<a href="./index.html" class="head-back-index">
 					<i class="back-index"></i>
@@ -80,10 +80,10 @@
 			</div>
 			<div class="navTap">
 				<a href="./putforward-record.html" class="putforward navActive">
-					<span>提现记录</span>
+					<span data-withdrawalrecord="lang_withdrawalrecord"></span>
 				</a>
 				<a href="./commission-task.html" class="commission">
-					<span>佣金记录</span>
+					<span data-withdrawalrecord="lang_commissionrecord"></span>
 				</a>
 			</div>
 			
@@ -92,7 +92,7 @@
 					<div class="putforward-scroll" >
 						<div id="pullDown">
 							<span class="pullDownIcon" id="pullDownIcon"></span>
-							<span class="pullDownLabel">向下拖动刷新页面</span>
+							<span class="pullDownLabel" data-withdrawalrecord="lang_dragdownrefresh"></span>
 						</div>
 						
 						<div class="putforward-wrap" id="putforwardRecordList">
@@ -101,7 +101,7 @@
 						
 						<div id="pullUp">
 							<span class="pullUpIcon" id="pullUpIcon"></span>
-							<span class="pullUpLabel">向上拖动加载更多</span>
+							<span class="pullUpLabel" data-withdrawalrecord="lang_draguptoloadmore"></span>
 						</div>
 					</div>
 
@@ -116,6 +116,7 @@
 		<script src="https://webapi.amap.com/maps?v=1.4.14&key=85d156489b248882eb103037cd0f9ce0"></script>
 		
 		<script src="./js/lib/iscroll/iscroll.js"></script>
+		<script src="./js/lib/i18n/jquery.i18n.properties.js"></script>
 		
 		<script>
 			$(function(){
@@ -125,23 +126,30 @@
 					setTimeSendTaskStart();
 				}
 				
+				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
+				setShowLanguage(langstyle);
+				
 				var pageIndex = 1;
 				var pageTotal = null;
 				var isOver = false;
 				
-				loaded();
-				loadList(url,pageIndex);
+				loadList(url,pageIndex,langtype);
+				
+				setTimeout(loaded,1000);
 				
 				var myScroll,
 					pullDownEl, 
 					pullDownOffset,
 					pullUpEl, 
-					pullUpOffset,
-					generatedCount = 0;
+					pullUpOffset;
 				
 				function pullDownAction () {
 					$('#putforwardRecordList').html('');
-					loadList(url,1);
+					loadList(url,1,langtype);
 					document.getElementById("pullUp").style.display="";
 					pageIndex = 1;
 					isOver = false;
@@ -151,9 +159,9 @@
 				function pullUpAction () {
 					if(!isOver){
 						pageIndex++;
-						loadList(url,pageIndex);
+						loadList(url,pageIndex,langtype);
 					}
-					setTimeout(loadRefresh, 800);
+					setTimeout(loadRefresh, 1000);
 				}
 				
 				function loadRefresh(){
@@ -161,10 +169,13 @@
 				}
 				
 				function loaded() {
+					if (myScroll != null) {
+						myScroll.destroy();
+					}
 					pullDownEl = document.getElementById('pullDown');
 					pullDownOffset = pullDownEl.offsetHeight;
 					pullUpEl = document.getElementById('pullUp');	
-					pullUpOffset = 10;
+					pullUpOffset = pullUpEl.offsetHeight;
 					
 					myScroll = new iScroll('pullrefresh', {
 						useTransition: true,
@@ -172,26 +183,43 @@
 						onRefresh: function () {
 							if (pullDownEl.className.match('loading')) {
 								pullDownEl.className = '';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-withdrawalrecord="lang_dragdownrefresh"></span>');
+								
 								$('#pullDownIcon').removeClass('loadingicon');
 							}
 							if (pullUpEl.className.match('loading')) {
 								pullUpEl.className = '';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								// pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-withdrawalrecord="lang_draguptoloadmore"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
 							}
+							setShowLanguage(langstyle);
 						},
 						onScrollMove: function () {
 							
 							if (this.y > 0) {
 								pullDownEl.className = 'flip';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '松开加载数据...';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-withdrawalrecord="lang_unloadeddata"></span>');
+								
 								$('#pullDownIcon').removeClass('loadingicon');
 								this.minScrollY = 0;
 							}
 							if (this.y < 0 && pullDownEl.className.match('flip')) {
 								pullDownEl.className = '';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '向下拖动刷新页面';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-withdrawalrecord="lang_dragdownrefresh"></span>');
+								
 								$('#pullDownIcon').removeClass('loadingicon');
 								this.minScrollY = -pullDownOffset;
 							}
@@ -199,20 +227,35 @@
 							if ( this.scrollerH < this.wrapperH && this.y < (this.minScrollY-pullUpOffset) || this.scrollerH > this.wrapperH && this.y < (this.maxScrollY - pullUpOffset) ) {
 								document.getElementById("pullUp").style.display="";
 								pullUpEl.className = 'flip';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
+								// pullUpEl.querySelector('.pullUpLabel').innerHTML = '松开加载数据...';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-withdrawalrecord="lang_unloadeddata"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
 							} 
 							if (this.scrollerH < this.wrapperH && this.y > (this.minScrollY-pullUpOffset) && pullUpEl.className.match('flip') || this.scrollerH > this.wrapperH && this.y > (this.maxScrollY - pullUpOffset) && pullUpEl.className.match('flip')) {
 								document.getElementById("pullUp").style.display="none";
 								pullUpEl.className = '';
-								pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								// pullUpEl.querySelector('.pullUpLabel').innerHTML = '向上拖动加载更多';
+								
+								$('#pullUp').html('');
+								$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-withdrawalrecord="lang_draguptoloadmore"></span>');
+								
 								$('#pullUpIcon').removeClass('loadingicon');
 							}
+							setShowLanguage(langstyle);
 						},
 						onScrollEnd: function () {
+							document.getElementById("pullUp").style.display="block";
 							if (pullDownEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="none";
 								pullDownEl.className = 'loading';
-								pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
+								
+								$('#pullDown').html('');
+								$('#pullDown').html('<span class="pullDownIcon" id="pullDownIcon"></span> <span class="pullDownLabel" data-withdrawalrecord="lang_dataloading"></span>');
+								
 								$('#pullDownIcon').addClass('loadingicon');
 								pullDownAction();
 							} 
@@ -220,28 +263,35 @@
 								document.getElementById("pullUp").style.display="block";
 								if(isOver){
 									pullUpEl.className = 'ended';
-									pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+									// pullUpEl.querySelector('.pullUpLabel').innerHTML = '没有更多数据了...';
+									
+									$('#pullUp').html('');
+									$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-withdrawalrecord="lang_nomoredata"></span>');
+									
 									$('#pullUpIcon').removeClass('loadingicon');
 									$('#pullUpIcon').removeClass('pullUpIcon');
 								}else{
 									pullUpEl.className = 'loading';
-									pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
+									// pullUpEl.querySelector('.pullUpLabel').innerHTML = '加载中...';
+									
+									$('#pullUp').html('');
+									$('#pullUp').html('<span class="pullUpIcon" id="pullUpIcon"></span> <span class="pullUpLabel" data-withdrawalrecord="lang_dataloading"></span>');
+									
 									$('#pullUpIcon').addClass('loadingicon');
 									setTimeout(pullUpAction,1000);
 								}
 								
 							}
+							setShowLanguage(langstyle);
 						}
 					});
 				
 				}
 				
-				document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-				
-				document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 200);}, false);
+				document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false );
 				
 				//load list 
-				function loadList(url,pageIndex){
+				function loadList(url,pageIndex,langtype){
 					var userid = localStorage.getItem('userid');
 					
 					if(userid){
@@ -258,24 +308,27 @@
 								if(data.code === 403){
 									location.href = './login.html';
 								}else if(data.code === 404){
-									alert('设备被锁');
+									langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 								}else if(data.code === 5000 ){
 									pageTotal = data.pages;
 									if(data.pageList.length != 0){
+										var resInStr = (langtype === 1 ? ' In audit' : '审核中');
+										var resPassStr = (langtype === 1 ? ' Audit pass' : '审核通过');
+										var resFailStr = (langtype === 1 ? ' Audit failure' : '审核失败');
 										var putforwadRecordListHtml = '';
 										for(var i=0;i<data.pageList.length;i++){
 											if(data.pageList[i].status === 1){
-												putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核中');
+												putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,resInStr,langtype);
 											}else if(data.pageList[i].status === 2){
 												if(data.pageList[i].assetStatus === 1){
-													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核通过');
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,resPassStr,langtype);
 												}else if(data.pageList[i].assetStatus === 2){
-													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核通过');
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,resPassStr,langtype);
 												}else if(data.pageList[i].assetStatus === 3){
-													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核通过');
+													putforwadRecordListHtml += showPutforwardResultOk(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,resPassStr,langtype);
 												}
 											}else if(data.pageList[i].status === 3){
-												putforwadRecordListHtml += showPutforwardAbnormal(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,'审核失败',data.pageList[i].illustrate);
+												putforwadRecordListHtml += showPutforwardAbnormal(data.pageList[i].strMoney,data.pageList[i].strLaunchTime,resFailStr,data.pageList[i].illustrate,langtype);
 											}
 										}
 										$('#putforwardRecordList').append(putforwadRecordListHtml);
@@ -288,13 +341,10 @@
 												$(this).parent('div').siblings('div').addClass('hide');
 											}
 										});
-										
 									}else{
-										$('#pullDown').hide();
-										myScroll.destroy();
-										$('#putforwardRecordList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span>暂无数据</span></div>');
+										$('#pullrefresh').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-withdrawalrecord="lang_nodata"></span></div>');
 									}
-									
+									setShowLanguage(langstyle);
 									if(pageIndex == pageTotal){
 										isOver = true;
 									}
@@ -307,9 +357,9 @@
 				}
 				
 				//show showPutforwardResultOk
-				function showPutforwardResultOk(strMoney,strLaunchTime,resultState){
+				function showPutforwardResultOk(strMoney,strLaunchTime,resultState,langtype){
 					return '<div class="putforward-item"><div class="putforward-ok"><div class="putforward-state">'+
-							'<span>提现 '+ strMoney+' 元</span>'+
+							'<span>'+ (langtype === 1 ? 'Cash withdrawal ' : '提现 ') + strMoney + (langtype === 1 ? ' RMB' : ' 元') +'</span>'+
 							'<span> '+ resultState +'</span>'+
 							'</div><div class="putforward-time">'+
 							'<span>'+ strLaunchTime +'</span>'+
@@ -317,18 +367,38 @@
 				}
 				
 				//show showPutforwardAbnormal
-				function showPutforwardAbnormal(strMoney,strLaunchTime,resultState,descript){
+				function showPutforwardAbnormal(strMoney,strLaunchTime,resultState,descript,langtype){
 					return '<div class="putforward-item"><div class="putforward-infor"><div class="putforward-money"><div class="putforward-state">'+
-								'<span>提现 '+ strMoney +' 元</span>'+
-								'<span>'+ resultState +'</span>'+
+								'<span>'+ (langtype === 1 ? 'Cash withdrawal ' : '提现 ') + strMoney + (langtype === 1 ? ' RMB' : ' 元') +'</span>'+
+								'<span> '+ resultState +'</span>'+
 								'</div><div class="putforward-time">'+
 								'<span>'+ strLaunchTime +'</span>'+
-								'</div></div><div class="putforward-result"><span>查看详情</span></div></div><div class="putforword-detail hide">'+
+								'</div></div><div class="putforward-result"><span>'+ (langtype === 1 ? 'view details' : '查看详情') +'</span></div></div><div class="putforword-detail hide">'+
 								'<p>'+ descript +'</p>'+
 								'</div></div>'
 				}
 			
 			});
+			
+			function setShowLanguage(style){
+				var style = style || 'zh_CN';
+				$.i18n.properties({  
+					name: 'Messages',  
+					path: './js/lib/i18n/bundle/',
+					mode: 'map',
+					language:style,
+					async:true,
+					callback: function() {
+						try {
+							$("[data-withdrawalrecord]").each(function(){
+								$(this).html($.i18n.prop($(this).data("withdrawalrecord")));
+							});
+						}catch(err){
+							console.log(err);
+						}
+					}
+				});
+			}
 		</script>
 		
 		

@@ -117,20 +117,6 @@
 			
 		</div>
 		
-		<!-- load state -->
-		<div class="state-modal" id="loadLayer">
-			<div class="statemodal-contain">
-				<div class="statemodal-content">
-					<div class="statemodal-icon">
-						<i class="" id="loadicon"></i>
-					</div>
-					<div class="statemodal-text" >
-						<span id="loadContext" data-recommendrecord="lang_dataloading"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		
 		<div id="taskdiv"></div>
 
 		<script src="./js/sendtask.js"></script>
@@ -148,13 +134,18 @@
 				}
 				
 				var langstyle = localStorage.getItem('langstyle');
+				var langtype = null;
+				if(langstyle.indexOf('en') >= 0){
+					langtype = 1;
+				}
 				setShowLanguage(langstyle);
 				
 				var pageIndex = 1;
 				var pageTotal = null;
 				var isOver = false;
 				
-				loadList(url,pageIndex);
+				loadList(url,pageIndex,langtype);
+				setTimeout(loaded,1000);
 				
 				var myScroll,
 					pullDownEl, 
@@ -165,7 +156,7 @@
 				
 				function pullDownAction () {
 					$('#commissionRecommendList').html('');
-					loadList(url,1);
+					loadList(url,1,langtype);
 					document.getElementById("pullUp").style.display="";
 					pageIndex = 1;
 					isOver = false;
@@ -175,7 +166,7 @@
 				function pullUpAction () {
 					if(!isOver){
 						pageIndex++;
-						loadList(url,pageIndex);
+						loadList(url,pageIndex,langtype);
 					}
 					setTimeout(loadRefresh, 600);
 				}
@@ -185,6 +176,9 @@
 				}
 				
 				function loaded() {
+					if (myScroll != null) {
+						myScroll.destroy();
+					}
 					pullDownEl = document.getElementById('pullDown');
 					pullDownOffset = pullDownEl.offsetHeight;
 					pullUpEl = document.getElementById('pullUp');	
@@ -258,7 +252,9 @@
 							}
 						},
 						onScrollEnd: function () {
+							document.getElementById("pullUp").style.display="block";
 							if (pullDownEl.className.match('flip')) {
+								document.getElementById("pullUp").style.display="none";
 								pullDownEl.className = 'loading';
 								// pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';
 								
@@ -298,10 +294,7 @@
 				
 				document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
 				
-				document.addEventListener('DOMContentLoaded', function () {setTimeout(loaded, 800);}, false);
-				
-				
-				function loadList(url,pageIndex){
+				function loadList(url,pageIndex,langtype){
 					var userid = localStorage.getItem('userid');
 					if(userid){
 						$.ajax({
@@ -312,13 +305,13 @@
 								id:userid,
 								type:1, //推荐佣金
 								pageNum:pageIndex, //当前页
-								pageDataCount:10 //每页的数据条数
+								pageDataCount:20 //每页的数据条数
 							},
 							success:function(data){
 								if(data.code === 403){
 									location.href = './login.html';
 								}else if(data.code === 404){
-									alert('设备被锁');
+									langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 								}else if(data.code === 5000 ){
 									
 									pageTotal = data.pages;
@@ -334,12 +327,9 @@
 										
 										$('#commissionRecommendList').append(comTaskListHtml);
 									}else{
-										$('#pullDown').hide();
-										
-										$('#commissionRecommendList').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-recommendrecord="lang_nodata"></span></div>');
-										setShowLanguage(langstyle);
+										$('#pullrefresh').html('<div class="platform-empty"><img src="./img/icons/no-record.png" alt=""><span data-recommendrecord="lang_nodata"></span></div>');
 									}
-									
+									setShowLanguage(langstyle);
 									if(pageIndex == pageTotal){
 										isOver = true;
 									}

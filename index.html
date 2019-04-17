@@ -233,6 +233,10 @@
 			}
 			
 			var langstyle = localStorage.getItem('langstyle');
+			var langtype = null;
+			if(langstyle.indexOf('en') >= 0){
+				langtype = 1;
+			}
 			setShowLanguage(langstyle);
 			
 			var userid = localStorage.getItem('userid');
@@ -268,13 +272,13 @@
 			init(userid,isLogin);
 			
 			//show index info
-			showIndexInfo(url,userid);
+			showIndexInfo(url,userid,langtype);
 			
 			//show notice infor
-			showNoticeInfo(url)
+			showNoticeInfo(url,langtype)
 			
 			//start task btn
-			startTaskBtn(url,userid,langstyle);
+			startTaskBtn(url,userid,langstyle,langtype);
 			
 		});
 		
@@ -289,7 +293,7 @@
 		}
 		
 		//show index info
-		function showIndexInfo(url,userid){
+		function showIndexInfo(url,userid,langtype){
 			if(userid){
 				$.ajax({
 					type:'POST',
@@ -302,7 +306,7 @@
 						if(data.code === 403){
 							location.href = './login.html';
 						}else if(data.code === 404){
-							alert('设备被锁');
+							langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 						}else if(data.code === 5000 ){
 							var userInfo = data.userInfo;
 							localStorage.setItem('phone',userInfo.phone);
@@ -328,7 +332,7 @@
 		}
 		
 		//show notice infor
-		function showNoticeInfo(url){
+		function showNoticeInfo(url,langtype){
 			$.ajax({
 				type:'POST',
 				url:url+'notice/noticeList',
@@ -337,7 +341,7 @@
 					if(data.code === 403){
 						location.href = './login.html';
 					}else if(data.code === 404){
-						alert('设备被锁');
+						langtype === 1 ? alert('Equipment is locked') : alert('设备被锁')
 					}else if(data.code === 5000 ){
 						var contentState = null;
 						if(data.notice.length != 0){
@@ -396,7 +400,7 @@
 		}
 
 		//start task btn
-		function startTaskBtn(url,userid,langstyle){
+		function startTaskBtn(url,userid,langstyle,langtype){
 			var isclick = false;
 			isclick = !isclick;
 			$('#enginBtn').click(function(){
@@ -432,7 +436,7 @@
 								location.href = "./tasking.html";
 							},300);
 						}else{
-							alert('请检查网络是否连接');
+							langtype === 1 ? alert('Please check if the network is connected') : alert('请检查网络是否连接')
 						}
 					}else{
 						//set private and protocol
