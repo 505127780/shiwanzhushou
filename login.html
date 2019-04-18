@@ -133,7 +133,7 @@
 				
 
 				// H5 plus事件处理  
-				function plusReady(){
+				function plusReadyLogin(){
 					imei = plus.device.imei;
 					
 					if(imei.indexOf(',') >= 0){
@@ -154,11 +154,12 @@
 					
 					//check user vip
 					checkUserVip(url);
-				}  
+				}
+				
 				if(window.plus){
-					plusReady();
+					plusReadyLogin();
 				}else{  
-					document.addEventListener("plusready",plusReady,false);  
+					document.addEventListener("plusready",plusReadyLogin,false);  
 				}
 				
 				//check phone number
@@ -400,7 +401,6 @@
 												msgCode:sendCode  //短信验证码
 											},
 											success:function(data){
-												console.log(data)
 												if(data.code === 5000){
 													localStorage.setItem('loginstate',true);
 													localStorage.setItem('userid',data.userInfo);
@@ -408,7 +408,6 @@
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
 													localStorage.setItem('ringstate',false);//set received task ring
-													localStorage.removeItem('imei');
 													
 													location.href = './index.html';
 												}else if(data.code === 404){
@@ -428,7 +427,6 @@
 													localStorage.setItem('protocolstate',false);
 													localStorage.setItem('showmodal',true);//set show animation
 													localStorage.setItem('ringstate',false);//set received task ring
-													localStorage.removeItem('imei');
 													
 													// $('#errorMsg').show().children('span').text('注册成功');
 													location.href = './index.html';

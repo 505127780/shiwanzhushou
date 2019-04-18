@@ -84,7 +84,7 @@
 				<!--选择地区弹层-->
 				<section id="areaLayer" class="express-area-box">
 					<header>
-						<h3 data-addresss="lang_choiceAddress"></h3>
+						<h3 data-address="lang_choiceAddress"></h3>
 						<div class="selet-area-wrap">
 							<p><span class="one"></span></p>
 							<p><span class="two"></span></p>
@@ -137,7 +137,7 @@
 				
 				var langstyle = localStorage.getItem('langstyle');
 				var langtype = null;
-				if(langstyle.indexOf('en') >= 0){
+				if(langstyle && langstyle.indexOf('en') >= 0){
 					langtype = 1;
 				}
 				setShowLanguage(langstyle);

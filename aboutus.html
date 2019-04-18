@@ -57,7 +57,7 @@
 						<img src="./img/aboutus.png" alt="">
 					</div>
 					<div class="aboutus-public">
-						<span  data-aboutus="lang_currentversion"></span><em id="curVersion"></em>
+						<span  data-aboutus="lang_currentversion"></span> 测试版 <em id="curVersion"></em>
 					</div>
 				</div>
 				<div class="aboutus-c">
@@ -83,8 +83,8 @@
 			var curVer = localStorage.getItem('versioncode');
 			$('#curVersion').text(curVer);
 			
-			var style = localStorage.getItem('langstyle');
-			setShowLanguage(style);
+			var langstyle = localStorage.getItem('langstyle');
+			setShowLanguage(langstyle);
 			
 		});
 		

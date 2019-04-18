@@ -19,7 +19,7 @@
 		var getlangtype = null;
 		var langstyle = getNavLanguage();
 		langstyle = langstyle.toLowerCase();
-		if(langstyle.indexOf('en-') >= 0){
+		if(langstyle && langstyle.indexOf('en-') >= 0){
 			langstyle = langstyle.split('-')[0];
 			getlangtype = 1;
 		}else{
@@ -32,7 +32,17 @@
 	// H5 plus事件处理
 	function plusReady(){
 		
-		var checknetstate = checkLanguage();
+		var comLangStyle = localStorage.getItem('langstyle') || 'false';
+		var checknetstate = null;
+		if(comLangStyle != "" || comLangStyle != null || comLangStyle != 'undefined'){
+			if(comLangStyle.indexOf('en') >= 0){
+				checknetstate = 1;
+			}else{
+				checknetstate = 2;
+			}
+		}else{
+			checknetstate = checkLanguage();
+		}
 		
 		//处理屏幕只能竖向
 		plus.screen.lockOrientation("portrait-primary");

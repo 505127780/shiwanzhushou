@@ -1,9 +1,9 @@
 {
     "appid":"H5B7611E9",
     "Android":{
-    	"version":"1.2.19",
-    	"title":"试玩助手-1.2.19",
-    	"note":"1.优化提现功能\n",
-    	"url":"http://try-project-1255372231.cossh.myqcloud.com/apk/shiwanzhushou-1.2.19.apk"
+    	"version":"1.2.20",
+    	"title":"试玩助手-测试版-1.2.20",
+    	"note":"1.增加中英文切换功能\n2.优化列表页滑动功能\n3.关闭默认铃声功能\n",
+    	"url":"http://try-project-1255372231.cossh.myqcloud.com/apk/shiwanzhushou-test-1.2.20.apk"
     }
 }

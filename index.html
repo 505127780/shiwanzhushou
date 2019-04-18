@@ -74,7 +74,7 @@
 	.b-key-contain{height:0.8rem;text-align:center;display:flex;flex-direction:row;justify-content:center;}
 	.b-key-contain > div{}
 	.b-key-contain > div > span{font-size:0.32rem;color:#222;}
-	.key-dot{height:0.28rem;width:0.4rem;position:relative;margin-left:0.05rem;}
+	.key-dot{display:none;height:0.28rem;width:0.4rem;position:relative;margin-left:0.05rem;}
 	
 	.notice-dot{
 		position:absolute;
@@ -225,24 +225,12 @@
 	
 	<script>
 		$(function(){
-			//update old 1.2.14 ,delete updatemodalstate
-			var curLocalVersion = localStorage.getItem('versioncode');
-			var curLocalUpdateState = localStorage.getItem('updatemodalstate');
-			if( curLocalVersion === '1.2.14' && curLocalUpdateState ){
-				localStorage.removeItem('updatemodalstate');
-			}
 			
-			var langstyle = localStorage.getItem('langstyle');
-			var langtype = null;
-			if(langstyle.indexOf('en') >= 0){
-				langtype = 1;
-			}
-			setShowLanguage(langstyle);
-			
+			var imeiIndex = localStorage.getItem('imei');
 			var userid = localStorage.getItem('userid');
 			var isLogin = localStorage.getItem('loginstate');
-
 			var taskstate = localStorage.getItem('taskstate');
+			
 			if(taskstate === 'true'){
 				//after five minutes send task start
 				setTimeSendTaskStart();
@@ -253,44 +241,104 @@
 				$('#keyNoticeText').html('<span data-index="lang_grabbingtasks"></span>');
 				$('#keyDot').show();
 				
-				setShowLanguage(langstyle);
-				
 			}else{
 				$('#enginBtn').children('img').show().attr('src','./img/icons/start.png');
-
+			
 				//set key text
 				$('#keyNoticeText').html('<span data-index="lang_automaticexecution"></span>');
 				$('#keyDot').hide();
-				
-				setShowLanguage(langstyle);
 				
 				//after five minutes send task end
 				setTimeSendTaskEnd();
 			}
 			
-			//init index page
-			init(userid,isLogin);
+			// H5 plus事件处理  
+			function plusReadyIndex(){
+				imeiIndex = plus.device.imei;
+				
+				if(imeiIndex && imeiIndex.indexOf(',') >= 0){
+					var beforeIMEI = imeiIndex.split(',')[0];
+					var afterIMEI = imeiIndex.split(',')[1];
+					if( (/^\d+$/.test(beforeIMEI)) && (/^\d+$/.test(afterIMEI)) ){
+						var getIMEI = (beforeIMEI+','+afterIMEI);
+						localStorage.setItem('imei',getIMEI);
+						checkLoginState(getIMEI);
+					}else{
+						location.href = './login.html';
+					}
+				}else{
+					if( /^\d+$/.test(imeiIndex) ){
+						localStorage.setItem('imei',getIMEI);
+						checkLoginState(imeiIndex);
+					}else{
+						location.href = './login.html';
+					}
+				}
+				
+			}
 			
-			//show index info
-			showIndexInfo(url,userid,langtype);
+			if( !imeiIndex || imeiIndex === 'undefined' ){
+				if(window.plus){
+					plusReadyIndex();
+				}else{
+					document.addEventListener("plusready",plusReadyIndex,false);
+				}
+			}else{
+				
+				if( (!userid || userid === 'undefined') || (!isLogin || isLogin === 'undefined' || isLogin !== 'true') ){
+					location.href = './login.html';
+				}else{
+				
+					//show index info
+					showIndexInfo(url,userid,langtype);
+					
+					//show notice infor
+					showNoticeInfo(url,langtype)
+					
+					//start task btn
+					startTaskBtn(url,userid,langstyle,langtype);
+				}
+			}
 			
-			//show notice infor
-			showNoticeInfo(url,langtype)
+			//检查登录状态
+			function checkLoginState(getimei){
+				if(getimei){
+					$.ajax({
+						type:'POST',
+						url:url+'user/equipmentNumberLogin',
+						dataType:'json',
+						data:{
+							equipmentNumber:getimei
+						},
+						success:function(data){
+							
+							if(data.coode === 5000){
+								if(data.id && data.id != ''){
+									localStorage.setItem('loginstate',true);
+									localStorage.setItem('userid',data.id);
+									
+									location.reload();
+									
+								}else{
+									location.href = './login.html';
+								}
+							}else{
+								location.href = './login.html';
+							}
+						}
+					});
+				}
+			}
 			
-			//start task btn
-			startTaskBtn(url,userid,langstyle,langtype);
+			var langstyle = localStorage.getItem('langstyle');
+			var langtype = null;
+			if(langstyle && langstyle.indexOf('en') >= 0){
+				langtype = 1;
+			}
+			
+			setShowLanguage(langstyle);
 			
 		});
-		
-		
-		//init index page
-		function init(userid,isLogin){
-			if( (!userid || userid === 'undefined') || (!isLogin || isLogin === 'undefined' || isLogin !== 'true') ){
-				location.href = './login.html';
-			}else{
-				return false;
-			}
-		}
 		
 		//show index info
 		function showIndexInfo(url,userid,langtype){

@@ -129,7 +129,7 @@
 				
 				var langstyle = localStorage.getItem('langstyle');
 				var langtype = null;
-				if(langstyle.indexOf('en') >= 0){
+				if(langstyle && langstyle.indexOf('en') >= 0){
 					langtype = 1;
 				}
 				setShowLanguage(langstyle);
